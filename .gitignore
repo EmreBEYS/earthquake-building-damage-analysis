@@ -26,7 +26,7 @@ venv/
 .ipynb_checkpoints/
 
 # Local datasets and generated artifacts
-data/raw/*
+data/raw/**
 data/external/*
 data/interim/*
 data/processed/*
@@ -34,10 +34,10 @@ models/*
 reports/figures/*
 
 # Keep directory placeholders
-!data/raw/.gitkeep
+!data/raw/**/
+!data/raw/**/.gitkeep
 !data/external/.gitkeep
 !data/interim/.gitkeep
 !data/processed/.gitkeep
 !models/.gitkeep
 !reports/figures/.gitkeep
-
