@@ -1,0 +1,33 @@
+{
+  "aoi_bbox_wgs84": [38.210286, 38.287227, 38.364463, 38.398576],
+  "copernicus_ems": {
+    "dataset_id": "cems_emsr648_aoi05_grading_vectors",
+    "filename": "EMSR648_AOI05_GRA_PRODUCT_r1_VECTORS_v1_vector.zip",
+    "sha256": "ab56968a7880f22fbf13df94ec51921079e4f7213e05eb1f9cf3596b346bfd59",
+    "destination": "data/raw/copernicus_emergency/EMSR648_AOI05_GRA_PRODUCT_r1_VECTORS_v1"
+  },
+  "geoboundaries": {
+    "api_url": "https://www.geoboundaries.org/api/current/gbOpen/TUR/ADM2/",
+    "download_url": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/TUR/ADM2/geoBoundaries-TUR-ADM2.geojson",
+    "filename": "geoBoundaries-TUR-ADM2.geojson",
+    "sha256": "8e7594ab12d916e3b93f920475a300c364dfb94a0e40bfa6d55f43aff0c7fd97",
+    "destination": "data/external/geoboundaries/TUR_ADM2_2021",
+    "selected_shape_ids": [
+      "54988432B75263721717029",
+      "54988432B29488154081251"
+    ]
+  },
+  "sentinel_2": {
+    "stac_search_url": "https://stac.dataspace.copernicus.eu/v1/search",
+    "collection": "sentinel-2-l2a",
+    "max_cloud_cover": 30,
+    "limit": 100,
+    "destination": "data/external/sentinel_2/catalog",
+    "windows": {
+      "2022_summer": "2022-06-01T00:00:00Z/2022-09-30T23:59:59Z",
+      "2023_post_event": "2023-02-06T00:00:00Z/2023-03-31T23:59:59Z",
+      "2023_summer": "2023-06-01T00:00:00Z/2023-09-30T23:59:59Z",
+      "2026_summer": "2026-06-01T00:00:00Z/2026-09-30T23:59:59Z"
+    }
+  }
+}
