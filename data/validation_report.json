@@ -1,0 +1,141 @@
+{
+  "validated_on": "2026-10-12",
+  "datasets": [
+    {
+      "dataset_id": "cems_emsr648_aoi05_grading_vectors",
+      "path": "data/raw/copernicus_emergency/EMSR648_AOI05_GRA_PRODUCT_r1_VECTORS_v1/EMSR648_AOI05_GRA_PRODUCT_r1_VECTORS_v1_vector.zip",
+      "exists": true,
+      "checked": true,
+      "bytes": 4322776,
+      "sha256": "ab56968a7880f22fbf13df94ec51921079e4f7213e05eb1f9cf3596b346bfd59",
+      "content": {
+        "zip_members": 75,
+        "zip_uncompressed_bytes": 16622225,
+        "geojson_layers": 9,
+        "shapefile_sets": 9
+      },
+      "valid": true
+    },
+    {
+      "dataset_id": "geoboundaries_tur_adm2_2021",
+      "path": "data/external/geoboundaries/TUR_ADM2_2021/geoBoundaries-TUR-ADM2.geojson",
+      "exists": true,
+      "checked": true,
+      "bytes": 16115778,
+      "sha256": "8e7594ab12d916e3b93f920475a300c364dfb94a0e40bfa6d55f43aff0c7fd97",
+      "content": {
+        "feature_count": 973,
+        "geometry_types": {
+          "MultiPolygon": 36,
+          "Polygon": 937
+        },
+        "bbox": [
+          25.6654487,
+          35.8076804,
+          44.8176638,
+          42.1048008
+        ]
+      },
+      "valid": true
+    },
+    {
+      "dataset_id": "sentinel2_l2a_2022_summer",
+      "path": "data/external/sentinel_2/catalog/2022_summer.json",
+      "exists": true,
+      "checked": true,
+      "bytes": 215670,
+      "sha256": "1fa7279b3aa881b9bffd0400c124d504ddfa968612f66a495137acd140311bf8",
+      "content": {
+        "feature_count": 44,
+        "geometry_types": {
+          "Polygon": 44
+        },
+        "bbox": [
+          37.84724864924708,
+          37.85395064837388,
+          39.11247403813807,
+          38.84894433319432
+        ]
+      },
+      "valid": true
+    },
+    {
+      "dataset_id": "sentinel2_l2a_2023_post_event",
+      "path": "data/external/sentinel_2/catalog/2023_post_event.json",
+      "exists": true,
+      "checked": true,
+      "bytes": 48250,
+      "sha256": "4f04a518f6664be318e925c40ce3adcd0c048b0532ceb3a1b816e6ea94441059",
+      "content": {
+        "feature_count": 9,
+        "geometry_types": {
+          "Polygon": 9
+        },
+        "bbox": [
+          37.84724864924708,
+          37.85395064837388,
+          39.11247403813807,
+          38.84894433319432
+        ]
+      },
+      "valid": true
+    },
+    {
+      "dataset_id": "sentinel2_l2a_2023_summer",
+      "path": "data/external/sentinel_2/catalog/2023_summer.json",
+      "exists": true,
+      "checked": true,
+      "bytes": 243912,
+      "sha256": "2c553c82cdbb0ccfd15bc96015b2d3773846a476af8a40de72d3dbc49631f89e",
+      "content": {
+        "feature_count": 46,
+        "geometry_types": {
+          "Polygon": 46
+        },
+        "bbox": [
+          37.84724864924708,
+          37.85395064837388,
+          39.11247403813807,
+          38.84894433319432
+        ]
+      },
+      "valid": true
+    },
+    {
+      "dataset_id": "sentinel2_l2a_2026_summer",
+      "path": "data/external/sentinel_2/catalog/2026_summer.json",
+      "exists": true,
+      "checked": true,
+      "bytes": 342963,
+      "sha256": "e9dd68840fc6b4a663cd1a5d9f3d1dc351015061d8b828e987a5082974e08950",
+      "content": {
+        "feature_count": 65,
+        "geometry_types": {
+          "Polygon": 65
+        },
+        "bbox": [
+          37.84724864924708,
+          37.85395064837388,
+          39.11247403813807,
+          38.84894433319432
+        ]
+      },
+      "valid": true
+    },
+    {
+      "dataset_id": "official_malatya_municipal_boundaries",
+      "status": "pending_verified_download",
+      "checked": false
+    },
+    {
+      "dataset_id": "private_edevlet_records",
+      "status": "excluded_private",
+      "checked": false
+    },
+    {
+      "dataset_id": "proprietary_vhr_imagery_referenced_by_cems",
+      "status": "excluded_proprietary",
+      "checked": false
+    }
+  ]
+}

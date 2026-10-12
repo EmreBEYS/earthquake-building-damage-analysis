@@ -10,6 +10,25 @@ motion indicators, and observed post-earthquake damage. Its first goal is an
 explainable and reproducible analysis; predictive models are used as supporting
 tools rather than as substitutes for engineering judgment.
 
+The current phase is limited to the **Malatya AOI05 data foundation**. It preserves and
+validates source data, inventories licences and coverage, and records 2022/2023/2026 imagery
+candidates. No machine-learning model is implemented in this phase.
+
+## Current Dataset Status
+
+- Copernicus EMSR648 AOI05 2023 grading vectors: locally preserved and validated; raw bytes
+  remain Git-ignored.
+- Türkiye ADM2 boundaries: pinned geoBoundaries/OSM-derived source downloaded and validated;
+  Battalgazi and the Malatya Yeşilyurt records are reproducibly selected after validation.
+- Sentinel-2 L2A: 2022 summer, 2023 post-event, 2023 summer and 2026 summer STAC catalogue
+  metadata collected; imagery assets are not downloaded or committed.
+- Official municipal/neighbourhood boundaries: pending a stable official bulk download with
+  explicit reuse terms.
+- Private e-Devlet data and proprietary VHR imagery: explicitly excluded.
+
+See [`data/inventory.csv`](data/inventory.csv), [`data/validation_report.json`](data/validation_report.json)
+and [`docs/data-sources.md`](docs/data-sources.md) for evidence and limitations.
+
 ## Research Questions
 
 - Which structural and seismic variables are most strongly associated with damage severity?
@@ -48,6 +67,7 @@ earthquake-building-damage-analysis/
 │   ├── features/          # Feature engineering
 │   ├── modeling/          # Training and inference
 │   └── visualization/     # Reusable plotting functions
+├── scripts/               # Immutable acquisition, validation, and post-validation extraction
 └── tests/                 # Automated tests
 ```
 
@@ -72,6 +92,9 @@ Run the initial checks with:
 pytest
 ruff check .
 ```
+
+Dataset commands are documented in [`scripts/README.md`](scripts/README.md). They use only the
+Python standard library and can be run before installing the analytical dependencies.
 
 ## Evaluation Principles
 
