@@ -29,6 +29,7 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "--strict-markers"
+pythonpath = ["."]
 
 [tool.ruff]
 line-length = 100

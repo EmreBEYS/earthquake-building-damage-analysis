@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0",
+  "field": "damage_class_original",
+  "classes": {
+    "No visible damage": {
+      "damage_class": "no_visible_damage",
+      "damage_label": 0,
+      "damage_binary": 0
+    },
+    "Possibly damaged": {
+      "damage_class": "possibly_damaged",
+      "damage_label": 1,
+      "damage_binary": 1
+    },
+    "Damaged": {
+      "damage_class": "damaged",
+      "damage_label": 2,
+      "damage_binary": 1
+    },
+    "Destroyed": {
+      "damage_class": "destroyed",
+      "damage_label": 3,
+      "damage_binary": 1
+    }
+  },
+  "cautions": [
+    "damage_label is project-defined and ordinal",
+    "damage_binary includes possibly damaged",
+    "labels are photo-interpretation results, not structural safety certificates"
+  ]
+}
