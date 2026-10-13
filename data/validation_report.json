@@ -1,5 +1,6 @@
 {
   "validated_on": "2026-10-12",
+  "scope": "Historical local validation evidence. The referenced raw/external payloads are intentionally not distributed in Git and are absent from a clean clone.",
   "datasets": [
     {
       "dataset_id": "cems_emsr648_aoi05_grading_vectors",
