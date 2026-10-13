@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "project_crs": "EPSG:4326",
+  "analysis_crs": "EPSG:32637",
+  "datasets": [
+    {
+      "dataset_id": "cems_emsr648_aoi05_builtupa_2023",
+      "domain": "buildings",
+      "role": "damage_labels",
+      "status": "prepared",
+      "source_dataset_id": "cems_emsr648_aoi05_grading_vectors",
+      "interim_path": "data/interim/buildings/EMSR648_AOI05"
+    },
+    {
+      "dataset_id": "osm_malatya_buildings_pre_event",
+      "domain": "buildings",
+      "role": "pre_event_footprints",
+      "status": "planned",
+      "interim_path": "data/interim/buildings/OSM_Malatya_pre_event"
+    },
+    {
+      "dataset_id": "usgs_comcat_2023_event_catalog",
+      "domain": "earthquakes",
+      "role": "event_catalog",
+      "status": "planned",
+      "interim_path": "data/interim/earthquakes/USGS_2023"
+    },
+    {
+      "dataset_id": "malatya_admin_boundaries",
+      "domain": "boundaries",
+      "role": "spatial_reference",
+      "status": "planned",
+      "interim_path": "data/interim/boundaries/Malatya"
+    },
+    {
+      "dataset_id": "worldpop_tur_population_2021",
+      "domain": "population",
+      "role": "exposure_covariate",
+      "status": "planned",
+      "interim_path": "data/interim/population/WorldPop_2021"
+    },
+    {
+      "dataset_id": "sentinel2_malatya_multitemporal",
+      "domain": "imagery",
+      "role": "remote_sensing_features",
+      "status": "planned",
+      "interim_path": "data/interim/imagery/Sentinel2_Malatya"
+    }
+  ]
+}
