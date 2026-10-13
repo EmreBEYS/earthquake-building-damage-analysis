@@ -16,12 +16,14 @@ candidates. No machine-learning model is implemented in this phase.
 
 ## Current Dataset Status
 
-- Copernicus EMSR648 AOI05 2023 grading vectors: locally preserved and validated; raw bytes
-  remain Git-ignored.
-- Türkiye ADM2 boundaries: pinned geoBoundaries/OSM-derived source downloaded and validated;
-  Battalgazi and the Malatya Yeşilyurt records are reproducibly selected after validation.
-- Sentinel-2 L2A: 2022 summer, 2023 post-event, 2023 summer and 2026 summer STAC catalogue
-  metadata collected; imagery assets are not downloaded or committed.
+- Copernicus EMSR648 AOI05 2023 grading vectors were validated in a prior local workspace;
+  the checksum and validation evidence are committed, but the raw bytes are not distributed.
+- A pinned Türkiye ADM2 geoBoundaries/OSM-derived file was previously validated; a clean clone
+  must reacquire it and verify the recorded checksum before use.
+- Sentinel-2 L2A catalogue snapshots were previously collected for 2022/2023/2026; their
+  checksums and small candidate manifest are committed, while snapshots and imagery are absent.
+- USGS ComCat events, a dated pre-event OSM building snapshot and WorldPop exposure data are
+  documented acquisition candidates, not acquired datasets.
 - Official municipal/neighbourhood boundaries: pending a stable official bulk download with
   explicit reuse terms.
 - Private e-Devlet data and proprietary VHR imagery: explicitly excluded.
@@ -73,11 +75,22 @@ earthquake-building-damage-analysis/
 
 ## Getting Started
 
-Prerequisites: Python 3.11 or later.
+Prerequisites: Python 3.11 and [uv](https://docs.astral.sh/uv/). The committed lock file is the
+reproducible default:
+
+```bash
+uv sync --locked --all-extras
+uv run pytest -q
+uv run ruff check .
+uv run python scripts/check_project.py
+```
+
+For a conventional virtual environment instead:
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate
+# Linux/macOS: source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
 ```
@@ -86,15 +99,11 @@ Place source datasets under `data/raw/` and document their origin and license in
 `docs/data-sources.md`. Do not commit datasets containing personal, sensitive,
 restricted, or third-party licensed information.
 
-Run the initial checks with:
-
-```bash
-pytest
-ruff check .
-```
-
 Dataset commands are documented in [`scripts/README.md`](scripts/README.md). They use only the
 Python standard library and can be run before installing the analytical dependencies.
+
+Sprint acceptance criteria and the external-access handoff are in
+[`docs/sprints/sprint-00-01.md`](docs/sprints/sprint-00-01.md).
 
 ## Evaluation Principles
 

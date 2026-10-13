@@ -1,8 +1,12 @@
 # Data sources and provenance
 
-Last reviewed: 2026-10-12. The machine-readable inventory is
+Last reviewed: 2026-10-13. The machine-readable inventory is
 [`data/inventory.csv`](../data/inventory.csv). Raw/external files are local and Git-ignored;
 small manifests and validation evidence are committed.
+
+The words “validated” and “catalogued” below refer to the historical validation snapshot dated
+2026-10-12. They do not mean those Git-ignored payloads exist after cloning. Reacquisition and
+checksum verification are mandatory on each new workstation.
 
 ## 1. Copernicus EMSR648 AOI05 grading vectors
 
@@ -87,5 +91,18 @@ processing baseline and duplicate/reprocessed products.
 | ESRI World Imagery / Pleiades pixels referenced by CEMS | Excluded | Proprietary imagery is not included in the CEMS vector package and must not be redistributed. |
 | Large Sentinel-2 assets | Pending deliberate selection | Catalogue discovery is complete; downloading scenes would be large and requires visual QA first. |
 | 2022 building footprint baseline | Pending | EMSR648 does not provide one. It must be created later from a date-controlled, clearly licensed source. |
+
+## 5. Acquisition candidates not yet downloaded
+
+| Source | Intended role | Gate before acquisition/use |
+|---|---|---|
+| USGS ComCat FDSN event API | Reproducible event catalogue for the February 2023 sequence | Commit exact spatial/time/magnitude query, preserve response bytes and checksum, and reconcile preferred origin/magnitude with AFAD. |
+| OpenStreetMap historical extract | Pre-event building-footprint candidate | Obtain a dated snapshot no later than 2023-02-05; current OSM is not a pre-event baseline. Preserve ODbL attribution/share-alike obligations. |
+| WorldPop Türkiye 2021 | Optional population-exposure covariate | Verify the product README, CC BY 4.0 terms, CRS, nodata, resolution and checksum before clipping. It is not a damage label. |
+| AFAD 6 February reference | Authoritative Turkish agency event metadata | Use as a documented reference only until stable structured access and explicit redistribution terms are verified. |
+
+The source pages reviewed for this plan are the USGS FDSN API and USGS data-licensing guidance,
+the OpenStreetMap copyright page, the WorldPop Türkiye product README, and the AFAD 6 February
+information page. Source URLs and current disposition are recorded in the inventory.
 
 No unavailable dataset is represented as acquired. No ML-ready processed dataset has been created.

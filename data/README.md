@@ -11,7 +11,8 @@ data/
 ├── processed/    # analysis-ready products; not created in this phase
 ├── manifests/    # small, reviewable metadata committed to Git
 ├── inventory.csv # one row per source or deliberately excluded/pending source
-└── validation_report.json
+├── validation_report.json # committed historical evidence; not proof of clean-clone availability
+└── local-validation-report.json # optional ignored report for the current machine
 ```
 
 ## Non-negotiable rules
@@ -47,3 +48,14 @@ python scripts/prepare_aoi_boundaries.py
 The Sentinel command stores catalogue metadata only. It does not download imagery assets.
 Scene selection must be reviewed for season, cloud/shadow, coverage and product baseline before
 any later imagery download.
+
+Inventory status is deliberately separate from repository availability:
+
+- `validated_local_only` and `catalogued_local_only` mean the committed checksum/evidence came
+  from a prior local workspace; the payload is not in Git.
+- `planned` and `pending_verified_download` mean no usable local dataset is claimed.
+- `excluded_private` and `excluded_proprietary` are guardrails, not acquisition tasks.
+
+Run `python scripts/check_project.py` at any time to check the layout, inventory metadata and
+the invariant that Git does not track data payloads. This smoke check does not require datasets
+or network access.

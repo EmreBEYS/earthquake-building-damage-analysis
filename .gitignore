@@ -16,6 +16,7 @@ venv/
 .env
 .env.*
 !.env.example
+.python-version.local
 
 # Editors and operating systems
 .DS_Store
@@ -30,6 +31,7 @@ data/raw/**
 data/external/*
 data/interim/*
 data/processed/*
+data/local-validation-report.json
 models/*
 reports/figures/*
 

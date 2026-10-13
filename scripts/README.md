@@ -27,6 +27,20 @@ Validation is read-only for raw/external inputs. It checks:
 
 It writes small, reviewable evidence to `data/validation_report.json` and `data/manifests/`.
 
+The committed report is historical evidence from the workspace where the ignored payloads were
+available. A clean clone should not run validation until the selected payloads have been acquired;
+missing files are a failure, not silently treated as valid.
+
+## `check_project.py`
+
+This offline smoke check validates the expected project layout, config shape, inventory columns,
+status vocabulary, URLs/checksums and the rule that Git tracks no dataset payloads. It does not
+claim that ignored datasets exist:
+
+```bash
+python scripts/check_project.py
+```
+
 ## `prepare_aoi_boundaries.py`
 
 This script will not run unless the boundary source has a passing validation report. It selects
