@@ -46,3 +46,5 @@ reports/figures/*
 !data/processed/.gitkeep
 !models/.gitkeep
 !reports/figures/.gitkeep
+data/raw/official_damage/
+data/interim/official_damage/
