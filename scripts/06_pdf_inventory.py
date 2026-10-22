@@ -1,7 +1,6 @@
 
 from pathlib import Path
 import fitz
-import pymupdf
 import pandas as pd
 
 
