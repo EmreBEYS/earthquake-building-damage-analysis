@@ -1,0 +1,22 @@
+{
+  "total_records": 46563,
+  "analysis_records": 46563,
+  "duplicate_candidate_rows": 0,
+  "damage_conflict_rows": 0,
+  "missing_mahalle_rows": 0,
+  "invalid_rows": 0,
+  "review_rows": 0,
+  "person_counts": {
+    "person_02": 16420,
+    "person_01": 15413,
+    "person_03": 14730
+  },
+  "damage_classes": {
+    "Az hasarli": 20706,
+    "Agir hasarli": 12276,
+    "Hasarsiz": 10131,
+    "Orta hasarli": 1593,
+    "Acil yiktirilacak": 955,
+    "Yikik": 902
+  }
+}
