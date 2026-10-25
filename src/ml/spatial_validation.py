@@ -11,7 +11,6 @@ from sklearn.metrics import (
 )
 from sklearn.model_selection import GroupShuffleSplit
 
-
 ROOT = Path(__file__).resolve().parents[2]
 
 INPUT = (

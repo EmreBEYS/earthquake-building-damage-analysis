@@ -424,7 +424,6 @@ uv sync --locked --all-extras
 ```
 
 ### Official Damage Dataset Processing
-
 Place authorized source PDFs in the following local structure:
 
 ```text
@@ -521,4 +520,3 @@ The models are not designed to replace official damage assessment procedures.
 The repository's source code is governed by the terms of its [LICENSE](LICENSE) file.
 
 Dataset, map, imagery, and pretrained-model licenses are separate and must be reviewed before redistribution.
-
