@@ -2,8 +2,6 @@
 from pathlib import Path
 
 import geopandas as gpd
-import pandas as pd
-
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -80,10 +78,6 @@ def main():
     ambiguous_ids = match_counts[
         match_counts > 1
     ].index
-
-    ambiguous = matched[
-        matched["osm_key"].isin(ambiguous_ids)
-    ]
 
     accepted = matched[
         ~matched["osm_key"].isin(ambiguous_ids)

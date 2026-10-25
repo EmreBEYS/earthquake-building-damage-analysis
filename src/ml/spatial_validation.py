@@ -3,16 +3,13 @@ from pathlib import Path
 
 import geopandas as gpd
 import numpy as np
-import pandas as pd
-
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import (
-    classification_report,
     accuracy_score,
+    classification_report,
     f1_score,
 )
 from sklearn.model_selection import GroupShuffleSplit
-
 
 ROOT = Path(__file__).resolve().parents[2]
 

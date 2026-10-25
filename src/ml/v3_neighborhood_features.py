@@ -2,7 +2,6 @@
 from pathlib import Path
 
 import geopandas as gpd
-import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[2]
 
