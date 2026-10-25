@@ -1,0 +1,13 @@
+{
+  "dataset": "data\\processed\\building_features.csv",
+  "features": [
+    "building_area_m2",
+    "building_perimeter_m",
+    "shape_index"
+  ],
+  "target": "damage_class",
+  "random_state": 42,
+  "test_size": 0.2,
+  "split_method": "stratified_random",
+  "evaluation_scope": "exploratory"
+}

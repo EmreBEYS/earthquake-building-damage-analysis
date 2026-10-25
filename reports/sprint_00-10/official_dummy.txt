@@ -1,0 +1,12 @@
+                   precision    recall  f1-score   support
+
+Acil yiktirilacak       0.00      0.00      0.00       191
+     Agir hasarli       0.00      0.00      0.00      2455
+       Az hasarli       0.44      1.00      0.62      4141
+         Hasarsiz       0.00      0.00      0.00      2026
+     Orta hasarli       0.00      0.00      0.00       319
+            Yikik       0.00      0.00      0.00       181
+
+         accuracy                           0.44      9313
+        macro avg       0.07      0.17      0.10      9313
+     weighted avg       0.20      0.44      0.27      9313
