@@ -119,8 +119,8 @@ The project follows a reproducible analytical workflow.
 | 00-02 | Initial data preparation and preprocessing | Completed |
 | 00-08 | Official PDF extraction and dataset construction | Completed |
 | 00-09 | Multi-source validation and dataset integration | Completed |
-| 00-10 | Exploratory analysis and machine-learning training | Planned |
-| 00-11 | Interactive dashboard and spatial visualization | Planned |
+| 00-10 | Exploratory analysis and machine-learning training | Completed |
+| 00-11 | Interactive dashboard and spatial visualization | In progress |
 
 ### Sprint 00-08 — Official Damage Dataset Extraction
 
@@ -322,34 +322,24 @@ proportions, not individual-building classification accuracy.
 
 Detailed results are stored in `reports/sprint_00-10/`.
 
-## Next Sprint — 00-11
+## Sprint 00-11 — Streamlit Research Dashboard
 
-Sprint 00-11 will focus on a Streamlit research dashboard
-featuring:
+Sprint 00-11 adds a Streamlit research dashboard featuring:
 
 - Official damage-class distributions
-- Neighborhood-level spatial visualizations
+- Neighborhood-level spatial comparisons and coverage filters
 - Historical OSM building coverage
 - V1, V2, and V3 experiment summaries
 - Dataset provenance and limitations
 
-The dashboard will display validated analyses rather than
-unsupported building-level damage predictions.
+The dashboard reads compact, version-controlled report files. It does not require
+the raw PDFs, large geospatial payloads, or local model artifacts to start. Missing
+inputs fail with an explanatory message instead of an opaque traceback.
 
-
-### Sprint 00-11 — Interactive Analysis Interface
-
-Planned capabilities:
-
-- Dataset overview and statistical summaries
-- Damage category distribution charts
-- Neighbourhood-level comparisons
-- Geospatial damage visualization
-- Trained model evaluation results
-- Interactive feature exploration
-- Model inference where supported by validated input features
-
-The initial technology candidates include Streamlit, GeoPandas, Folium, and Plotly.
+The interface deliberately does **not** provide building-level inference. V1, V2,
+and V3 use different targets and validation units, so their scores are presented
+separately and are not directly comparable. Correlations are labelled exploratory,
+not causal, and every page carries a non-operational-use warning.
 
 ## Repository Structure
 
@@ -401,6 +391,7 @@ uv sync --locked --all-extras
 uv run pytest -q
 uv run ruff check .
 uv run python scripts/check_project.py
+uv run streamlit run dashboard.py
 ```
 
 A conventional Python virtual environment can also be used:
@@ -415,10 +406,24 @@ python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
 ```
 
-The official damage-processing scripts additionally require pandas and PyMuPDF if these packages are not already included in the installed environment.
+`PyMuPDF` is a declared runtime dependency because scripts 07 and 08 open PDF
+documents through the `pymupdf` module. The old `inspect_Dataset.py` file and its
+unused import are not part of the current repository.
+
+On Windows PowerShell, start the dashboard from the repository root:
+
+```powershell
+uv sync --locked
+uv run streamlit run dashboard.py
+```
+
+To reproduce the optional Sprint 00-10 geospatial analyses, install all extras:
+
+```powershell
+uv sync --locked --all-extras
+```
 
 ### Official Damage Dataset Processing
-
 Place authorized source PDFs in the following local structure:
 
 ```text
@@ -515,4 +520,3 @@ The models are not designed to replace official damage assessment procedures.
 The repository's source code is governed by the terms of its [LICENSE](LICENSE) file.
 
 Dataset, map, imagery, and pretrained-model licenses are separate and must be reviewed before redistribution.
-

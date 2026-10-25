@@ -5,8 +5,8 @@ import geopandas as gpd
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import (
-    accuracy_score,
     classification_report,
+    accuracy_score,
     f1_score,
 )
 from sklearn.model_selection import GroupShuffleSplit
