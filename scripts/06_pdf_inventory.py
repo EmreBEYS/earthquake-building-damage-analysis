@@ -1,7 +1,6 @@
 
 from pathlib import Path
 
-import fitz
 import pandas as pd
 
 BASE = Path(__file__).resolve().parent.parent
