@@ -1,0 +1,5 @@
+,damaged,destroyed,no_visible_damage,possibly_damaged
+damaged,0,0,31,0
+destroyed,0,4,16,0
+no_visible_damage,2,4,648,0
+possibly_damaged,0,0,19,0
