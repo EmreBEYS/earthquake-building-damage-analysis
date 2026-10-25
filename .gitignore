@@ -10,6 +10,7 @@ htmlcov/
 dist/
 build/
 
+
 # Environments and secrets
 .venv/
 venv/
@@ -17,6 +18,9 @@ venv/
 .env.*
 !.env.example
 .python-version.local
+.env
+.env.*
+!.env.example
 
 # Editors and operating systems
 .DS_Store
