@@ -2,6 +2,7 @@
 from pathlib import Path
 
 import pandas as pd
+import pymupdf
 
 BASE = Path(__file__).resolve().parent.parent
 
@@ -13,7 +14,7 @@ OUTPUT.mkdir(parents=True, exist_ok=True)
 records = []
 
 for pdf_file in sorted(PDF_DIR.rglob("*.pdf")):
-    with fitz.open(pdf_file) as doc:
+    with pymupdf.open(pdf_file) as doc:
         page_count = len(doc)
 
         text_pages = 0
