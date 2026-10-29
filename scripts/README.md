@@ -59,6 +59,14 @@ name agreement, reproduces aggregates for each person group, and writes compact 
 GeoJSON, full coverage/unmatched tables, a manifest and validation report. Full commands are
 documented in [`docs/sprints/sprint-00-12.md`](../docs/sprints/sprint-00-12.md).
 
+## Sprint 00-13 temporal satellite acquisition
+
+`11_acquire_sentinel2_temporal.py` writes a deterministic review plan, searches the public Earth
+Search STAC catalogue and downloads real three-band true-colour Sentinel-2 L2A Cloud-Optimized
+GeoTIFFs. It needs no API key or account. The script validates TIFF structure, size, band count,
+CRS, 10 m pixel scale and SHA-256, while all large files and the local acquisition manifest
+remain under Git-ignored `data/external/` storage.
+
 ## Order of operations
 
 ```bash
@@ -71,4 +79,3 @@ python scripts/prepare_aoi_boundaries.py
 
 When a source changes, create a new versioned destination and update the inventory/checksum after
 review. Do not bypass the overwrite refusal.
-

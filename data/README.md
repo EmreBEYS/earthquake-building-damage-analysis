@@ -45,9 +45,10 @@ Only after validation passes, create the AOI-relevant district extract:
 python scripts/prepare_aoi_boundaries.py
 ```
 
-The Sentinel command stores catalogue metadata only. It does not download imagery assets.
-Scene selection must be reviewed for season, cloud/shadow, coverage and product baseline before
-any later imagery download.
+The general Sentinel command stores catalogue metadata only. Sprint 00-13 deliberately selects
+three reviewed scenes and downloads real public MGRS-tile GeoTIFF pixels with
+`scripts/11_acquire_sentinel2_temporal.py`. Those large files remain under ignored
+`data/external/sentinel_2/geotiff/`; only the keyless search plan is committed.
 
 ## Sprint 00-12 dashboard exception
 
@@ -55,8 +56,9 @@ any later imagery download.
 render the research map. These are not raw source archives. Their provenance, attribution,
 feature counts, CRS and exclusions are recorded in the adjacent manifest and validation report.
 Official damage values in the neighborhood layer are aggregates only and must not be interpreted
-as building coordinates. The adjacent coverage CSV retains all 80 exact-match neighborhoods,
-while the unmatched CSV reports the remaining 2,737 records without assigning geometry.
+as building coordinates. The coverage CSV contains 80 exact-name matches and seven confirmed
+aliases. The reviewed overlay contains 27 boundaries, including two reference-only features
+without official records. No official records remain unmatched.
 
 Inventory status is deliberately separate from repository availability:
 
@@ -68,4 +70,3 @@ Inventory status is deliberately separate from repository availability:
 Run `python scripts/check_project.py` at any time to check the layout, inventory metadata and
 the invariant that Git does not track data payloads. This smoke check does not require datasets
 or network access.
-

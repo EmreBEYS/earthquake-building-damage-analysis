@@ -1,6 +1,6 @@
 {
   "sprint": "00-12",
-  "generated_at_utc": "2026-10-29T06:51:31+00:00",
+  "generated_at_utc": "2026-10-29T13:03:20+00:00",
   "display_crs": "EPSG:4326",
   "layers": {
     "aoi05_neighborhoods": {
@@ -8,7 +8,14 @@
       "source": "OpenStreetMap relation geometries keyed by committed V3 relation ids",
       "source_endpoint": "https://nominatim.openstreetmap.org/lookup",
       "attribution": "© OpenStreetMap contributors, ODbL 1.0",
-      "role": "exact-match neighborhood boundaries with AOI coverage and person-group aggregates"
+      "role": "exact and confirmed-alias neighborhood boundaries with aggregate records"
+    },
+    "requested_neighborhood_boundaries": {
+      "path": "requested_neighborhood_boundaries.geojson",
+      "source": "OpenStreetMap relation geometries listed in configs/neighborhood_aliases.json",
+      "source_endpoint": "https://nominatim.openstreetmap.org/lookup",
+      "attribution": "© OpenStreetMap contributors, ODbL 1.0",
+      "role": "reviewed boundary overlay; reference-only features carry no official records"
     },
     "unmapped_official_aggregates": {
       "path": "unmapped_official_aggregates.csv",
@@ -18,7 +25,7 @@
     "official_neighborhood_coverage": {
       "path": "official_neighborhood_coverage.csv",
       "source": "validated exact-match and AOI coverage reports plus person groups",
-      "role": "all 80 exact-match neighborhoods, including boundaries not in the committed map layer"
+      "role": "80 exact-name and 7 confirmed-alias neighborhoods with person-group totals"
     },
     "copernicus_damage_polygons": {
       "path": "copernicus_damage_polygons.geojson",
@@ -29,4 +36,3 @@
   },
   "official_record_semantics": "neighborhood aggregates only; no building-level geolocation"
 }
-

@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.1",
+  "provider": "Earth Search public STAC / Sentinel-2 Level-2A COGs",
+  "stac_url": "https://earth-search.aws.element84.com/v1",
+  "collection": "sentinel-2-l2a",
+  "aoi_bbox_wgs84": [38.210286, 38.287227, 38.364463, 38.398576],
+  "target_mgrs": {
+    "utm_zone": 37,
+    "latitude_band": "S",
+    "grid_square": "DC",
+    "tile": "37SDC"
+  },
+  "output": {
+    "asset": "visual",
+    "description": "Public true-colour Cloud-Optimized GeoTIFF (red, green, blue)",
+    "crs": "EPSG:32637",
+    "width": 10980,
+    "height": 10980,
+    "pixel_size_metres": 10,
+    "bands": ["red", "green", "blue"],
+    "scope": "full_mgrs_tile",
+    "destination": "data/external/sentinel_2/geotiff"
+  },
+  "scenes": [
+    {
+      "label": "pre_event_2022_summer",
+      "role": "seasonal_pre_event_baseline",
+      "date": "2022-08-05",
+      "catalog_cloud_cover_percent": 0.0
+    },
+    {
+      "label": "post_event_2023_immediate",
+      "role": "post_event_observation",
+      "date": "2023-02-26",
+      "catalog_cloud_cover_percent": 1.24
+    },
+    {
+      "label": "post_event_2023_summer",
+      "role": "season_matched_post_event_observation",
+      "date": "2023-09-19",
+      "catalog_cloud_cover_percent": 0.0
+    }
+  ],
+  "attribution": "Contains modified Copernicus Sentinel data 2022–2023"
+}

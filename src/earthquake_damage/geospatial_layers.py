@@ -23,6 +23,7 @@ class MapLayers:
     """GeoJSON layers and their audited manifest."""
 
     neighborhoods: dict[str, Any]
+    requested_boundaries: dict[str, Any]
     damage_polygons: dict[str, Any]
     manifest: dict[str, Any]
     validation: dict[str, Any]
@@ -173,6 +174,22 @@ def load_map_layers(root: Path = MAP_ROOT) -> MapLayers:
         },
         allowed_geometry_types={"Polygon", "MultiPolygon"},
     )
+    requested_boundaries_path = root / "requested_neighborhood_boundaries.geojson"
+    if requested_boundaries_path.is_file():
+        requested_boundaries = read_geojson_checked(
+            requested_boundaries_path,
+            required_properties={
+                "neighborhood_id",
+                "boundary_name",
+                "official_match_status",
+                "source",
+            },
+            allowed_geometry_types={"Polygon", "MultiPolygon"},
+        )
+    else:
+        # This reviewed overlay is additive. Keep the committed Sprint 00-12
+        # layers usable until the boundary-acquisition step has produced it.
+        requested_boundaries = {"type": "FeatureCollection", "features": []}
     damage_polygons = read_geojson_checked(
         root / "copernicus_damage_polygons.geojson",
         required_properties={"feature_id", "damage_grade", "detection_method", "source"},
@@ -195,7 +212,6 @@ def load_map_layers(root: Path = MAP_ROOT) -> MapLayers:
         "official_total": int,
         "severe_count": int,
         "severe_ratio": float,
-        "aoi_coverage_ratio": float,
         "person_01_total": int,
         "person_01_severe_count": int,
         "person_02_total": int,
@@ -211,6 +227,10 @@ def load_map_layers(root: Path = MAP_ROOT) -> MapLayers:
             )
         for column, converter in coverage_numeric.items():
             row[column] = converter(row[column])
+        raw_coverage_ratio = row.get("aoi_coverage_ratio", "")
+        row["aoi_coverage_ratio"] = (
+            float(raw_coverage_ratio) if str(raw_coverage_ratio).strip() else None
+        )
 
     if not unmapped_path.is_file():
         raise GeospatialLayerError(f"Required aggregate table is missing: {unmapped_path}")
@@ -228,6 +248,7 @@ def load_map_layers(root: Path = MAP_ROOT) -> MapLayers:
         row["severe_ratio"] = float(row["severe_ratio"])
     return MapLayers(
         neighborhoods,
+        requested_boundaries,
         damage_polygons,
         manifest,
         validation,
@@ -251,4 +272,3 @@ def filter_feature_collection(
             if feature.get("properties", {}).get(property_name) in accepted_values
         ],
     }
-

@@ -16,8 +16,8 @@ The research combines two complementary components:
 2. **Spatial and Temporal Analysis:** Investigation of changes in the built environment across Malatya, particularly Yeşilyurt and Battalgazi, using available pre-event, post-event, and 2026 geographical data.
 
 The current development stage includes the official damage-record pipeline, exploratory machine-
-learning baselines, and a Streamlit interface with audited AOI05 geospatial layers. Satellite
-GeoTIFF temporal acquisition is planned for Sprint 00-13.
+learning baselines, an audited AOI05 map, and a Sprint 00-13 workflow for acquiring real
+Sentinel-2 temporal GeoTIFF pixels from the public Earth Search catalogue without an API key.
 
 ## Current Dataset Status
 
@@ -347,13 +347,12 @@ not causal, and every page carries a non-operational-use warning.
 
 Sprint 00-12 adds an audited interactive map to the Streamlit dashboard:
 
-- 62 AOI05 high-coverage neighborhood boundaries matched by exact OSM relation ID and
-  independently validated normalized name;
-- all 80 exact-match neighborhoods retained in a coverage table (43,826 records), with the
-  currently committed 62 high-coverage geometries rendered on the map;
+- 87 official neighborhood boundaries: 80 exact OSM relation/name matches plus seven confirmed
+  spelling aliases, representing all 46,563 official records;
+- a reviewed 27-boundary overlay containing 18 previously missing exact-match geometries,
+  seven alias targets and two reference-only boundaries;
 - `person_01`, `person_02`, and `person_03` filters that reproduce the original extraction split;
-- 2,737 boundary-unmatched records in seven name groups disclosed separately without invented
-  coordinates;
+- zero unmatched official records after the seven explicit alias decisions;
 - official damage values shown only as aggregates, never as building-level coordinates;
 - 3,617 displayable Copernicus EMSR648 damage polygons with damage-class filters;
 - explicit CRS, coordinate, geometry, feature-ID, property and name-match validation; and
@@ -362,8 +361,23 @@ Sprint 00-12 adds an audited interactive map to the Streamlit dashboard:
 Two of the 3,619 source Copernicus features collapse to empty/non-polygonal results during
 validity repair. They are not silently fabricated: the map excludes them and the validation
 report records the exclusion. See [`docs/sprints/sprint-00-12.md`](docs/sprints/sprint-00-12.md)
-for reproduction commands, interface behavior and limitations. Satellite GeoTIFF temporal
-acquisition remains Sprint 00-13 work.
+for reproduction commands, interface behavior and limitations.
+
+## Sprint 00-13 — Sentinel-2 Temporal GeoTIFF Acquisition
+
+Sprint 00-13 adds a keyless, reproducible Earth Search public STAC workflow:
+
+- three reviewed Sentinel-2 L2A acquisitions: 2022 summer pre-event, February 2023 post-event,
+  and season-matched 2023 summer;
+- real three-band true-colour Cloud-Optimized GeoTIFFs, not screenshots;
+- public Sentinel-2 L2A MGRS tile 37SDC, EPSG:32637, 10 m pixels and deterministic search hashes;
+- no API key, OAuth client or cloud account required;
+- immutable local GeoTIFF outputs under ignored `data/external/` storage; and
+- TIFF signature, band count, CRS, pixel scale and SHA-256 validation.
+
+The Streamlit `Uydu · Zaman Serisi` page shows the reviewed acquisition plan and local file
+availability without claiming that satellite pixels are official or building-level damage
+records. See [`docs/sprints/sprint-00-13.md`](docs/sprints/sprint-00-13.md).
 
 ## Repository Structure
 
@@ -544,4 +558,3 @@ The models are not designed to replace official damage assessment procedures.
 The repository's source code is governed by the terms of its [LICENSE](LICENSE) file.
 
 Dataset, map, imagery, and pretrained-model licenses are separate and must be reviewed before redistribution.
-

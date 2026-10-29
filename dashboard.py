@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -25,7 +28,7 @@ st.set_page_config(
 )
 
 st.title("Malatya Deprem Hasar Araştırması")
-st.caption("Sprint 00-12 · doğrulanmış deney çıktıları ve coğrafi katmanlar")
+st.caption("Sprint 00-13 · doğrulanmış coğrafi katmanlar ve zamansal uydu edinimi")
 
 st.warning(
     "Bu arayüz araştırma amaçlıdır. Sonuçlar bina güvenliği, tahliye, güçlendirme veya "
@@ -47,6 +50,7 @@ page = st.sidebar.radio(
     [
         "Genel bakış",
         "Harita · Katmanlar",
+        "Uydu · Zaman Serisi",
         "V1 · Copernicus",
         "V2 · Resmî kayıtlar",
         "V3 · Mekânsal",
@@ -95,6 +99,7 @@ elif page == "Harita · Katmanlar":
         st.stop()
 
     neighborhood_features = layers.neighborhoods["features"]
+    requested_boundary_features = layers.requested_boundaries["features"]
     damage_features = layers.damage_polygons["features"]
     damage_grades = sorted({feature["properties"]["damage_grade"] for feature in damage_features})
     person_groups = ["person_01", "person_02", "person_03"]
@@ -102,10 +107,21 @@ elif page == "Harita · Katmanlar":
     with st.sidebar:
         st.subheader("Harita filtreleri")
         show_official = st.checkbox("Mahalle resmî hasar oranı", value=True)
+        requested_boundaries_available = bool(requested_boundary_features)
+        show_requested_boundaries = st.checkbox(
+            "İncelenen mahalle sınırları",
+            value=requested_boundaries_available,
+            disabled=not requested_boundaries_available,
+        )
+        if not requested_boundaries_available:
+            st.caption("Yeni mahalle sınırı katmanı henüz hazırlanmadı.")
         show_damage = st.checkbox("Copernicus hasar poligonları", value=True)
         selected_persons = st.multiselect("Resmî kayıt grubu", person_groups, default=person_groups)
+        coverage_groups = sorted(
+            {feature["properties"]["coverage_group"] for feature in neighborhood_features}
+        )
         selected_coverage = st.multiselect(
-            "AOI kapsam sınıfı", ["high", "medium", "low"], default=["high", "medium", "low"]
+            "AOI kapsam sınıfı", coverage_groups, default=coverage_groups
         )
         min_records = st.slider("En az resmî kayıt", 0, 3_000, 0, 50)
         selected_damage = st.multiselect(
@@ -171,16 +187,46 @@ elif page == "Harita · Katmanlar":
                         item["display_official_total"],
                         item["display_severe_count"],
                         item["coverage_group"],
-                        item["aoi_coverage_ratio"],
+                        (
+                            f"{item['aoi_coverage_ratio']:.1%}"
+                            if item["aoi_coverage_ratio"] is not None
+                            else "ad eşleştirmesi doğrulandı"
+                        ),
+                        item["match_method"],
                     ]
                     for item in properties
                 ],
                 hovertemplate=(
                     "<b>%{customdata[0]}</b><br>Resmî kayıt: %{customdata[1]:,}"
                     "<br>Ağır/acil/yıkık: %{customdata[2]:,}<br>Pay: %{z:.1%}"
-                    "<br>AOI kapsamı: %{customdata[3]} (%{customdata[4]:.1%})<extra></extra>"
+                    "<br>AOI kapsamı: %{customdata[3]} (%{customdata[4]})"
+                    "<br>Eşleştirme: %{customdata[5]}<extra></extra>"
                 ),
                 name="Mahalle toplamları",
+            )
+        )
+
+    if show_requested_boundaries:
+        requested_properties = [
+            feature["properties"] for feature in requested_boundary_features
+        ]
+        figure.add_trace(
+            go.Choroplethmap(
+                geojson=layers.requested_boundaries,
+                locations=[item["neighborhood_id"] for item in requested_properties],
+                z=[0] * len(requested_properties),
+                featureidkey="properties.neighborhood_id",
+                colorscale=[[0, "rgba(0,0,0,0)"], [1, "rgba(0,0,0,0)"]],
+                showscale=False,
+                marker={"opacity": 1, "line": {"width": 2.2, "color": "#1f77b4"}},
+                customdata=[
+                    [item["boundary_name"], item["official_match_status"]]
+                    for item in requested_properties
+                ],
+                hovertemplate=(
+                    "<b>%{customdata[0]}</b><br>Sınır durumu: %{customdata[1]}<extra></extra>"
+                ),
+                name="İncelenen mahalle sınırları",
             )
         )
 
@@ -247,7 +293,17 @@ elif page == "Harita · Katmanlar":
         coverage_frame["seçili_ağır_acil_yıkık"]
         / coverage_frame["seçili_kayıt"].where(coverage_frame["seçili_kayıt"] > 0)
     ).fillna(0.0)
-    unmapped_frame = pd.DataFrame(layers.unmapped_official)
+    unmapped_frame = pd.DataFrame(
+        layers.unmapped_official,
+        columns=[
+            "person",
+            "mahalle",
+            "official_total",
+            "severe_count",
+            "severe_ratio",
+            "record_geography",
+        ],
+    )
     unmapped_selected = unmapped_frame[unmapped_frame["person"].isin(selected_persons)].copy()
 
     col1, col2, col3, col4, col5 = st.columns(5)
@@ -267,8 +323,8 @@ elif page == "Harita · Katmanlar":
 
     st.subheader("Tüm resmî mahalle kapsamı")
     st.write(
-        "Aşağıdaki tablo 80 kesin eşleşen mahallenin tamamını içerir. Haritada görünmeyen "
-        "orta/düşük AOI kapsamlı mahalleler de burada korunur."
+        "Aşağıdaki tablo 80 kesin ad eşleşmesini ve doğrulanan 7 yazım düzeltmesini içerir. "
+        "Resmî kayıtlar yalnızca mahalle toplamı olarak tutulur."
     )
     st.dataframe(
         coverage_frame[
@@ -282,22 +338,92 @@ elif page == "Harita · Katmanlar":
             ]
         ]
         .sort_values("seçili_kayıt", ascending=False)
-        .style.format({"aoi_coverage_ratio": "{:.1%}", "seçili_ağır_oran": "{:.1%}"}),
+        .style.format(
+            {
+                "aoi_coverage_ratio": lambda value: (
+                    f"{value:.1%}" if pd.notna(value) else "değerlendirilmedi"
+                ),
+                "seçili_ağır_oran": "{:.1%}",
+            }
+        ),
         use_container_width=True,
     )
 
     with st.expander("Sınır eşleşmesi olmayan resmî kayıt grupları"):
-        st.warning(
-            "Bu kayıtlar tabloda gösterilir ancak doğrulanmış bir mahalle sınırına veya binaya "
-            "yerleştirilmez."
+        if unmapped_selected.empty:
+            st.success("Doğrulanan yedi yazım düzeltmesinden sonra eşleşmeyen kayıt kalmadı.")
+        else:
+            st.warning(
+                "Bu kayıtlar tabloda gösterilir ancak doğrulanmış bir mahalle sınırına veya binaya "
+                "yerleştirilmez."
+            )
+            st.dataframe(
+                unmapped_selected[
+                    ["person", "mahalle", "official_total", "severe_count", "severe_ratio"]
+                ]
+                .sort_values("official_total", ascending=False)
+                .style.format({"severe_ratio": "{:.1%}"}),
+                use_container_width=True,
+            )
+
+elif page == "Uydu · Zaman Serisi":
+    st.header("Sprint 00-13 · Sentinel-2 zamansal GeoTIFF edinimi")
+    st.info(
+        "Bu bölüm ekran görüntüsü kullanmaz. AOI05'i kapsayan 37SDC karesi için gerçek "
+        "Sentinel-2 Level-2A üç bantlı renkli GeoTIFF edinilir. API anahtarı gerekmez. Uydu pikselleri "
+        "resmî hasar kaydı veya bina düzeyi konum değildir."
+    )
+    plan_path = Path("data/manifests/sentinel2_temporal_plan.json")
+    if not plan_path.is_file():
+        st.error(f"Uydu edinim planı bulunamadı: {plan_path}")
+    else:
+        plan = json.loads(plan_path.read_text(encoding="utf-8"))
+        local_manifest_path = (
+            Path(plan["output"]["destination"]) / "acquisition_manifest.json"
         )
-        st.dataframe(
-            unmapped_selected[
-                ["person", "mahalle", "official_total", "severe_count", "severe_ratio"]
-            ]
-            .sort_values("official_total", ascending=False)
-            .style.format({"severe_ratio": "{:.1%}"}),
-            use_container_width=True,
+        validated_paths = set()
+        if local_manifest_path.is_file():
+            local_manifest = json.loads(local_manifest_path.read_text(encoding="utf-8"))
+            validated_paths = {
+                item["path"]
+                for item in local_manifest.get("validation", [])
+                if item.get("valid") is True
+            }
+        scene_rows = []
+        for scene in plan["scenes"]:
+            local_path = Path(scene["output_path"])
+            if local_path.as_posix() in validated_paths:
+                local_status = "Doğrulandı"
+            elif local_path.is_file():
+                local_status = "GeoTIFF doğrulanacak"
+            else:
+                local_status = "İndirilmedi"
+            scene_rows.append(
+                {
+                    "dönem": scene["label"],
+                    "rol": scene["role"],
+                    "çekim_tarihi": scene["date"],
+                    "katalog_bulut_%": scene["catalog_cloud_cover_percent"],
+                    "ürün": "İndirme sırasında Earth Search'ten seçilir",
+                    "yerel_durum": local_status,
+                }
+            )
+        downloaded = sum(row["yerel_durum"] != "İndirilmedi" for row in scene_rows)
+        col1, col2, col3, col4 = st.columns(4)
+        col1.metric("Planlanan dönem", len(scene_rows))
+        col2.metric("Yerel GeoTIFF", downloaded)
+        col3.metric("Çözünürlük", f"{plan['output']['pixel_size_metres']} m")
+        col4.metric("Bant", len(plan["output"]["bands"]))
+        st.dataframe(pd.DataFrame(scene_rows), use_container_width=True, hide_index=True)
+        st.caption(
+            f"Çıktı: {plan['output']['crs']} · tam MGRS {plan['target_mgrs']['tile']} karesi · "
+            f"{', '.join(plan['output']['bands'])}. Herkese açık HTTPS kaynağı kullanılır; "
+            "API anahtarı veya kullanıcı hesabı gerekmez."
+        )
+        st.code(
+            "python scripts/11_acquire_sentinel2_temporal.py download\n"
+            "python scripts/11_acquire_sentinel2_temporal.py validate",
+            language="powershell",
         )
 
 elif page == "V1 · Copernicus":
@@ -413,4 +539,3 @@ else:
 - Arayüz yalnızca sürümlenmiş rapor çıktılarını okur; model çıkarımı veya bina düzeyi risk tahmini yapmaz.
 """
     )
-
