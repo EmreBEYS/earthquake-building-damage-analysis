@@ -55,7 +55,8 @@ any later imagery download.
 render the research map. These are not raw source archives. Their provenance, attribution,
 feature counts, CRS and exclusions are recorded in the adjacent manifest and validation report.
 Official damage values in the neighborhood layer are aggregates only and must not be interpreted
-as building coordinates.
+as building coordinates. The adjacent coverage CSV retains all 80 exact-match neighborhoods,
+while the unmatched CSV reports the remaining 2,737 records without assigning geometry.
 
 Inventory status is deliberately separate from repository availability:
 
@@ -67,3 +68,4 @@ Inventory status is deliberately separate from repository availability:
 Run `python scripts/check_project.py` at any time to check the layout, inventory metadata and
 the invariant that Git does not track data payloads. This smoke check does not require datasets
 or network access.
+

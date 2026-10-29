@@ -4,6 +4,7 @@ from earthquake_damage.geospatial_layers import (
     GeospatialLayerError,
     filter_feature_collection,
     load_map_layers,
+    normalize_match_key,
     normalize_neighborhood_name,
     validate_geojson,
 )
@@ -30,6 +31,14 @@ def test_committed_map_layers_pass_contract() -> None:
     )
     assert layers.validation["valid"] is True
     assert layers.manifest["official_record_semantics"].startswith("neighborhood aggregates")
+    assert len(layers.official_coverage) == 80
+    assert sum(row["official_total"] for row in layers.official_coverage) == 43_826
+    assert sum(row["official_total"] for row in layers.unmapped_official) == 2_737
+    assert (
+        sum(row["official_total"] for row in layers.official_coverage)
+        + sum(row["official_total"] for row in layers.unmapped_official)
+        == 46_563
+    )
 
 
 @pytest.mark.parametrize(
@@ -38,6 +47,11 @@ def test_committed_map_layers_pass_contract() -> None:
 )
 def test_neighborhood_name_normalization(raw: object, expected: str) -> None:
     assert normalize_neighborhood_name(raw) == expected
+
+
+def test_match_key_removes_spacing_and_punctuation() -> None:
+    assert normalize_match_key("B. Mustafa Paşa Mahallesi") == "bmustafapasa"
+    assert normalize_match_key("B.MUSTAFAPASA") == "bmustafapasa"
 
 
 def test_validate_geojson_rejects_non_wgs84_coordinates() -> None:
@@ -71,3 +85,4 @@ def test_filter_feature_collection_preserves_metadata() -> None:
     assert filtered["name"] == "damage"
     assert [feature["id"] for feature in filtered["features"]] == ["one"]
     assert len(collection["features"]) == 2
+

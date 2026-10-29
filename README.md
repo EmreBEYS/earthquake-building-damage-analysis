@@ -349,8 +349,12 @@ Sprint 00-12 adds an audited interactive map to the Streamlit dashboard:
 
 - 62 AOI05 high-coverage neighborhood boundaries matched by exact OSM relation ID and
   independently validated normalized name;
-- official damage values shown only as neighborhood aggregates (26,692 records), never as
-  building-level coordinates;
+- all 80 exact-match neighborhoods retained in a coverage table (43,826 records), with the
+  currently committed 62 high-coverage geometries rendered on the map;
+- `person_01`, `person_02`, and `person_03` filters that reproduce the original extraction split;
+- 2,737 boundary-unmatched records in seven name groups disclosed separately without invented
+  coordinates;
+- official damage values shown only as aggregates, never as building-level coordinates;
 - 3,617 displayable Copernicus EMSR648 damage polygons with damage-class filters;
 - explicit CRS, coordinate, geometry, feature-ID, property and name-match validation; and
 - committed compact GeoJSON, manifest and validation evidence for clean-clone startup.
@@ -540,3 +544,4 @@ The models are not designed to replace official damage assessment procedures.
 The repository's source code is governed by the terms of its [LICENSE](LICENSE) file.
 
 Dataset, map, imagery, and pretrained-model licenses are separate and must be reviewed before redistribution.
+
