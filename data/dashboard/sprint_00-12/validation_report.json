@@ -1,0 +1,45 @@
+{
+  "valid": true,
+  "generated_at_utc": "2026-10-29T06:31:46+00:00",
+  "checks": {
+    "aoi05_neighborhoods": {
+      "feature_count": 62,
+      "geometry_types": [
+        "Polygon"
+      ],
+      "bbox_wgs84": [
+        38.231564,
+        38.306128,
+        38.363815,
+        38.384281
+      ],
+      "crs": "EPSG:4326 (RFC 7946 longitude/latitude)",
+      "id_match_count": 62,
+      "normalized_name_match_count": 62,
+      "official_records": 26692,
+      "building_level_geolocation_claimed": false
+    },
+    "copernicus_damage_polygons": {
+      "feature_count": 3617,
+      "geometry_types": [
+        "MultiPolygon",
+        "Polygon"
+      ],
+      "bbox_wgs84": [
+        38.212213,
+        38.289296,
+        38.364381,
+        38.397501
+      ],
+      "crs": "EPSG:4326 (RFC 7946 longitude/latitude)",
+      "damage_grade_counts": {
+        "Damaged": 157,
+        "Destroyed": 102,
+        "No visible damage": 3265,
+        "Possibly damaged": 93
+      },
+      "source_feature_count": 3619,
+      "excluded_non_polygonal_or_empty": 2
+    }
+  }
+}

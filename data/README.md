@@ -49,6 +49,14 @@ The Sentinel command stores catalogue metadata only. It does not download imager
 Scene selection must be reviewed for season, cloud/shadow, coverage and product baseline before
 any later imagery download.
 
+## Sprint 00-12 dashboard exception
+
+`data/dashboard/sprint_00-12/` contains compact, derived display layers so a clean clone can
+render the research map. These are not raw source archives. Their provenance, attribution,
+feature counts, CRS and exclusions are recorded in the adjacent manifest and validation report.
+Official damage values in the neighborhood layer are aggregates only and must not be interpreted
+as building coordinates.
+
 Inventory status is deliberately separate from repository availability:
 
 - `validated_local_only` and `catalogued_local_only` mean the committed checksum/evidence came

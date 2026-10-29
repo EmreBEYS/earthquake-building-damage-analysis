@@ -15,7 +15,9 @@ The research combines two complementary components:
 1. **Building Damage Classification:** Analysis and prediction of post-earthquake building damage severity using validated datasets and appropriate machine-learning methods.
 2. **Spatial and Temporal Analysis:** Investigation of changes in the built environment across Malatya, particularly Yeşilyurt and Battalgazi, using available pre-event, post-event, and 2026 geographical data.
 
-The current development stage has completed the initial official damage-record extraction and integration pipeline. Machine-learning training and the interactive analysis interface are planned for subsequent sprints.
+The current development stage includes the official damage-record pipeline, exploratory machine-
+learning baselines, and a Streamlit interface with audited AOI05 geospatial layers. Satellite
+GeoTIFF temporal acquisition is planned for Sprint 00-13.
 
 ## Current Dataset Status
 
@@ -340,6 +342,24 @@ The interface deliberately does **not** provide building-level inference. V1, V2
 and V3 use different targets and validation units, so their scores are presented
 separately and are not directly comparable. Correlations are labelled exploratory,
 not causal, and every page carries a non-operational-use warning.
+
+## Sprint 00-12 — Geospatial Layer Integration
+
+Sprint 00-12 adds an audited interactive map to the Streamlit dashboard:
+
+- 62 AOI05 high-coverage neighborhood boundaries matched by exact OSM relation ID and
+  independently validated normalized name;
+- official damage values shown only as neighborhood aggregates (26,692 records), never as
+  building-level coordinates;
+- 3,617 displayable Copernicus EMSR648 damage polygons with damage-class filters;
+- explicit CRS, coordinate, geometry, feature-ID, property and name-match validation; and
+- committed compact GeoJSON, manifest and validation evidence for clean-clone startup.
+
+Two of the 3,619 source Copernicus features collapse to empty/non-polygonal results during
+validity repair. They are not silently fabricated: the map excludes them and the validation
+report records the exclusion. See [`docs/sprints/sprint-00-12.md`](docs/sprints/sprint-00-12.md)
+for reproduction commands, interface behavior and limitations. Satellite GeoTIFF temporal
+acquisition remains Sprint 00-13 work.
 
 ## Repository Structure
 
