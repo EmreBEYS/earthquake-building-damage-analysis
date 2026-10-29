@@ -6,6 +6,7 @@ __pycache__/
 .pytest-*/
 .ruff_cache/
 .mypy_cache/
+.uv-cache/
 .coverage
 htmlcov/
 dist/
@@ -42,6 +43,7 @@ reports/figures/*
 
 # Temporary/partial downloads
 *.part
+.tmp/
 
 # Keep directory placeholders
 !data/raw/**/
@@ -53,4 +55,3 @@ reports/figures/*
 !reports/figures/.gitkeep
 data/raw/official_damage/
 data/interim/official_damage/
-

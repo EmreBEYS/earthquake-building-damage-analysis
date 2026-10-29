@@ -20,6 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_COVERAGE = ROOT / "reports" / "sprint_00-10" / "v3_neighborhood_coverage_validation.csv"
 DEFAULT_OFFICIAL_RECORDS = ROOT / "data" / "final" / "malatya_damage_dataset.csv"
 DEFAULT_OUTPUT = ROOT / "data" / "dashboard" / "sprint_00-12"
+DEFAULT_ALIAS_CONFIG = ROOT / "configs" / "neighborhood_aliases.json"
 PERSONS = ("person_01", "person_02", "person_03")
 SEVERE_CLASSES = {"Agir hasarli", "Acil yiktirilacak", "Yikik"}
 
@@ -30,6 +31,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--copernicus", type=Path, required=True)
     parser.add_argument("--coverage", type=Path, default=DEFAULT_COVERAGE)
     parser.add_argument("--official-records", type=Path, default=DEFAULT_OFFICIAL_RECORDS)
+    parser.add_argument("--alias-config", type=Path, default=DEFAULT_ALIAS_CONFIG)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     return parser.parse_args()
 
@@ -58,7 +60,7 @@ def _write_geojson(frame: gpd.GeoDataFrame, path: Path) -> dict:
     return document
 
 
-def build_neighborhoods(args: argparse.Namespace) -> tuple[dict, dict]:
+def build_neighborhoods(args: argparse.Namespace) -> tuple[dict, dict, dict, dict]:
     boundaries = _to_wgs84(gpd.read_file(args.neighborhoods), "neighborhood boundaries")
     id_column = "id" if "id" in boundaries else "osm_id"
     name_column = "mahalle" if "mahalle" in boundaries else "name"
@@ -67,14 +69,56 @@ def build_neighborhoods(args: argparse.Namespace) -> tuple[dict, dict]:
 
     official = pd.read_csv(args.coverage)
     records = pd.read_csv(args.official_records, low_memory=False)
+    alias_config = json.loads(args.alias_config.read_text(encoding="utf-8"))
+    aliases = alias_config["aliases"]
+    alias_by_source_key = {
+        normalize_match_key(alias["source_name"]): alias for alias in aliases
+    }
+    if len(alias_by_source_key) != len(aliases):
+        raise ValueError("alias config contains duplicate normalized source names")
+
     official["neighborhood_id"] = official["id"].astype(str)
     official["display_name_key"] = official["mahalle"].map(normalize_neighborhood_name)
     official["match_key"] = official["mahalle"].map(normalize_match_key)
+    official["source_name"] = official["mahalle"]
+    official["match_method"] = "exact_osm_relation_id_and_normalized_name"
     if official["neighborhood_id"].duplicated().any():
         raise ValueError("official aggregate contains duplicate neighborhood ids")
 
-    records["match_key"] = records["mahalle"].map(normalize_match_key)
+    records["source_match_key"] = records["mahalle"].map(normalize_match_key)
     records["is_severe"] = records["hasar_durumu"].isin(SEVERE_CLASSES)
+    alias_rows: list[dict[str, object]] = []
+    for source_key, alias in alias_by_source_key.items():
+        subset = records[records["source_match_key"] == source_key]
+        if subset.empty:
+            raise ValueError(f"confirmed alias has no official records: {alias['source_name']}")
+        severe_count = int(subset["is_severe"].sum())
+        official_total = len(subset)
+        alias_rows.append(
+            {
+                "id": alias["target_relation_id"],
+                "neighborhood_id": alias["target_relation_id"],
+                "mahalle": alias["target_name"],
+                "display_name_key": normalize_neighborhood_name(alias["target_name"]),
+                "match_key": normalize_match_key(alias["target_name"]),
+                "source_name": alias["source_name"],
+                "match_method": "confirmed_name_alias_and_osm_relation_id",
+                "official_total": official_total,
+                "severe_count": severe_count,
+                "severe_ratio": severe_count / official_total,
+                "aoi_coverage_ratio": None,
+                "coverage_group": "alias_validated",
+            }
+        )
+    official = pd.concat([official, pd.DataFrame(alias_rows)], ignore_index=True)
+    if official["neighborhood_id"].duplicated().any():
+        raise ValueError("confirmed aliases collide with an existing neighborhood relation id")
+
+    records["match_key"] = records["source_match_key"]
+    for source_key, alias in alias_by_source_key.items():
+        records.loc[records["source_match_key"] == source_key, "match_key"] = normalize_match_key(
+            alias["target_name"]
+        )
     matched_keys = set(official["match_key"])
     matched_records = records[records["match_key"].isin(matched_keys)].copy()
     unmatched_records = records[~records["match_key"].isin(matched_keys)].copy()
@@ -114,6 +158,8 @@ def build_neighborhoods(args: argparse.Namespace) -> tuple[dict, dict]:
         "severe_ratio",
         "aoi_coverage_ratio",
         "coverage_group",
+        "source_name",
+        "match_method",
         *person_columns,
     ]
     official[official_table_columns].to_csv(
@@ -152,6 +198,8 @@ def build_neighborhoods(args: argparse.Namespace) -> tuple[dict, dict]:
                 "severe_ratio",
                 "aoi_coverage_ratio",
                 "coverage_group",
+                "source_name",
+                "match_method",
                 *person_columns,
             ]
         ],
@@ -173,7 +221,6 @@ def build_neighborhoods(args: argparse.Namespace) -> tuple[dict, dict]:
         (selected["display_name_key_boundary"] == selected["display_name_key_official"]).sum()
     )
 
-    selected["match_method"] = "exact_osm_relation_id_and_normalized_name"
     selected["record_geography"] = "neighborhood_aggregate_not_building_geolocation"
     selected = selected[
         [
@@ -184,6 +231,7 @@ def build_neighborhoods(args: argparse.Namespace) -> tuple[dict, dict]:
             "severe_ratio",
             "aoi_coverage_ratio",
             "coverage_group",
+            "source_name",
             *person_columns,
             "match_method",
             "record_geography",
@@ -193,7 +241,9 @@ def build_neighborhoods(args: argparse.Namespace) -> tuple[dict, dict]:
     selected["official_total"] = selected["official_total"].astype(int)
     selected["severe_count"] = selected["severe_count"].astype(int)
     selected["severe_ratio"] = selected["severe_ratio"].astype(float)
-    selected["aoi_coverage_ratio"] = selected["aoi_coverage_ratio"].astype(float)
+    selected["aoi_coverage_ratio"] = pd.to_numeric(
+        selected["aoi_coverage_ratio"], errors="coerce"
+    )
     selected["geometry"] = selected.geometry.simplify(0.000015, preserve_topology=True)
     document = _write_geojson(selected, args.output / "aoi05_neighborhoods.geojson")
     audit = validate_geojson(
@@ -202,6 +252,52 @@ def build_neighborhoods(args: argparse.Namespace) -> tuple[dict, dict]:
         required_properties={"neighborhood_id", "mahalle", "official_total", "severe_ratio"},
         allowed_geometry_types={"Polygon", "MultiPolygon"},
     )
+    requested_ids = set(alias_config["requested_boundary_ids"])
+    requested = boundaries[boundaries["neighborhood_id"].isin(requested_ids)].copy()
+    missing_requested = sorted(requested_ids - set(requested["neighborhood_id"]))
+    if missing_requested:
+        raise ValueError(f"requested neighborhood boundaries are missing: {missing_requested}")
+    alias_ids = {alias["target_relation_id"] for alias in aliases}
+    reference_ids = {item["relation_id"] for item in alias_config["reference_only"]}
+    requested["official_match_status"] = requested["neighborhood_id"].map(
+        lambda relation_id: (
+            "confirmed_name_alias"
+            if relation_id in alias_ids
+            else "reference_only"
+            if relation_id in reference_ids
+            else "existing_official_match"
+        )
+    )
+    requested["source"] = "OpenStreetMap contributors via Nominatim lookup"
+    requested = requested[
+        [
+            "neighborhood_id",
+            "boundary_name",
+            "official_match_status",
+            "source",
+            "geometry",
+        ]
+    ].copy()
+    requested["geometry"] = requested.geometry.simplify(0.000015, preserve_topology=True)
+    requested_document = _write_geojson(
+        requested, args.output / "requested_neighborhood_boundaries.geojson"
+    )
+    requested_audit = validate_geojson(
+        requested_document,
+        layer_name="requested_neighborhood_boundaries.geojson",
+        required_properties={
+            "neighborhood_id",
+            "boundary_name",
+            "official_match_status",
+            "source",
+        },
+        allowed_geometry_types={"Polygon", "MultiPolygon"},
+    )
+    requested_audit["status_counts"] = {
+        str(key): int(value)
+        for key, value in requested["official_match_status"].value_counts().sort_index().items()
+    }
+
     audit.update(
         {
             "id_match_count": len(selected),
@@ -210,11 +306,27 @@ def build_neighborhoods(args: argparse.Namespace) -> tuple[dict, dict]:
             "official_records_by_person": {
                 person: int(selected[f"{person}_total"].sum()) for person in PERSONS
             },
-            "exact_match_neighborhoods": len(official),
-            "exact_match_official_records": int(official["official_total"].sum()),
+            "exact_match_neighborhoods": int(
+                (official["match_method"] == "exact_osm_relation_id_and_normalized_name").sum()
+            ),
+            "exact_match_official_records": int(
+                official.loc[
+                    official["match_method"] == "exact_osm_relation_id_and_normalized_name",
+                    "official_total",
+                ].sum()
+            ),
             "exact_match_official_records_by_person": {
-                person: int(official[f"{person}_total"].sum()) for person in PERSONS
+                person: int(
+                    official.loc[
+                        official["match_method"]
+                        == "exact_osm_relation_id_and_normalized_name",
+                        f"{person}_total",
+                    ].sum()
+                )
+                for person in PERSONS
             },
+            "resolved_neighborhoods": len(official),
+            "resolved_official_records": int(official["official_total"].sum()),
             "boundary_geometry_unavailable": sorted(
                 set(official["neighborhood_id"]) - set(selected["neighborhood_id"])
             ),
@@ -233,12 +345,21 @@ def build_neighborhoods(args: argparse.Namespace) -> tuple[dict, dict]:
             },
             "exact_match_coverage_group_counts": {
                 str(key): int(value)
-                for key, value in official["coverage_group"].value_counts().sort_index().items()
+                for key, value in official.loc[
+                    official["match_method"]
+                    == "exact_osm_relation_id_and_normalized_name",
+                    "coverage_group",
+                ]
+                .value_counts()
+                .sort_index()
+                .items()
             },
             "building_level_geolocation_claimed": False,
+            "confirmed_alias_count": len(aliases),
+            "confirmed_alias_records": int(sum(row["official_total"] for row in alias_rows)),
         }
     )
-    return document, audit
+    return document, audit, requested_document, requested_audit
 
 
 def build_damage(args: argparse.Namespace) -> tuple[dict, dict]:
@@ -276,7 +397,7 @@ def build_damage(args: argparse.Namespace) -> tuple[dict, dict]:
 def main() -> None:
     args = parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
-    _, neighborhood_audit = build_neighborhoods(args)
+    _, neighborhood_audit, _, requested_audit = build_neighborhoods(args)
     _, damage_audit = build_damage(args)
     generated_at = datetime.now(UTC).replace(microsecond=0).isoformat()
     manifest = {
@@ -289,7 +410,14 @@ def main() -> None:
                 "source": "OpenStreetMap relation geometries keyed by committed V3 relation ids",
                 "source_endpoint": "https://nominatim.openstreetmap.org/lookup",
                 "attribution": "© OpenStreetMap contributors, ODbL 1.0",
-                "role": "exact-match neighborhood boundaries with AOI coverage and person-group aggregates",
+                "role": "exact and confirmed-alias neighborhood boundaries with aggregate records",
+            },
+            "requested_neighborhood_boundaries": {
+                "path": "requested_neighborhood_boundaries.geojson",
+                "source": "OpenStreetMap relation geometries listed in configs/neighborhood_aliases.json",
+                "source_endpoint": "https://nominatim.openstreetmap.org/lookup",
+                "attribution": "© OpenStreetMap contributors, ODbL 1.0",
+                "role": "reviewed boundary overlay; reference-only features carry no official records",
             },
             "unmapped_official_aggregates": {
                 "path": "unmapped_official_aggregates.csv",
@@ -299,7 +427,7 @@ def main() -> None:
             "official_neighborhood_coverage": {
                 "path": "official_neighborhood_coverage.csv",
                 "source": "validated exact-match and AOI coverage reports plus person groups",
-                "role": "all 80 exact-match neighborhoods, including boundaries not in the committed map layer",
+                "role": "80 exact-name and 7 confirmed-alias neighborhoods with person-group totals",
             },
             "copernicus_damage_polygons": {
                 "path": "copernicus_damage_polygons.geojson",
@@ -315,6 +443,7 @@ def main() -> None:
         "generated_at_utc": generated_at,
         "checks": {
             "aoi05_neighborhoods": neighborhood_audit,
+            "requested_neighborhood_boundaries": requested_audit,
             "copernicus_damage_polygons": damage_audit,
         },
     }
@@ -329,4 +458,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

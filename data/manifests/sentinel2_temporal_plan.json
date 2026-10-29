@@ -1,0 +1,66 @@
+{
+  "sprint": "00-13",
+  "schema_version": "1.1",
+  "provider": "Earth Search public STAC / Sentinel-2 Level-2A COGs",
+  "stac_url": "https://earth-search.aws.element84.com/v1",
+  "collection": "sentinel-2-l2a",
+  "aoi_bbox_wgs84": [
+    38.210286,
+    38.287227,
+    38.364463,
+    38.398576
+  ],
+  "target_mgrs": {
+    "utm_zone": 37,
+    "latitude_band": "S",
+    "grid_square": "DC",
+    "tile": "37SDC"
+  },
+  "output": {
+    "asset": "visual",
+    "description": "Public true-colour Cloud-Optimized GeoTIFF (red, green, blue)",
+    "crs": "EPSG:32637",
+    "width": 10980,
+    "height": 10980,
+    "pixel_size_metres": 10,
+    "bands": [
+      "red",
+      "green",
+      "blue"
+    ],
+    "scope": "full_mgrs_tile",
+    "destination": "data/external/sentinel_2/geotiff"
+  },
+  "authentication": "not_required",
+  "scenes": [
+    {
+      "label": "pre_event_2022_summer",
+      "role": "seasonal_pre_event_baseline",
+      "date": "2022-08-05",
+      "catalog_cloud_cover_percent": 0.0,
+      "output_path": "data/external/sentinel_2/geotiff/pre_event_2022_summer_visual.tif",
+      "search_url": "https://earth-search.aws.element84.com/v1/search?collections=sentinel-2-l2a&bbox=38.210286%2C38.287227%2C38.364463%2C38.398576&datetime=2022-08-05T00%3A00%3A00Z%2F2022-08-05T23%3A59%3A59Z&limit=100",
+      "search_sha256": "fb48fb19e2f2bfc98e0747516f2114833a4927467574132dbb0ecb982e8e54bb"
+    },
+    {
+      "label": "post_event_2023_immediate",
+      "role": "post_event_observation",
+      "date": "2023-02-26",
+      "catalog_cloud_cover_percent": 1.24,
+      "output_path": "data/external/sentinel_2/geotiff/post_event_2023_immediate_visual.tif",
+      "search_url": "https://earth-search.aws.element84.com/v1/search?collections=sentinel-2-l2a&bbox=38.210286%2C38.287227%2C38.364463%2C38.398576&datetime=2023-02-26T00%3A00%3A00Z%2F2023-02-26T23%3A59%3A59Z&limit=100",
+      "search_sha256": "456cd362d22b1a5777edb94f6d84b818d3d5d184f3cb7b028ea3e7aa2e5cd94d"
+    },
+    {
+      "label": "post_event_2023_summer",
+      "role": "season_matched_post_event_observation",
+      "date": "2023-09-19",
+      "catalog_cloud_cover_percent": 0.0,
+      "output_path": "data/external/sentinel_2/geotiff/post_event_2023_summer_visual.tif",
+      "search_url": "https://earth-search.aws.element84.com/v1/search?collections=sentinel-2-l2a&bbox=38.210286%2C38.287227%2C38.364463%2C38.398576&datetime=2023-09-19T00%3A00%3A00Z%2F2023-09-19T23%3A59%3A59Z&limit=100",
+      "search_sha256": "1c9d03e1f9b381357c977f61a67ad607769b39fed3649cee788ff1ae36aca094"
+    }
+  ],
+  "attribution": "Contains modified Copernicus Sentinel data 2022–2023",
+  "interpretation": "Sentinel-2 imagery supports temporal remote-sensing review; it is not an official building-damage record and does not geolocate official records to buildings."
+}

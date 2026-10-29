@@ -73,10 +73,14 @@ Attribution: `© OpenStreetMap contributors, ODbL 1.0; distributed via geoBounda
 - Query bbox: EMSR648 AOI05 bbox in WGS 84; collection L2A; reported cloud cover at most 30%.
 - Windows: 2022 summer, 2023 immediate post-event, season-matched 2023 summer, and 2026 summer.
 
-Only catalogue metadata was downloaded. No JP2/TIFF imagery assets are in the repository or local
-dataset. The validated catalogues contain 44, 9, 46 and 65 records respectively. The first five
+The validated catalogue snapshots contain 44, 9, 46 and 65 records respectively. The first five
 catalogue candidates per window are recorded in
-[`data/manifests/sentinel2_candidates.csv`](../data/manifests/sentinel2_candidates.csv).
+[`data/manifests/sentinel2_candidates.csv`](../data/manifests/sentinel2_candidates.csv). Sprint
+00-13 uses the same reviewed dates to acquire real three-band true-colour GeoTIFFs from the
+public Earth Search `sentinel-2-l2a` collection. The downloaded files cover MGRS tile 37SDC,
+which contains AOI05, and require no account or API key. GeoTIFFs and their local checksum
+manifest are ignored; the keyless search plan is committed as
+[`data/manifests/sentinel2_temporal_plan.json`](../data/manifests/sentinel2_temporal_plan.json).
 
 Cloud percentage is product/tile metadata, not proof that AOI05 itself is cloud-free. Before any
 scene download, visually inspect AOI coverage, cloud/shadow, snow, seasonal comparability,

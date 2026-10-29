@@ -19,9 +19,9 @@ clean clone:
 
 | Layer | Display features | Source features | Notes |
 |---|---:|---:|---|
-| AOI05 high-coverage neighborhoods | 62 | 62 | OSM relation ID + normalized-name match; 26,692 official rows aggregated |
-| Exact-match neighborhood coverage | 80 | 80 | 43,826 records; high/medium/low AOI coverage retained |
-| Boundary-unmatched official aggregates | 7 groups | 2,737 records | Table only; no geometry is invented |
+| Official neighborhood map | 87 | 87 | 80 exact matches + 7 confirmed aliases; all 46,563 records aggregated |
+| Reviewed boundary overlay | 27 | 27 | 18 recovered exact matches + 7 alias targets + 2 reference-only boundaries |
+| Boundary-unmatched official aggregates | 0 groups | 0 records | No records remain unmatched after explicit alias decisions |
 | Copernicus damage polygons | 3,617 | 3,619 | Two source geometries became empty/non-polygonal during validity repair and are excluded |
 
 The accompanying manifest and validation report record feature counts, geometry types, WGS84
@@ -38,7 +38,7 @@ The preparation command:
 4. repairs polygon geometry conservatively and reports exclusions;
 5. joins neighborhoods by exact OSM relation ID;
 6. independently requires normalized Turkish names to agree;
-7. verifies all 80 exact-name matches and records which 62 currently have committed display geometry;
+7. verifies all 80 exact-name matches and seven explicit name-alias decisions;
 8. reproduces each aggregate from `person_01`, `person_02` and `person_03`; and
 9. writes only neighborhood or unmatched-name aggregates for official records.
 
@@ -60,9 +60,10 @@ uv run pytest
 uv run streamlit run dashboard.py
 ```
 
-The OSM acquisition command performs two rate-limited lookups for the relation IDs already
-committed in the Sprint 00-10 match report. OSM geometries may evolve; regenerate and review the
-validation diff rather than assuming a later response is byte-identical.
+The OSM acquisition command performs rate-limited lookups for all exact-match, alias-target and
+reference-only relation IDs. It can also import a saved Nominatim response and merge it with an
+existing reviewed layer for offline reproduction. OSM geometries may evolve; regenerate and
+review the validation diff rather than assuming a later response is byte-identical.
 
 ## Interface
 
@@ -70,14 +71,14 @@ The `Harita · Katmanlar` page supports:
 
 - independent neighborhood-aggregate and Copernicus layer visibility;
 - `person_01`, `person_02` and `person_03` source-group filtering;
-- high/medium/low AOI coverage filtering;
+- high/medium/low and alias-validated coverage filtering;
 - minimum official-record filtering;
 - neighborhood selection;
 - Copernicus damage-class filtering;
-- a complete 80-neighborhood coverage table and a separate 2,737-record unmatched table;
+- a complete 87-neighborhood coverage table and an empty unmatched-record audit table;
+- an independently switchable 27-boundary review overlay;
 - separate hover semantics for official aggregates and Copernicus observations; and
 - visible audit counts for valid and excluded geometries.
 
-Satellite GeoTIFF acquisition and temporal before/after imagery are intentionally deferred to
-Sprint 00-13.
-
+Satellite GeoTIFF acquisition and temporal before/after imagery are implemented separately in
+Sprint 00-13 so their pixel semantics are never conflated with official neighborhood aggregates.

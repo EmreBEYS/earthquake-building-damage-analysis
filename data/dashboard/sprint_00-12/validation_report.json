@@ -1,26 +1,26 @@
 {
   "valid": true,
-  "generated_at_utc": "2026-10-29T06:51:31+00:00",
+  "generated_at_utc": "2026-10-29T13:03:20+00:00",
   "checks": {
     "aoi05_neighborhoods": {
-      "feature_count": 62,
+      "feature_count": 87,
       "geometry_types": [
         "Polygon"
       ],
       "bbox_wgs84": [
-        38.231564,
-        38.306128,
-        38.363815,
-        38.384281
+        38.195343,
+        38.259194,
+        38.426335,
+        38.430514
       ],
       "crs": "EPSG:4326 (RFC 7946 longitude/latitude)",
-      "id_match_count": 62,
-      "normalized_name_match_count": 62,
-      "official_records": 26692,
+      "id_match_count": 87,
+      "normalized_name_match_count": 87,
+      "official_records": 46563,
       "official_records_by_person": {
-        "person_01": 9827,
-        "person_02": 7316,
-        "person_03": 9549
+        "person_01": 15413,
+        "person_02": 16420,
+        "person_03": 14730
       },
       "exact_match_neighborhoods": 80,
       "exact_match_official_records": 43826,
@@ -29,41 +29,47 @@
         "person_02": 15201,
         "person_03": 13804
       },
-      "boundary_geometry_unavailable": [
-        "relation/11971751",
-        "relation/12268640",
-        "relation/12268647",
-        "relation/12268662",
-        "relation/12268663",
-        "relation/12268728",
-        "relation/12268729",
-        "relation/12268748",
-        "relation/12268769",
-        "relation/12268770",
-        "relation/12268776",
-        "relation/12268801",
-        "relation/12268934",
-        "relation/12270505",
-        "relation/12272441",
-        "relation/8825730",
-        "relation/8825735",
-        "relation/8825736"
-      ],
-      "unmapped_official_records": 2737,
+      "resolved_neighborhoods": 87,
+      "resolved_official_records": 46563,
+      "boundary_geometry_unavailable": [],
+      "unmapped_official_records": 0,
       "unmapped_official_records_by_person": {
-        "person_01": 592,
-        "person_02": 1219,
-        "person_03": 926
+        "person_01": 0,
+        "person_02": 0,
+        "person_03": 0
       },
       "mapped_coverage_group_counts": {
-        "high": 62
+        "alias_validated": 7,
+        "high": 62,
+        "low": 8,
+        "medium": 10
       },
       "exact_match_coverage_group_counts": {
         "high": 62,
         "low": 8,
         "medium": 10
       },
-      "building_level_geolocation_claimed": false
+      "building_level_geolocation_claimed": false,
+      "confirmed_alias_count": 7,
+      "confirmed_alias_records": 2737
+    },
+    "requested_neighborhood_boundaries": {
+      "feature_count": 27,
+      "geometry_types": [
+        "Polygon"
+      ],
+      "bbox_wgs84": [
+        38.195343,
+        38.259194,
+        38.426335,
+        38.430514
+      ],
+      "crs": "EPSG:4326 (RFC 7946 longitude/latitude)",
+      "status_counts": {
+        "confirmed_name_alias": 7,
+        "existing_official_match": 18,
+        "reference_only": 2
+      }
     },
     "copernicus_damage_polygons": {
       "feature_count": 3617,
@@ -89,4 +95,3 @@
     }
   }
 }
-

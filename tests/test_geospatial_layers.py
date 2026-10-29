@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 import pytest
 
 from earthquake_damage.geospatial_layers import (
@@ -24,21 +27,41 @@ def polygon_feature(properties: dict, *, feature_id: str = "one") -> dict:
 
 def test_committed_map_layers_pass_contract() -> None:
     layers = load_map_layers()
-    assert len(layers.neighborhoods["features"]) == 62
+    assert len(layers.neighborhoods["features"]) == 87
+    assert len(layers.requested_boundaries["features"]) == 27
     assert len(layers.damage_polygons["features"]) == 3_617
     assert (
         layers.validation["checks"]["copernicus_damage_polygons"]["source_feature_count"] == 3_619
     )
     assert layers.validation["valid"] is True
     assert layers.manifest["official_record_semantics"].startswith("neighborhood aggregates")
-    assert len(layers.official_coverage) == 80
-    assert sum(row["official_total"] for row in layers.official_coverage) == 43_826
-    assert sum(row["official_total"] for row in layers.unmapped_official) == 2_737
-    assert (
-        sum(row["official_total"] for row in layers.official_coverage)
-        + sum(row["official_total"] for row in layers.unmapped_official)
-        == 46_563
-    )
+    assert len(layers.official_coverage) == 87
+    assert sum(row["official_total"] for row in layers.official_coverage) == 46_563
+    assert layers.unmapped_official == []
+    neighborhood_audit = layers.validation["checks"]["aoi05_neighborhoods"]
+    assert neighborhood_audit["exact_match_neighborhoods"] == 80
+    assert neighborhood_audit["confirmed_alias_count"] == 7
+    assert neighborhood_audit["confirmed_alias_records"] == 2_737
+    assert neighborhood_audit["building_level_geolocation_claimed"] is False
+    requested_audit = layers.validation["checks"]["requested_neighborhood_boundaries"]
+    assert requested_audit["status_counts"] == {
+        "confirmed_name_alias": 7,
+        "existing_official_match": 18,
+        "reference_only": 2,
+    }
+
+
+def test_confirmed_neighborhood_aliases_are_unique_and_explicit() -> None:
+    config_path = Path(__file__).resolve().parents[1] / "configs" / "neighborhood_aliases.json"
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    aliases = config["aliases"]
+    assert len(aliases) == 7
+    assert len({normalize_match_key(item["source_name"]) for item in aliases}) == 7
+    assert len({item["target_relation_id"] for item in aliases}) == 7
+    hamidiye = next(item for item in aliases if item["source_name"] == "HAMDIYE")
+    assert hamidiye["target_relation_id"] == "relation/12268774"
+    assert hamidiye["district"] == "Yeşilyurt"
+    assert config["record_geography"] == "neighborhood_aggregate_not_building_geolocation"
 
 
 @pytest.mark.parametrize(
@@ -85,4 +108,3 @@ def test_filter_feature_collection_preserves_metadata() -> None:
     assert filtered["name"] == "damage"
     assert [feature["id"] for feature in filtered["features"]] == ["one"]
     assert len(collection["features"]) == 2
-
