@@ -1,0 +1,21 @@
+{
+  "sprint": "00-12",
+  "generated_at_utc": "2026-10-29T06:31:46+00:00",
+  "display_crs": "EPSG:4326",
+  "layers": {
+    "aoi05_neighborhoods": {
+      "path": "aoi05_neighborhoods.geojson",
+      "source": "OpenStreetMap relation geometries keyed by committed V3 relation ids",
+      "source_endpoint": "https://nominatim.openstreetmap.org/lookup",
+      "attribution": "© OpenStreetMap contributors, ODbL 1.0",
+      "role": "AOI05-intersecting neighborhood boundaries with neighborhood aggregates"
+    },
+    "copernicus_damage_polygons": {
+      "path": "copernicus_damage_polygons.geojson",
+      "source": "Copernicus EMSR648 AOI05 GRA builtUpA r1 v1",
+      "attribution": "Copernicus Emergency Management Service (© 2023 European Union), EMSR648 Malatya (AOI05): Grading Map",
+      "role": "mapped damage polygons; not official structural-safety decisions"
+    }
+  },
+  "official_record_semantics": "neighborhood aggregates only; no building-level geolocation"
+}
