@@ -1,4 +1,4 @@
-"""Acquire current OSM geometries for the committed high-coverage relation IDs."""
+"""Acquire current OSM geometries for all committed exact-match relation IDs."""
 
 from __future__ import annotations
 
@@ -11,8 +11,7 @@ from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parents[1]
 EXACT_MATCH = ROOT / "reports" / "sprint_00-10" / "v3_official_osm_exact_match.csv"
-HIGH_COVERAGE = ROOT / "reports" / "sprint_00-10" / "v3_high_coverage_analysis.csv"
-OUTPUT = ROOT / "data" / "external" / "osm" / "aoi05_high_coverage_neighborhoods.geojson"
+OUTPUT = ROOT / "data" / "external" / "osm" / "aoi05_exact_match_neighborhoods.geojson"
 USER_AGENT = "earthquake-building-damage-analysis/00-12 (academic research dashboard)"
 
 
@@ -22,8 +21,7 @@ def read_rows(path: Path) -> list[dict[str, str]]:
 
 
 def main() -> None:
-    high_names = {row["mahalle"] for row in read_rows(HIGH_COVERAGE)}
-    selected = [row for row in read_rows(EXACT_MATCH) if row["mahalle"] in high_names]
+    selected = read_rows(EXACT_MATCH)
     expected_by_id = {row["id"].split("/")[-1]: row for row in selected}
     features: list[dict] = []
 
@@ -78,3 +76,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

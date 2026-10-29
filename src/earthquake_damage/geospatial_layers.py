@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import math
 import unicodedata
+from csv import DictReader
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterable
@@ -25,6 +26,8 @@ class MapLayers:
     damage_polygons: dict[str, Any]
     manifest: dict[str, Any]
     validation: dict[str, Any]
+    official_coverage: list[dict[str, Any]]
+    unmapped_official: list[dict[str, Any]]
 
 
 def normalize_neighborhood_name(value: object) -> str:
@@ -45,6 +48,11 @@ def normalize_neighborhood_name(value: object) -> str:
             text = text[: -len(suffix)].strip()
             break
     return text
+
+
+def normalize_match_key(value: object) -> str:
+    """Return the punctuation-free key used by the audited V3 exact-name join."""
+    return normalize_neighborhood_name(value).replace(" ", "")
 
 
 def _iter_positions(coordinates: Any) -> Iterable[tuple[float, float]]:
@@ -154,6 +162,14 @@ def load_map_layers(root: Path = MAP_ROOT) -> MapLayers:
             "severe_ratio",
             "match_method",
             "record_geography",
+            "aoi_coverage_ratio",
+            "coverage_group",
+            "person_01_total",
+            "person_01_severe_count",
+            "person_02_total",
+            "person_02_severe_count",
+            "person_03_total",
+            "person_03_severe_count",
         },
         allowed_geometry_types={"Polygon", "MultiPolygon"},
     )
@@ -169,7 +185,55 @@ def load_map_layers(root: Path = MAP_ROOT) -> MapLayers:
         raise GeospatialLayerError(f"Could not read map-layer audit metadata: {error}") from error
     if not validation.get("valid"):
         raise GeospatialLayerError("Committed Sprint 00-12 map layers did not pass validation")
-    return MapLayers(neighborhoods, damage_polygons, manifest, validation)
+    unmapped_path = root / "unmapped_official_aggregates.csv"
+    coverage_path = root / "official_neighborhood_coverage.csv"
+    if not coverage_path.is_file():
+        raise GeospatialLayerError(f"Required aggregate table is missing: {coverage_path}")
+    with coverage_path.open(encoding="utf-8", newline="") as stream:
+        official_coverage = list(DictReader(stream))
+    coverage_numeric = {
+        "official_total": int,
+        "severe_count": int,
+        "severe_ratio": float,
+        "aoi_coverage_ratio": float,
+        "person_01_total": int,
+        "person_01_severe_count": int,
+        "person_02_total": int,
+        "person_02_severe_count": int,
+        "person_03_total": int,
+        "person_03_severe_count": int,
+    }
+    for index, row in enumerate(official_coverage):
+        missing = set(coverage_numeric).difference(row)
+        if missing:
+            raise GeospatialLayerError(
+                f"{coverage_path.name}: row {index} is missing columns: {', '.join(sorted(missing))}"
+            )
+        for column, converter in coverage_numeric.items():
+            row[column] = converter(row[column])
+
+    if not unmapped_path.is_file():
+        raise GeospatialLayerError(f"Required aggregate table is missing: {unmapped_path}")
+    with unmapped_path.open(encoding="utf-8", newline="") as stream:
+        unmapped_official = list(DictReader(stream))
+    required_unmapped = {"person", "mahalle", "official_total", "severe_count"}
+    for index, row in enumerate(unmapped_official):
+        missing = required_unmapped.difference(row)
+        if missing:
+            raise GeospatialLayerError(
+                f"{unmapped_path.name}: row {index} is missing columns: {', '.join(sorted(missing))}"
+            )
+        row["official_total"] = int(row["official_total"])
+        row["severe_count"] = int(row["severe_count"])
+        row["severe_ratio"] = float(row["severe_ratio"])
+    return MapLayers(
+        neighborhoods,
+        damage_polygons,
+        manifest,
+        validation,
+        official_coverage,
+        unmapped_official,
+    )
 
 
 def filter_feature_collection(
@@ -187,3 +251,4 @@ def filter_feature_collection(
             if feature.get("properties", {}).get(property_name) in accepted_values
         ],
     }
+

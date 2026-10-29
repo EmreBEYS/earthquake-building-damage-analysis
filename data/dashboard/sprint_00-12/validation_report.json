@@ -1,6 +1,6 @@
 {
   "valid": true,
-  "generated_at_utc": "2026-10-29T06:31:46+00:00",
+  "generated_at_utc": "2026-10-29T06:51:31+00:00",
   "checks": {
     "aoi05_neighborhoods": {
       "feature_count": 62,
@@ -17,6 +17,52 @@
       "id_match_count": 62,
       "normalized_name_match_count": 62,
       "official_records": 26692,
+      "official_records_by_person": {
+        "person_01": 9827,
+        "person_02": 7316,
+        "person_03": 9549
+      },
+      "exact_match_neighborhoods": 80,
+      "exact_match_official_records": 43826,
+      "exact_match_official_records_by_person": {
+        "person_01": 14821,
+        "person_02": 15201,
+        "person_03": 13804
+      },
+      "boundary_geometry_unavailable": [
+        "relation/11971751",
+        "relation/12268640",
+        "relation/12268647",
+        "relation/12268662",
+        "relation/12268663",
+        "relation/12268728",
+        "relation/12268729",
+        "relation/12268748",
+        "relation/12268769",
+        "relation/12268770",
+        "relation/12268776",
+        "relation/12268801",
+        "relation/12268934",
+        "relation/12270505",
+        "relation/12272441",
+        "relation/8825730",
+        "relation/8825735",
+        "relation/8825736"
+      ],
+      "unmapped_official_records": 2737,
+      "unmapped_official_records_by_person": {
+        "person_01": 592,
+        "person_02": 1219,
+        "person_03": 926
+      },
+      "mapped_coverage_group_counts": {
+        "high": 62
+      },
+      "exact_match_coverage_group_counts": {
+        "high": 62,
+        "low": 8,
+        "medium": 10
+      },
       "building_level_geolocation_claimed": false
     },
     "copernicus_damage_polygons": {
@@ -43,3 +89,4 @@
     }
   }
 }
+

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
@@ -96,30 +97,55 @@ elif page == "Harita · Katmanlar":
     neighborhood_features = layers.neighborhoods["features"]
     damage_features = layers.damage_polygons["features"]
     damage_grades = sorted({feature["properties"]["damage_grade"] for feature in damage_features})
+    person_groups = ["person_01", "person_02", "person_03"]
 
     with st.sidebar:
         st.subheader("Harita filtreleri")
         show_official = st.checkbox("Mahalle resmî hasar oranı", value=True)
         show_damage = st.checkbox("Copernicus hasar poligonları", value=True)
-        min_records = st.slider("En az resmî kayıt", 0, 3_000, 100, 50)
+        selected_persons = st.multiselect("Resmî kayıt grubu", person_groups, default=person_groups)
+        selected_coverage = st.multiselect(
+            "AOI kapsam sınıfı", ["high", "medium", "low"], default=["high", "medium", "low"]
+        )
+        min_records = st.slider("En az resmî kayıt", 0, 3_000, 0, 50)
         selected_damage = st.multiselect(
             "Copernicus hasar sınıfı", damage_grades, default=damage_grades
         )
+
+        display_features = []
+        for feature in neighborhood_features:
+            properties = {**feature["properties"]}
+            properties["display_official_total"] = sum(
+                properties[f"{person}_total"] for person in selected_persons
+            )
+            properties["display_severe_count"] = sum(
+                properties[f"{person}_severe_count"] for person in selected_persons
+            )
+            properties["display_severe_ratio"] = (
+                properties["display_severe_count"] / properties["display_official_total"]
+                if properties["display_official_total"]
+                else 0.0
+            )
+            display_features.append({**feature, "properties": properties})
+        display_collection = {**layers.neighborhoods, "features": display_features}
+
         available_names = sorted(
             feature["properties"]["mahalle"]
-            for feature in neighborhood_features
-            if feature["properties"]["official_total"] >= min_records
+            for feature in display_features
+            if feature["properties"]["display_official_total"] >= min_records
+            and feature["properties"]["coverage_group"] in selected_coverage
         )
         selected_names = st.multiselect("Mahalle", available_names, default=available_names)
 
     visible_neighborhoods = {
         feature["properties"]["neighborhood_id"]
-        for feature in neighborhood_features
-        if feature["properties"]["official_total"] >= min_records
+        for feature in display_features
+        if feature["properties"]["display_official_total"] >= min_records
+        and feature["properties"]["coverage_group"] in selected_coverage
         and feature["properties"]["mahalle"] in selected_names
     }
     neighborhood_geojson = filter_feature_collection(
-        layers.neighborhoods,
+        display_collection,
         property_name="neighborhood_id",
         accepted_values=visible_neighborhoods,
     )
@@ -132,7 +158,7 @@ elif page == "Harita · Katmanlar":
             go.Choroplethmap(
                 geojson=neighborhood_geojson,
                 locations=[item["neighborhood_id"] for item in properties],
-                z=[item["severe_ratio"] for item in properties],
+                z=[item["display_severe_ratio"] for item in properties],
                 featureidkey="properties.neighborhood_id",
                 colorscale="YlOrRd",
                 zmin=0,
@@ -140,12 +166,19 @@ elif page == "Harita · Katmanlar":
                 marker={"opacity": 0.5, "line": {"width": 1.5, "color": "#202020"}},
                 colorbar={"title": "Ağır/acil/yıkık<br>kayıt payı"},
                 customdata=[
-                    [item["mahalle"], item["official_total"], item["severe_count"]]
+                    [
+                        item["mahalle"],
+                        item["display_official_total"],
+                        item["display_severe_count"],
+                        item["coverage_group"],
+                        item["aoi_coverage_ratio"],
+                    ]
                     for item in properties
                 ],
                 hovertemplate=(
                     "<b>%{customdata[0]}</b><br>Resmî kayıt: %{customdata[1]:,}"
-                    "<br>Ağır/acil/yıkık: %{customdata[2]:,}<br>Pay: %{z:.1%}<extra></extra>"
+                    "<br>Ağır/acil/yıkık: %{customdata[2]:,}<br>Pay: %{z:.1%}"
+                    "<br>AOI kapsamı: %{customdata[3]} (%{customdata[4]:.1%})<extra></extra>"
                 ),
                 name="Mahalle toplamları",
             )
@@ -201,23 +234,71 @@ elif page == "Harita · Katmanlar":
     )
     st.plotly_chart(figure, use_container_width=True)
 
-    map_validation = layers.validation["checks"]
-    col1, col2, col3, col4 = st.columns(4)
+    coverage_frame = pd.DataFrame(layers.official_coverage)
+    coverage_frame["seçili_kayıt"] = sum(
+        (coverage_frame[f"{person}_total"] for person in selected_persons),
+        start=pd.Series(0, index=coverage_frame.index),
+    )
+    coverage_frame["seçili_ağır_acil_yıkık"] = sum(
+        (coverage_frame[f"{person}_severe_count"] for person in selected_persons),
+        start=pd.Series(0, index=coverage_frame.index),
+    )
+    coverage_frame["seçili_ağır_oran"] = (
+        coverage_frame["seçili_ağır_acil_yıkık"]
+        / coverage_frame["seçili_kayıt"].where(coverage_frame["seçili_kayıt"] > 0)
+    ).fillna(0.0)
+    unmapped_frame = pd.DataFrame(layers.unmapped_official)
+    unmapped_selected = unmapped_frame[unmapped_frame["person"].isin(selected_persons)].copy()
+
+    col1, col2, col3, col4, col5 = st.columns(5)
     col1.metric("Mahalle sınırı", len(filtered_neighborhoods))
     col2.metric(
-        "Mahalle resmî kaydı",
-        f"{sum(f['properties']['official_total'] for f in filtered_neighborhoods):,}",
+        "Haritadaki kayıt",
+        f"{sum(f['properties']['display_official_total'] for f in filtered_neighborhoods):,}",
     )
-    col3.metric("Geçerli Copernicus poligonu", f"{len(damage_features):,}")
-    col4.metric(
-        "Geometri dışlanan",
-        map_validation["copernicus_damage_polygons"]["excluded_non_polygonal_or_empty"],
-    )
+    col3.metric("Kesin eşleşen kayıt", f"{int(coverage_frame['seçili_kayıt'].sum()):,}")
+    col4.metric("Sınır eşleşmeyen kayıt", f"{int(unmapped_selected['official_total'].sum()):,}")
+    col5.metric("Geçerli Copernicus poligonu", f"{len(damage_features):,}")
     st.caption(
         "Görüntüleme CRS'i EPSG:4326'dır. Mahalleler OSM relation kimliği ve normalize adın "
-        "birlikte eşleşmesiyle bağlanmıştır. Copernicus kaynak paketindeki iki boş/poligonal "
-        "olmayan onarılamaz geometri harita katmanından dışlanmış ve doğrulama raporuna yazılmıştır."
+        "birlikte eşleşmesiyle bağlanmıştır. Person filtreleri yalnızca toplulaştırılmış sayıları "
+        "değiştirir; tekil kayıt koordinatı üretilmez."
     )
+
+    st.subheader("Tüm resmî mahalle kapsamı")
+    st.write(
+        "Aşağıdaki tablo 80 kesin eşleşen mahallenin tamamını içerir. Haritada görünmeyen "
+        "orta/düşük AOI kapsamlı mahalleler de burada korunur."
+    )
+    st.dataframe(
+        coverage_frame[
+            [
+                "mahalle",
+                "coverage_group",
+                "aoi_coverage_ratio",
+                "seçili_kayıt",
+                "seçili_ağır_acil_yıkık",
+                "seçili_ağır_oran",
+            ]
+        ]
+        .sort_values("seçili_kayıt", ascending=False)
+        .style.format({"aoi_coverage_ratio": "{:.1%}", "seçili_ağır_oran": "{:.1%}"}),
+        use_container_width=True,
+    )
+
+    with st.expander("Sınır eşleşmesi olmayan resmî kayıt grupları"):
+        st.warning(
+            "Bu kayıtlar tabloda gösterilir ancak doğrulanmış bir mahalle sınırına veya binaya "
+            "yerleştirilmez."
+        )
+        st.dataframe(
+            unmapped_selected[
+                ["person", "mahalle", "official_total", "severe_count", "severe_ratio"]
+            ]
+            .sort_values("official_total", ascending=False)
+            .style.format({"severe_ratio": "{:.1%}"}),
+            use_container_width=True,
+        )
 
 elif page == "V1 · Copernicus":
     st.header("V1 · Copernicus EMSR648 AOI05")
@@ -332,3 +413,4 @@ else:
 - Arayüz yalnızca sürümlenmiş rapor çıktılarını okur; model çıkarımı veya bina düzeyi risk tahmini yapmaz.
 """
     )
+

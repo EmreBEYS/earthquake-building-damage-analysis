@@ -10,20 +10,26 @@ from pathlib import Path
 import geopandas as gpd
 import pandas as pd
 
-from earthquake_damage.geospatial_layers import normalize_neighborhood_name, validate_geojson
+from earthquake_damage.geospatial_layers import (
+    normalize_match_key,
+    normalize_neighborhood_name,
+    validate_geojson,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_OFFICIAL = ROOT / "reports" / "sprint_00-10" / "v3_official_osm_exact_match.csv"
-DEFAULT_HIGH_COVERAGE = ROOT / "reports" / "sprint_00-10" / "v3_high_coverage_analysis.csv"
+DEFAULT_COVERAGE = ROOT / "reports" / "sprint_00-10" / "v3_neighborhood_coverage_validation.csv"
+DEFAULT_OFFICIAL_RECORDS = ROOT / "data" / "final" / "malatya_damage_dataset.csv"
 DEFAULT_OUTPUT = ROOT / "data" / "dashboard" / "sprint_00-12"
+PERSONS = ("person_01", "person_02", "person_03")
+SEVERE_CLASSES = {"Agir hasarli", "Acil yiktirilacak", "Yikik"}
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--neighborhoods", type=Path, required=True)
     parser.add_argument("--copernicus", type=Path, required=True)
-    parser.add_argument("--official", type=Path, default=DEFAULT_OFFICIAL)
-    parser.add_argument("--high-coverage", type=Path, default=DEFAULT_HIGH_COVERAGE)
+    parser.add_argument("--coverage", type=Path, default=DEFAULT_COVERAGE)
+    parser.add_argument("--official-records", type=Path, default=DEFAULT_OFFICIAL_RECORDS)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     return parser.parse_args()
 
@@ -59,27 +65,94 @@ def build_neighborhoods(args: argparse.Namespace) -> tuple[dict, dict]:
     if id_column not in boundaries or name_column not in boundaries:
         raise ValueError("neighborhood source must contain id/osm_id and mahalle/name")
 
-    official = pd.read_csv(args.official)
-    high = pd.read_csv(args.high_coverage)
-    selected_names = set(high["mahalle"])
-    official = official[official["mahalle"].isin(selected_names)].copy()
+    official = pd.read_csv(args.coverage)
+    records = pd.read_csv(args.official_records, low_memory=False)
     official["neighborhood_id"] = official["id"].astype(str)
-    official["name_key"] = official["mahalle"].map(normalize_neighborhood_name)
+    official["display_name_key"] = official["mahalle"].map(normalize_neighborhood_name)
+    official["match_key"] = official["mahalle"].map(normalize_match_key)
     if official["neighborhood_id"].duplicated().any():
         raise ValueError("official aggregate contains duplicate neighborhood ids")
 
+    records["match_key"] = records["mahalle"].map(normalize_match_key)
+    records["is_severe"] = records["hasar_durumu"].isin(SEVERE_CLASSES)
+    matched_keys = set(official["match_key"])
+    matched_records = records[records["match_key"].isin(matched_keys)].copy()
+    unmatched_records = records[~records["match_key"].isin(matched_keys)].copy()
+    person_values = tuple(sorted(records["person"].dropna().unique()))
+    if person_values != PERSONS:
+        raise ValueError(f"unexpected person groups: {person_values}")
+
+    person_counts = (
+        matched_records.groupby(["match_key", "person"])
+        .agg(total=("hasar_durumu", "size"), severe_count=("is_severe", "sum"))
+        .reset_index()
+    )
+    for person in PERSONS:
+        subset = person_counts[person_counts["person"] == person].set_index("match_key")
+        official[f"{person}_total"] = (
+            official["match_key"].map(subset["total"]).fillna(0).astype(int)
+        )
+        official[f"{person}_severe_count"] = (
+            official["match_key"].map(subset["severe_count"]).fillna(0).astype(int)
+        )
+
+    calculated_total = official[[f"{person}_total" for person in PERSONS]].sum(axis=1)
+    calculated_severe = official[[f"{person}_severe_count" for person in PERSONS]].sum(axis=1)
+    if not calculated_total.equals(official["official_total"].astype(int)):
+        raise ValueError("person-group totals do not reproduce official neighborhood totals")
+    if not calculated_severe.equals(official["severe_count"].astype(int)):
+        raise ValueError("person-group severe counts do not reproduce official severe counts")
+
+    person_columns = [
+        column for person in PERSONS for column in (f"{person}_total", f"{person}_severe_count")
+    ]
+    official_table_columns = [
+        "neighborhood_id",
+        "mahalle",
+        "official_total",
+        "severe_count",
+        "severe_ratio",
+        "aoi_coverage_ratio",
+        "coverage_group",
+        *person_columns,
+    ]
+    official[official_table_columns].to_csv(
+        args.output / "official_neighborhood_coverage.csv", index=False, encoding="utf-8"
+    )
+
+    unmapped_summary = (
+        unmatched_records.groupby(["person", "mahalle"], dropna=False)
+        .agg(official_total=("hasar_durumu", "size"), severe_count=("is_severe", "sum"))
+        .reset_index()
+    )
+    unmapped_summary["severe_count"] = unmapped_summary["severe_count"].astype(int)
+    unmapped_summary["severe_ratio"] = (
+        unmapped_summary["severe_count"] / unmapped_summary["official_total"]
+    )
+    unmapped_summary["record_geography"] = "unmapped_aggregate_no_validated_boundary"
+    unmapped_summary.to_csv(
+        args.output / "unmapped_official_aggregates.csv", index=False, encoding="utf-8"
+    )
+
     boundaries["neighborhood_id"] = boundaries[id_column].astype(str)
     boundaries["boundary_name"] = boundaries[name_column].astype(str)
-    boundaries["name_key"] = boundaries["boundary_name"].map(normalize_neighborhood_name)
+    boundaries["display_name_key"] = boundaries["boundary_name"].map(normalize_neighborhood_name)
+    available_ids = set(boundaries["neighborhood_id"])
+    mapped_official = official[official["neighborhood_id"].isin(available_ids)].copy()
+    if mapped_official.empty:
+        raise ValueError("none of the exact-match neighborhoods have boundary geometry")
     selected = boundaries.merge(
-        official[
+        mapped_official[
             [
                 "neighborhood_id",
                 "mahalle",
-                "name_key",
+                "display_name_key",
                 "official_total",
                 "severe_count",
                 "severe_ratio",
+                "aoi_coverage_ratio",
+                "coverage_group",
+                *person_columns,
             ]
         ],
         on="neighborhood_id",
@@ -87,15 +160,17 @@ def build_neighborhoods(args: argparse.Namespace) -> tuple[dict, dict]:
         suffixes=("_boundary", "_official"),
         validate="one_to_one",
     )
-    if len(selected) != len(official):
-        missing = sorted(set(official["neighborhood_id"]) - set(selected["neighborhood_id"]))
+    if len(selected) != len(mapped_official):
+        missing = sorted(set(mapped_official["neighborhood_id"]) - set(selected["neighborhood_id"]))
         raise ValueError(f"missing boundary geometry for official neighborhood ids: {missing}")
-    mismatches = selected[selected["name_key_boundary"] != selected["name_key_official"]]
+    mismatches = selected[
+        selected["display_name_key_boundary"] != selected["display_name_key_official"]
+    ]
     if not mismatches.empty:
         pairs = mismatches[["boundary_name", "mahalle"]].to_dict("records")
         raise ValueError(f"neighborhood id/name mismatch: {pairs}")
     normalized_name_match_count = int(
-        (selected["name_key_boundary"] == selected["name_key_official"]).sum()
+        (selected["display_name_key_boundary"] == selected["display_name_key_official"]).sum()
     )
 
     selected["match_method"] = "exact_osm_relation_id_and_normalized_name"
@@ -107,6 +182,9 @@ def build_neighborhoods(args: argparse.Namespace) -> tuple[dict, dict]:
             "official_total",
             "severe_count",
             "severe_ratio",
+            "aoi_coverage_ratio",
+            "coverage_group",
+            *person_columns,
             "match_method",
             "record_geography",
             "geometry",
@@ -115,6 +193,7 @@ def build_neighborhoods(args: argparse.Namespace) -> tuple[dict, dict]:
     selected["official_total"] = selected["official_total"].astype(int)
     selected["severe_count"] = selected["severe_count"].astype(int)
     selected["severe_ratio"] = selected["severe_ratio"].astype(float)
+    selected["aoi_coverage_ratio"] = selected["aoi_coverage_ratio"].astype(float)
     selected["geometry"] = selected.geometry.simplify(0.000015, preserve_topology=True)
     document = _write_geojson(selected, args.output / "aoi05_neighborhoods.geojson")
     audit = validate_geojson(
@@ -128,6 +207,34 @@ def build_neighborhoods(args: argparse.Namespace) -> tuple[dict, dict]:
             "id_match_count": len(selected),
             "normalized_name_match_count": normalized_name_match_count,
             "official_records": int(selected["official_total"].sum()),
+            "official_records_by_person": {
+                person: int(selected[f"{person}_total"].sum()) for person in PERSONS
+            },
+            "exact_match_neighborhoods": len(official),
+            "exact_match_official_records": int(official["official_total"].sum()),
+            "exact_match_official_records_by_person": {
+                person: int(official[f"{person}_total"].sum()) for person in PERSONS
+            },
+            "boundary_geometry_unavailable": sorted(
+                set(official["neighborhood_id"]) - set(selected["neighborhood_id"])
+            ),
+            "unmapped_official_records": int(unmapped_summary["official_total"].sum()),
+            "unmapped_official_records_by_person": {
+                person: int(
+                    unmapped_summary.loc[
+                        unmapped_summary["person"] == person, "official_total"
+                    ].sum()
+                )
+                for person in PERSONS
+            },
+            "mapped_coverage_group_counts": {
+                str(key): int(value)
+                for key, value in selected["coverage_group"].value_counts().sort_index().items()
+            },
+            "exact_match_coverage_group_counts": {
+                str(key): int(value)
+                for key, value in official["coverage_group"].value_counts().sort_index().items()
+            },
             "building_level_geolocation_claimed": False,
         }
     )
@@ -182,7 +289,17 @@ def main() -> None:
                 "source": "OpenStreetMap relation geometries keyed by committed V3 relation ids",
                 "source_endpoint": "https://nominatim.openstreetmap.org/lookup",
                 "attribution": "© OpenStreetMap contributors, ODbL 1.0",
-                "role": "AOI05-intersecting neighborhood boundaries with neighborhood aggregates",
+                "role": "exact-match neighborhood boundaries with AOI coverage and person-group aggregates",
+            },
+            "unmapped_official_aggregates": {
+                "path": "unmapped_official_aggregates.csv",
+                "source": "validated person_01/person_02/person_03 official records",
+                "role": "aggregate-only disclosure for records without a validated boundary match",
+            },
+            "official_neighborhood_coverage": {
+                "path": "official_neighborhood_coverage.csv",
+                "source": "validated exact-match and AOI coverage reports plus person groups",
+                "role": "all 80 exact-match neighborhoods, including boundaries not in the committed map layer",
             },
             "copernicus_damage_polygons": {
                 "path": "copernicus_damage_polygons.geojson",
@@ -212,3 +329,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

@@ -49,14 +49,14 @@ It does not modify the downloaded Türkiye source.
 
 ## Sprint 00-12 map preparation
 
-`10_acquire_osm_neighborhoods.py` performs two rate-limited Nominatim lookups for the 62 OSM
-relation IDs already selected by the committed Sprint 00-10 reports. It writes an ignored source
-GeoJSON under `data/external/osm/` and preserves OSM attribution.
+`10_acquire_osm_neighborhoods.py` performs two rate-limited Nominatim lookups for all 80 exact-
+match OSM relation IDs in the committed Sprint 00-10 reports. It writes an ignored source GeoJSON
+under `data/external/osm/` and preserves OSM attribution.
 
 `10_prepare_geospatial_layers.py` requires the `analysis` dependencies. It reprojects source
 geometry to WGS84, validates/repairs polygon geometry, enforces exact relation-ID and normalized
-name agreement, joins official values only at neighborhood aggregate level, and writes compact
-dashboard GeoJSON plus a manifest and validation report. Full commands and expected counts are
+name agreement, reproduces aggregates for each person group, and writes compact dashboard
+GeoJSON, full coverage/unmatched tables, a manifest and validation report. Full commands are
 documented in [`docs/sprints/sprint-00-12.md`](../docs/sprints/sprint-00-12.md).
 
 ## Order of operations
@@ -71,3 +71,4 @@ python scripts/prepare_aoi_boundaries.py
 
 When a source changes, create a new versioned destination and update the inventory/checksum after
 review. Do not bypass the overwrite refusal.
+

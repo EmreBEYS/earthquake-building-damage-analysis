@@ -1,0 +1,9 @@
+person,mahalle,official_total,severe_count,severe_ratio,record_geography
+person_01,ISKERDER,265,22,0.0830188679245283,unmapped_aggregate_no_validated_boundary
+person_01,SEHITFEVZI,327,212,0.6483180428134556,unmapped_aggregate_no_validated_boundary
+person_02,BASHANK,777,105,0.13513513513513514,unmapped_aggregate_no_validated_boundary
+person_02,FARHADIYE,168,65,0.3869047619047619,unmapped_aggregate_no_validated_boundary
+person_02,HAMDIYE,171,100,0.5847953216374269,unmapped_aggregate_no_validated_boundary
+person_02,KAVLIKBAG,103,75,0.7281553398058253,unmapped_aggregate_no_validated_boundary
+person_03,MERKEZ BEYDAĞ,926,169,0.18250539956803455,unmapped_aggregate_no_validated_boundary
+
