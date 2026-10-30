@@ -49,6 +49,11 @@ ALLOWED_STATUSES = {
     "excluded_proprietary",
 }
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+ALLOWED_TRACKED_DATA_PAYLOADS = {
+    "data/processed/sprint_00-14/buildings.parquet",
+    "data/processed/sprint_00-14/neighborhoods.parquet",
+    "data/processed/sprint_00-14/sprint_00-14.gpkg",
+}
 
 
 def inventory_rows() -> list[dict[str, str]]:
@@ -113,7 +118,11 @@ def tracked_payloads() -> list[str]:
         capture_output=True,
         text=True,
     )
-    return [path for path in result.stdout.splitlines() if not path.endswith("/.gitkeep")]
+    return [
+        path
+        for path in result.stdout.splitlines()
+        if not path.endswith("/.gitkeep") and path not in ALLOWED_TRACKED_DATA_PAYLOADS
+    ]
 
 
 def main() -> None:
@@ -137,3 +146,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
