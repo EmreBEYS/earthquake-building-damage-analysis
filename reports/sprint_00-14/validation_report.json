@@ -1,0 +1,472 @@
+{
+  "checks": {
+    "building_ambiguous_point_match_count": 0,
+    "building_duplicate_geometry_rows": 2,
+    "building_multiple_boundary_intersection_count": 122,
+    "building_overlap_pair_count": 8,
+    "building_overlap_pairs": [
+      {
+        "intersection_area_m2": 0.11914,
+        "left_id": "EMSR648_AOI05_BLDG_00873",
+        "right_id": "EMSR648_AOI05_BLDG_02288"
+      },
+      {
+        "intersection_area_m2": 2.978313,
+        "left_id": "EMSR648_AOI05_BLDG_00983",
+        "right_id": "EMSR648_AOI05_BLDG_02207"
+      },
+      {
+        "intersection_area_m2": 0.480256,
+        "left_id": "EMSR648_AOI05_BLDG_02209",
+        "right_id": "EMSR648_AOI05_BLDG_02286"
+      },
+      {
+        "intersection_area_m2": 0.026348,
+        "left_id": "EMSR648_AOI05_BLDG_02288",
+        "right_id": "EMSR648_AOI05_BLDG_02294"
+      },
+      {
+        "intersection_area_m2": 12.806103,
+        "left_id": "EMSR648_AOI05_BLDG_02506",
+        "right_id": "EMSR648_AOI05_BLDG_03160"
+      },
+      {
+        "intersection_area_m2": 0.986779,
+        "left_id": "EMSR648_AOI05_BLDG_02517",
+        "right_id": "EMSR648_AOI05_BLDG_03610"
+      },
+      {
+        "intersection_area_m2": 2.826155,
+        "left_id": "EMSR648_AOI05_BLDG_02609",
+        "right_id": "EMSR648_AOI05_BLDG_03610"
+      },
+      {
+        "intersection_area_m2": 0.305162,
+        "left_id": "EMSR648_AOI05_BLDG_03594",
+        "right_id": "EMSR648_AOI05_BLDG_03602"
+      }
+    ],
+    "building_partial_containment_count": 123,
+    "building_unmatched_count": 19,
+    "matched_building_count": 3598,
+    "matched_neighborhood_count": 87,
+    "neighborhood_duplicate_geometry_rows": 0,
+    "neighborhood_overlap_pair_count": 59,
+    "neighborhood_overlap_pairs": [
+      {
+        "intersection_area_m2": 263.267944,
+        "left_id": "relation/8825730",
+        "right_id": "relation/8825731"
+      },
+      {
+        "intersection_area_m2": 273.174268,
+        "left_id": "relation/8825730",
+        "right_id": "relation/8825732"
+      },
+      {
+        "intersection_area_m2": 72.870431,
+        "left_id": "relation/8825733",
+        "right_id": "relation/8825734"
+      },
+      {
+        "intersection_area_m2": 17.284244,
+        "left_id": "relation/8825734",
+        "right_id": "relation/8825735"
+      },
+      {
+        "intersection_area_m2": 8.801099,
+        "left_id": "relation/8825734",
+        "right_id": "relation/8825736"
+      },
+      {
+        "intersection_area_m2": 0.974188,
+        "left_id": "relation/11704518",
+        "right_id": "relation/11704520"
+      },
+      {
+        "intersection_area_m2": 19.126031,
+        "left_id": "relation/11704518",
+        "right_id": "relation/11971751"
+      },
+      {
+        "intersection_area_m2": 16.090759,
+        "left_id": "relation/11704519",
+        "right_id": "relation/11704521"
+      },
+      {
+        "intersection_area_m2": 0.014677,
+        "left_id": "relation/11704519",
+        "right_id": "relation/11704520"
+      },
+      {
+        "intersection_area_m2": 2.861758,
+        "left_id": "relation/11704519",
+        "right_id": "relation/11971752"
+      },
+      {
+        "intersection_area_m2": 80.513254,
+        "left_id": "relation/11704520",
+        "right_id": "relation/11704521"
+      },
+      {
+        "intersection_area_m2": 10.375878,
+        "left_id": "relation/11704520",
+        "right_id": "relation/11704522"
+      },
+      {
+        "intersection_area_m2": 33.846079,
+        "left_id": "relation/11704521",
+        "right_id": "relation/11971688"
+      },
+      {
+        "intersection_area_m2": 195.817285,
+        "left_id": "relation/11704522",
+        "right_id": "relation/11707615"
+      },
+      {
+        "intersection_area_m2": 135.211754,
+        "left_id": "relation/11704522",
+        "right_id": "relation/11707614"
+      },
+      {
+        "intersection_area_m2": 11.003591,
+        "left_id": "relation/11704522",
+        "right_id": "relation/11971688"
+      },
+      {
+        "intersection_area_m2": 24.945046,
+        "left_id": "relation/11704523",
+        "right_id": "relation/11707615"
+      },
+      {
+        "intersection_area_m2": 0.108337,
+        "left_id": "relation/11704530",
+        "right_id": "relation/11704531"
+      },
+      {
+        "intersection_area_m2": 25.180154,
+        "left_id": "relation/11704531",
+        "right_id": "relation/11707535"
+      },
+      {
+        "intersection_area_m2": 24.956732,
+        "left_id": "relation/11704531",
+        "right_id": "relation/11707536"
+      },
+      {
+        "intersection_area_m2": 0.120244,
+        "left_id": "relation/11704531",
+        "right_id": "relation/12268662"
+      },
+      {
+        "intersection_area_m2": 68.663029,
+        "left_id": "relation/11707614",
+        "right_id": "relation/11716832"
+      },
+      {
+        "intersection_area_m2": 34.690401,
+        "left_id": "relation/11707614",
+        "right_id": "relation/11716833"
+      },
+      {
+        "intersection_area_m2": 4.540479,
+        "left_id": "relation/11707615",
+        "right_id": "relation/11971694"
+      },
+      {
+        "intersection_area_m2": 53.735205,
+        "left_id": "relation/11716831",
+        "right_id": "relation/11971691"
+      },
+      {
+        "intersection_area_m2": 20.806741,
+        "left_id": "relation/11716831",
+        "right_id": "relation/11971694"
+      },
+      {
+        "intersection_area_m2": 30.303742,
+        "left_id": "relation/11716831",
+        "right_id": "relation/11716832"
+      },
+      {
+        "intersection_area_m2": 9.124797,
+        "left_id": "relation/11716832",
+        "right_id": "relation/11971692"
+      },
+      {
+        "intersection_area_m2": 63.386422,
+        "left_id": "relation/11716833",
+        "right_id": "relation/11971692"
+      },
+      {
+        "intersection_area_m2": 44.258891,
+        "left_id": "relation/11971658",
+        "right_id": "relation/11971660"
+      },
+      {
+        "intersection_area_m2": 0.094845,
+        "left_id": "relation/11971659",
+        "right_id": "relation/11971660"
+      },
+      {
+        "intersection_area_m2": 0.120355,
+        "left_id": "relation/11971660",
+        "right_id": "relation/11971663"
+      },
+      {
+        "intersection_area_m2": 35.221363,
+        "left_id": "relation/11971660",
+        "right_id": "relation/8825736"
+      },
+      {
+        "intersection_area_m2": 0.00469,
+        "left_id": "relation/11971662",
+        "right_id": "relation/11971672"
+      },
+      {
+        "intersection_area_m2": 0.030514,
+        "left_id": "relation/11971662",
+        "right_id": "relation/11971663"
+      },
+      {
+        "intersection_area_m2": 14.697388,
+        "left_id": "relation/11971662",
+        "right_id": "relation/8825736"
+      },
+      {
+        "intersection_area_m2": 52.809176,
+        "left_id": "relation/11971663",
+        "right_id": "relation/11971672"
+      },
+      {
+        "intersection_area_m2": 223.945897,
+        "left_id": "relation/11971663",
+        "right_id": "relation/11971665"
+      },
+      {
+        "intersection_area_m2": 16.660495,
+        "left_id": "relation/11971666",
+        "right_id": "relation/11971670"
+      },
+      {
+        "intersection_area_m2": 10.799562,
+        "left_id": "relation/11971668",
+        "right_id": "relation/11971670"
+      },
+      {
+        "intersection_area_m2": 19.403972,
+        "left_id": "relation/11971670",
+        "right_id": "relation/11971675"
+      },
+      {
+        "intersection_area_m2": 100.066337,
+        "left_id": "relation/11971670",
+        "right_id": "relation/11971671"
+      },
+      {
+        "intersection_area_m2": 0.428418,
+        "left_id": "relation/11971677",
+        "right_id": "relation/11971683"
+      },
+      {
+        "intersection_area_m2": 86.651272,
+        "left_id": "relation/11971679",
+        "right_id": "relation/12268748"
+      },
+      {
+        "intersection_area_m2": 1.174967,
+        "left_id": "relation/11971682",
+        "right_id": "relation/11971683"
+      },
+      {
+        "intersection_area_m2": 4.48146,
+        "left_id": "relation/11971683",
+        "right_id": "relation/11971684"
+      },
+      {
+        "intersection_area_m2": 8.988061,
+        "left_id": "relation/11971689",
+        "right_id": "relation/11971692"
+      },
+      {
+        "intersection_area_m2": 8.29413,
+        "left_id": "relation/11971751",
+        "right_id": "relation/11971752"
+      },
+      {
+        "intersection_area_m2": 459.642318,
+        "left_id": "relation/12268640",
+        "right_id": "relation/12268670"
+      },
+      {
+        "intersection_area_m2": 101.355165,
+        "left_id": "relation/12268641",
+        "right_id": "relation/12268801"
+      },
+      {
+        "intersection_area_m2": 0.01785,
+        "left_id": "relation/12268645",
+        "right_id": "relation/12268729"
+      },
+      {
+        "intersection_area_m2": 0.007395,
+        "left_id": "relation/12268645",
+        "right_id": "relation/12268728"
+      },
+      {
+        "intersection_area_m2": 0.116124,
+        "left_id": "relation/12268645",
+        "right_id": "relation/12268670"
+      },
+      {
+        "intersection_area_m2": 4.463986,
+        "left_id": "relation/12268647",
+        "right_id": "relation/12268662"
+      },
+      {
+        "intersection_area_m2": 0.062707,
+        "left_id": "relation/12268662",
+        "right_id": "relation/12268801"
+      },
+      {
+        "intersection_area_m2": 12.655934,
+        "left_id": "relation/12268662",
+        "right_id": "relation/12268663"
+      },
+      {
+        "intersection_area_m2": 20.860495,
+        "left_id": "relation/12268670",
+        "right_id": "relation/12268755"
+      },
+      {
+        "intersection_area_m2": 0.056973,
+        "left_id": "relation/12268769",
+        "right_id": "relation/12268770"
+      },
+      {
+        "intersection_area_m2": 0.122615,
+        "left_id": "relation/12268770",
+        "right_id": "relation/12268776"
+      }
+    ]
+  },
+  "metric_crs": "EPSG:32637",
+  "metric_crs_rationale": "WGS 84 / UTM zone 37N covers the Malatya AOI and provides metre units for area, perimeter, overlap and containment calculations.",
+  "outputs": {
+    "geoparquet": {
+      "files": {
+        "buildings": {
+          "path": "data/processed/sprint_00-14/buildings.parquet",
+          "sha256": "1009db263a8cfd234f12fd0e973aba36c4c9e6bbc4024938d25f1ab1c88c180c"
+        },
+        "neighborhoods": {
+          "path": "data/processed/sprint_00-14/neighborhoods.parquet",
+          "sha256": "9c5afb4da58e42872194dedf9596e83bbd70c1339f7c8d56c8f9ad15de17c33e"
+        }
+      },
+      "layers": {
+        "buildings": {
+          "crs": "EPSG:32637",
+          "empty_geometry_count": 0,
+          "feature_count": 3617,
+          "geometry_types": [
+            "MultiPolygon",
+            "Polygon"
+          ],
+          "invalid_geometry_count": 0,
+          "null_geometry_count": 0
+        },
+        "neighborhoods": {
+          "crs": "EPSG:32637",
+          "empty_geometry_count": 0,
+          "feature_count": 87,
+          "geometry_types": [
+            "Polygon"
+          ],
+          "invalid_geometry_count": 0,
+          "null_geometry_count": 0
+        }
+      }
+    },
+    "gpkg": {
+      "layers": {
+        "buildings": {
+          "crs": "EPSG:32637",
+          "empty_geometry_count": 0,
+          "feature_count": 3617,
+          "geometry_types": [
+            "MultiPolygon"
+          ],
+          "invalid_geometry_count": 0,
+          "null_geometry_count": 0
+        },
+        "neighborhoods": {
+          "crs": "EPSG:32637",
+          "empty_geometry_count": 0,
+          "feature_count": 87,
+          "geometry_types": [
+            "Polygon"
+          ],
+          "invalid_geometry_count": 0,
+          "null_geometry_count": 0
+        }
+      },
+      "path": "data/processed/sprint_00-14/sprint_00-14.gpkg",
+      "sha256": "ddf01f08e76f2afe6e8ab475be940fa449f2265a94047dc288687c6926826df8"
+    }
+  },
+  "pipeline_version": 1,
+  "review_thresholds": {
+    "building_area_max_m2": 100000.0,
+    "building_area_min_m2": 1.0,
+    "full_containment_ratio": 0.999999
+  },
+  "semantics": {
+    "building_layer": "Copernicus mapped damage polygons with geometry-derived metrics; official assessment records are not joined or transferred.",
+    "building_level_official_label_transfer": false,
+    "neighborhood_layer": "Reviewed neighborhood boundaries with counts and density of matched Copernicus polygons; official damage aggregates are intentionally excluded."
+  },
+  "sources": {
+    "buildings": {
+      "bounds": [
+        38.212213,
+        38.289296,
+        38.364381,
+        38.397501
+      ],
+      "crs": "EPSG:4326",
+      "duplicate_id_row_count": 0,
+      "empty_geometry_count": 0,
+      "feature_count": 3617,
+      "geometry_types": [
+        "MultiPolygon",
+        "Polygon"
+      ],
+      "invalid_geometry_count": 0,
+      "null_geometry_count": 0,
+      "path": "data/dashboard/sprint_00-12/copernicus_damage_polygons.geojson",
+      "sha256": "82f15fe31f22ccc3ad701e72316f29971370e56df1e01eb06ec51c44b96a6ca5"
+    },
+    "neighborhoods": {
+      "bounds": [
+        38.195343,
+        38.2591938,
+        38.4263348,
+        38.4305135
+      ],
+      "crs": "EPSG:4326",
+      "duplicate_id_row_count": 0,
+      "empty_geometry_count": 0,
+      "feature_count": 87,
+      "geometry_types": [
+        "Polygon"
+      ],
+      "invalid_geometry_count": 0,
+      "null_geometry_count": 0,
+      "path": "data/dashboard/sprint_00-12/aoi05_neighborhoods.geojson",
+      "sha256": "98dd5a12a75b98eba4bb2a87c3abd39f6d9ba991bea0586d3c423522ecaf265e"
+    }
+  },
+  "sprint": "00-14",
+  "valid": true
+}

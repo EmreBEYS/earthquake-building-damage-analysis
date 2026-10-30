@@ -1,0 +1,14 @@
+{
+  "sprint": "00-14",
+  "pipeline_version": 1,
+  "metric_crs": "EPSG:32637",
+  "buildings_source": "data/dashboard/sprint_00-12/copernicus_damage_polygons.geojson",
+  "neighborhoods_source": "data/dashboard/sprint_00-12/aoi05_neighborhoods.geojson",
+  "output_directory": "data/processed/sprint_00-14",
+  "report_path": "reports/sprint_00-14/validation_report.json",
+  "review_thresholds": {
+    "building_area_min_m2": 1.0,
+    "building_area_max_m2": 100000.0,
+    "full_containment_ratio": 0.999999
+  }
+}
