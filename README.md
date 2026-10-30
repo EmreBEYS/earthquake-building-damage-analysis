@@ -123,6 +123,9 @@ The project follows a reproducible analytical workflow.
 | 00-09 | Multi-source validation and dataset integration | Completed |
 | 00-10 | Exploratory analysis and machine-learning training | Completed |
 | 00-11 | Interactive dashboard and spatial visualization | In progress |
+| 00-12 | Audited geospatial dashboard layers | Completed |
+| 00-13 | Sentinel-2 temporal GeoTIFF acquisition | Completed |
+| 00-14 | Geometry validation, metric features and GeoPackage/GeoParquet | Completed |
 
 ### Sprint 00-08 — Official Damage Dataset Extraction
 
@@ -378,6 +381,18 @@ Sprint 00-13 adds a keyless, reproducible Earth Search public STAC workflow:
 The Streamlit `Uydu · Zaman Serisi` page shows the reviewed acquisition plan and local file
 availability without claiming that satellite pixels are official or building-level damage
 records. See [`docs/sprints/sprint-00-13.md`](docs/sprints/sprint-00-13.md).
+
+## Sprint 00-14 — Geometry Validation and Metric Features
+
+Sprint 00-14 validates the committed Copernicus damage polygons and reviewed neighborhood
+boundaries, computes area and perimeter in EPSG:32637, assigns polygons to neighborhoods and
+computes matched-polygon density per km². Duplicate, overlap, containment and match conditions
+remain visible as quality flags. Official assessment labels are never transferred to individual
+Copernicus polygons.
+
+The reproducible pipeline writes a two-layer GeoPackage and equivalent GeoParquet files, then
+reopens every output to verify layer names, CRS, feature counts and geometry validity. See
+[`docs/sprints/sprint-00-14.md`](docs/sprints/sprint-00-14.md).
 
 ## Repository Structure
 

@@ -51,6 +51,9 @@ reports/figures/*
 !data/external/.gitkeep
 !data/interim/.gitkeep
 !data/processed/.gitkeep
+!data/processed/sprint_00-14/
+!data/processed/sprint_00-14/*.gpkg
+!data/processed/sprint_00-14/*.parquet
 !models/.gitkeep
 !reports/figures/.gitkeep
 data/raw/official_damage/
