@@ -41,6 +41,18 @@ claim that ignored datasets exist:
 python scripts/check_project.py
 ```
 
+## `14_evaluate_existing_models.py`
+
+Re-evaluates the preserved Sprint 00-10 Dummy, Logistic Regression and Random Forest artifacts.
+It reproduces the original stratified holdout, fits in-memory clones for a 1 km grouped spatial
+holdout, audits leakage and class imbalance, and writes the Sprint 00-16 model evaluation report.
+The script records model hashes and modification times before and after evaluation and fails if
+an artifact changes.
+
+```powershell
+python scripts/14_evaluate_existing_models.py
+```
+
 ## `prepare_aoi_boundaries.py`
 
 This script will not run unless the boundary source has a passing validation report. It selects
@@ -79,3 +91,4 @@ python scripts/prepare_aoi_boundaries.py
 
 When a source changes, create a new versioned destination and update the inventory/checksum after
 review. Do not bypass the overwrite refusal.
+

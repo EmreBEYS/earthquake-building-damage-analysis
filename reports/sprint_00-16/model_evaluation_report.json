@@ -1,0 +1,228 @@
+{
+  "sprint": "00-16",
+  "generated_at_utc": "2026-11-02T16:24:32+00:00",
+  "evaluation_scope": "exploratory_reproducibility_and_generalization_audit",
+  "conclusion": "Spatial değerlendirmede en yüksek macro-F1 dummy için 0.2397. Hiçbir model operasyonel hasar sınıflandırması için yeterli kanıt sunmuyor; azınlık sınıfları ve coğrafi genelleme zayıf.",
+  "dataset": {
+    "rows": 3619,
+    "spatially_matched_rows": 3617,
+    "features": [
+      "building_area_m2",
+      "building_perimeter_m",
+      "shape_index"
+    ],
+    "target": "damage_class",
+    "sha256": "cc635a7e1b91bfeabb6ad876a70e9ffa4dedeb27985d25f22fe46444169e8e19"
+  },
+  "model_metrics": [
+    {
+      "split": "stratified_random",
+      "model": "dummy",
+      "train_rows": 2895,
+      "test_rows": 724,
+      "accuracy": 0.9033149171270718,
+      "macro_f1": 0.23730043541364296,
+      "weighted_f1": 0.8574280925995719,
+      "macro_f1_ci_lower": 0.23440939104915628,
+      "macro_f1_ci_upper": 0.24012921751615218
+    },
+    {
+      "split": "stratified_random",
+      "model": "logistic_regression",
+      "train_rows": 2895,
+      "test_rows": 724,
+      "accuracy": 0.26933701657458564,
+      "macro_f1": 0.1828260736005636,
+      "weighted_f1": 0.36140593937516924,
+      "macro_f1_ci_lower": 0.15741677340733023,
+      "macro_f1_ci_upper": 0.21145422619225762
+    },
+    {
+      "split": "stratified_random",
+      "model": "random_forest",
+      "train_rows": 2895,
+      "test_rows": 724,
+      "accuracy": 0.9005524861878453,
+      "macro_f1": 0.3082706766917293,
+      "weighted_f1": 0.8636646865783242,
+      "macro_f1_ci_lower": 0.25746706548403936,
+      "macro_f1_ci_upper": 0.3655988971046316
+    },
+    {
+      "split": "spatial_1km_groups",
+      "model": "dummy",
+      "train_rows": 3034,
+      "test_rows": 583,
+      "accuracy": 0.9210977701543739,
+      "macro_f1": 0.23973214285714287,
+      "weighted_f1": 0.8832669688801764,
+      "macro_f1_ci_lower": 0.2364376130198915,
+      "macro_f1_ci_upper": 0.24283755843221863
+    },
+    {
+      "split": "spatial_1km_groups",
+      "model": "logistic_regression",
+      "train_rows": 3034,
+      "test_rows": 583,
+      "accuracy": 0.27615780445969124,
+      "macro_f1": 0.16789472866769203,
+      "weighted_f1": 0.386289542967632,
+      "macro_f1_ci_lower": 0.14402433851925187,
+      "macro_f1_ci_upper": 0.19470179316253966
+    },
+    {
+      "split": "spatial_1km_groups",
+      "model": "random_forest",
+      "train_rows": 3034,
+      "test_rows": 583,
+      "accuracy": 0.9142367066895368,
+      "macro_f1": 0.23879928315412186,
+      "weighted_f1": 0.8798299489108983,
+      "macro_f1_ci_lower": 0.2355948572035021,
+      "macro_f1_ci_upper": 0.24180690876882197
+    }
+  ],
+  "reported_random_metrics_reproduced": true,
+  "leakage_audit": {
+    "feature_contract": {
+      "feature_columns": [
+        "building_area_m2",
+        "building_perimeter_m",
+        "shape_index"
+      ],
+      "forbidden_feature_columns": [],
+      "target_in_features": false,
+      "passed": true
+    },
+    "random_split": {
+      "method": "stratified_random",
+      "train_rows": 2895,
+      "test_rows": 724,
+      "record_id_overlap": 0,
+      "exact_feature_vector_overlap": 0,
+      "test_class_counts": {
+        "no_visible_damage": 654,
+        "damaged": 31,
+        "destroyed": 20,
+        "possibly_damaged": 19
+      }
+    },
+    "spatial_split": {
+      "method": "group_shuffle_split_1km_grid",
+      "train_groups": 72,
+      "test_groups": 18,
+      "group_overlap": 0,
+      "train_rows": 3034,
+      "test_rows": 583,
+      "record_id_overlap": 0,
+      "exact_feature_vector_overlap": 1,
+      "test_class_counts": {
+        "no_visible_damage": 537,
+        "damaged": 26,
+        "possibly_damaged": 13,
+        "destroyed": 7
+      }
+    }
+  },
+  "class_imbalance": {
+    "counts": {
+      "no_visible_damage": 3267,
+      "damaged": 157,
+      "destroyed": 102,
+      "possibly_damaged": 93
+    },
+    "shares": {
+      "no_visible_damage": 0.9027355623100304,
+      "damaged": 0.04338214976512849,
+      "destroyed": 0.028184581376070737,
+      "possibly_damaged": 0.025697706548770377
+    },
+    "majority_to_minority_ratio": 35.12903225806452
+  },
+  "uncertainty": [
+    {
+      "split": "stratified_random",
+      "model": "dummy",
+      "mean_normalized_entropy": 7.474338213496567e-14,
+      "median_max_probability": 1.0,
+      "low_confidence_fraction": 0.0,
+      "multiclass_log_loss": 3.339384458071475
+    },
+    {
+      "split": "stratified_random",
+      "model": "logistic_regression",
+      "mean_normalized_entropy": 0.8584898021728021,
+      "median_max_probability": 0.36393439838804686,
+      "low_confidence_fraction": 0.8950276243093923,
+      "multiclass_log_loss": 1.2988450759051746
+    },
+    {
+      "split": "stratified_random",
+      "model": "random_forest",
+      "mean_normalized_entropy": 0.1901099261184341,
+      "median_max_probability": 0.9566666666666667,
+      "low_confidence_fraction": 0.020718232044198894,
+      "multiclass_log_loss": 1.3752930422518632
+    },
+    {
+      "split": "spatial_1km_groups",
+      "model": "dummy",
+      "mean_normalized_entropy": 7.474338213496567e-14,
+      "median_max_probability": 1.0,
+      "low_confidence_fraction": 0.0,
+      "multiclass_log_loss": 2.725186473697927
+    },
+    {
+      "split": "spatial_1km_groups",
+      "model": "logistic_regression",
+      "mean_normalized_entropy": 0.8336163935303336,
+      "median_max_probability": 0.39589726954316173,
+      "low_confidence_fraction": 0.8936535162950258,
+      "multiclass_log_loss": 1.2444146831599532
+    },
+    {
+      "split": "spatial_1km_groups",
+      "model": "random_forest",
+      "mean_normalized_entropy": 0.17610287014606035,
+      "median_max_probability": 0.96,
+      "low_confidence_fraction": 0.012006861063464836,
+      "multiclass_log_loss": 1.213588989931293
+    }
+  ],
+  "model_preservation": {
+    "all_preserved": true,
+    "models": {
+      "dummy": {
+        "path": "models/dummy.joblib",
+        "sha256_before": "9645301f967940e34cc890228a9b196bdaeb6dd34613fb843900b250d325a2a2",
+        "mtime_ns_before": 1792916259719162900,
+        "sha256_after": "9645301f967940e34cc890228a9b196bdaeb6dd34613fb843900b250d325a2a2",
+        "mtime_ns_after": 1792916259719162900,
+        "preserved": true
+      },
+      "logistic_regression": {
+        "path": "models/logistic_regression.joblib",
+        "sha256_before": "d1b309fc84ba5efc0f412a95ef39406bc771301eb472626b6f8886d9b33cd590",
+        "mtime_ns_before": 1792916259759414700,
+        "sha256_after": "d1b309fc84ba5efc0f412a95ef39406bc771301eb472626b6f8886d9b33cd590",
+        "mtime_ns_after": 1792916259759414700,
+        "preserved": true
+      },
+      "random_forest": {
+        "path": "models/random_forest.joblib",
+        "sha256_before": "ba7c5087b8bac2d283374934c3b75380a9c90bd1ffc409fc4c53e75e84922818",
+        "mtime_ns_before": 1792916260435087900,
+        "sha256_after": "ba7c5087b8bac2d283374934c3b75380a9c90bd1ffc409fc4c53e75e84922818",
+        "mtime_ns_after": 1792916260435087900,
+        "preserved": true
+      }
+    }
+  },
+  "limitations": [
+    "Copernicus labels are mapped-damage observations, not official safety decisions.",
+    "Two source records lack valid Sprint 00-14 polygon geometry and are excluded from the spatial split.",
+    "Bootstrap intervals quantify resampling variation, not deployment uncertainty.",
+    "One spatial holdout is a stress test and does not establish external validity."
+  ]
+}
+
