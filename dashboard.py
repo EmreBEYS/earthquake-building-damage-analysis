@@ -20,7 +20,12 @@ from earthquake_damage.geospatial_layers import (
     filter_feature_collection,
     load_map_layers,
 )
-from earthquake_damage.sprint_00_15 import RealDamageMapError, load_real_damage_map
+from earthquake_damage.sprint_00_15 import (
+    OFFICIAL_SEVERE_RATIO_BANDS,
+    RealDamageMapError,
+    load_real_damage_map,
+    official_severe_ratio_band,
+)
 
 st.set_page_config(
     page_title="Malatya Deprem Hasar Araştırması",
@@ -119,6 +124,7 @@ elif page == "Gerçek Hasar Haritası":
             default=[item["label"] for item in official_classes],
         )
         min_official = st.slider("En az resmî kayıt", 0, 3_000, 0, 50)
+        min_severe_percent = st.slider("En az ağır/acil/yıkık payı (%)", 0, 100, 0, 1)
         show_copernicus = st.checkbox("Copernicus poligonları", value=True)
         selected_copernicus = st.multiselect(
             "Copernicus hasar sınıfı", copernicus_grades, default=copernicus_grades
@@ -130,30 +136,32 @@ elif page == "Gerçek Hasar Haritası":
     for feature in official_features:
         properties = {**feature["properties"]}
         selected_count = sum(int(properties[key]) for key in selected_keys)
-        if properties["official_total"] < min_official or not selected_count:
-            continue
-        dominant_key = max(
-            selected_keys,
-            key=lambda key: (
-                int(properties[key]),
-                -next(i for i, item in enumerate(official_classes) if item["key"] == key),
-            ),
+        severe_count = sum(
+            int(properties[key]) for key in ("heavy_damage", "urgent_demolition", "destroyed")
         )
+        severe_ratio = severe_count / properties["official_total"]
+        if (
+            properties["official_total"] < min_official
+            or severe_ratio < min_severe_percent / 100
+            or not selected_count
+        ):
+            continue
+        severe_band = official_severe_ratio_band(severe_ratio)
         properties["display_count"] = selected_count
         properties["display_ratio"] = selected_count / properties["official_total"]
-        properties["display_dominant_class"] = dominant_key
+        properties["display_severe_count"] = severe_count
+        properties["display_severe_ratio"] = severe_ratio
+        properties["display_severe_band"] = severe_band["key"]
         visible_official.append({**feature, "properties": properties})
         stats_rows.append(properties)
 
     figure = go.Figure()
     if show_official:
-        for item in official_classes:
-            if item["key"] not in selected_keys:
-                continue
+        for band in OFFICIAL_SEVERE_RATIO_BANDS:
             features = [
                 feature
                 for feature in visible_official
-                if feature["properties"]["display_dominant_class"] == item["key"]
+                if feature["properties"]["display_severe_band"] == band["key"]
             ]
             if not features:
                 continue
@@ -168,7 +176,7 @@ elif page == "Gerçek Hasar Haritası":
                     locations=[value["neighborhood_id"] for value in properties],
                     z=[1] * len(properties),
                     featureidkey="properties.neighborhood_id",
-                    colorscale=[[0, item["color"]], [1, item["color"]]],
+                    colorscale=[[0, band["color"]], [1, band["color"]]],
                     showscale=False,
                     marker={"opacity": 0.52, "line": {"width": 1.2, "color": "#ffffff"}},
                     customdata=[
@@ -177,15 +185,18 @@ elif page == "Gerçek Hasar Haritası":
                             value["official_total"],
                             value["display_count"],
                             value["display_ratio"],
+                            value["display_severe_count"],
+                            value["display_severe_ratio"],
                         ]
                         for value in properties
                     ],
                     hovertemplate=(
                         "<b>%{customdata[0]}</b><br>Resmî toplam: %{customdata[1]:,}"
                         "<br>Seçili sınıflar: %{customdata[2]:,} (%{customdata[3]:.1%})"
-                        f"<br>Baskın seçili sınıf: {item['label']}<extra></extra>"
+                        "<br>Ağır + acil + yıkık: %{customdata[4]:,} (%{customdata[5]:.1%})"
+                        f"<br>Eşik: {band['label']}<extra></extra>"
                     ),
-                    name=f"Resmî · {item['label']}",
+                    name=f"Resmî kritik pay · {band['label']}",
                 )
             )
 
@@ -286,7 +297,7 @@ elif page == "Gerçek Hasar Haritası":
         }
         st.dataframe(
             stats_frame[display_columns]
-            .sort_values("official_total", ascending=False)
+            .sort_values("severe_ratio", ascending=False)
             .rename(columns=renamed)
             .style.format({"Ağır/acil/yıkık payı": "{:.1%}"}),
             use_container_width=True,
@@ -764,3 +775,4 @@ else:
 - Arayüz yalnızca sürümlenmiş rapor çıktılarını okur; model çıkarımı veya bina düzeyi risk tahmini yapmaz.
 """
     )
+

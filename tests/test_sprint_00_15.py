@@ -9,6 +9,7 @@ from earthquake_damage.sprint_00_15 import (
     coordinate_evidence_columns,
     load_config,
     load_real_damage_map,
+    official_severe_ratio_band,
 )
 
 
@@ -63,3 +64,12 @@ def test_config_is_valid_json_and_exposes_satellite_attribution() -> None:
     assert json.loads(json.dumps(config))["sprint"] == "00-15"
     assert config["satellite_basemap"]["provider"] == "Esri World Imagery"
     assert "attribution" in config["satellite_basemap"]
+
+
+@pytest.mark.parametrize(
+    ("ratio", "expected"),
+    [(0.0, "low"), (0.0999, "low"), (0.10, "elevated"), (0.25, "high"), (0.40, "very_high"), (1.0, "very_high")],
+)
+def test_official_severe_ratio_thresholds(ratio: float, expected: str) -> None:
+    assert official_severe_ratio_band(ratio)["key"] == expected
+

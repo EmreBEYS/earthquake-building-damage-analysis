@@ -15,6 +15,9 @@ point is created.
 ## Map controls
 
 - six official damage-class filters and a minimum-record threshold;
+- neighborhood colors based on the combined `heavy + urgent demolition + destroyed` record share,
+  using `%0–10`, `%10–25`, `%25–40` and `%40+` threshold bands instead of a dominant class;
+- an optional minimum combined severe-share threshold;
 - independent Copernicus damage-class filters;
 - discrete legend entries prefixed with `Resmî` and `Copernicus`;
 - neighborhood statistics for all six official classes;
@@ -49,3 +52,4 @@ Expected validated totals are 46,563 official records, 87 official neighborhood 
 3,617 displayable Copernicus polygons. The six official class totals are 10,131 no-damage, 20,706
 slight-damage, 1,593 moderate-damage, 12,276 heavy-damage, 955 urgent-demolition and 902 destroyed
 records.
+
