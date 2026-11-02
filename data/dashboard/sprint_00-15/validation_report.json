@@ -1,0 +1,40 @@
+{
+  "sprint": "00-15",
+  "valid": true,
+  "official_record_count": 46563,
+  "official_neighborhood_count": 87,
+  "official_class_totals": {
+    "no_damage": 10131,
+    "slight_damage": 20706,
+    "moderate_damage": 1593,
+    "heavy_damage": 12276,
+    "urgent_demolition": 955,
+    "destroyed": 902
+  },
+  "official_coordinate_evidence_columns": [],
+  "building_level_official_geolocation_claimed": false,
+  "copernicus_feature_count": 3617,
+  "sources_joined_at_building_level": false,
+  "geojson": {
+    "feature_count": 87,
+    "geometry_types": [
+      "Polygon"
+    ],
+    "bbox_wgs84": [
+      38.195343,
+      38.259194,
+      38.426335,
+      38.430514
+    ],
+    "crs": "EPSG:4326 (RFC 7946 longitude/latitude)"
+  },
+  "sha256": {
+    "config": "42f7d1c8fa7c7fe4075ef113167c3b97efeb45e55b01e9b840c5c469fd56ddb5",
+    "official_boundaries": "98dd5a12a75b98eba4bb2a87c3abd39f6d9ba991bea0586d3c423522ecaf265e",
+    "neighborhood_aliases": "d1ef610de1a119eb4b22c28b1a7ffb6b0d3e47914e8b7e1c62cb667a66235fd9",
+    "copernicus_damage": "82f15fe31f22ccc3ad701e72316f29971370e56df1e01eb06ec51c44b96a6ca5",
+    "official_layer": "3e11481a26272ba04a2270b5d8b77d3827c88785de433ec00ac7d389d94d9333",
+    "statistics": "277d61c763c8ede4ecc7cbdb7bfb2868895c39206ccbfc8ac35fc2d1fe7e0fa1",
+    "manifest": "954d29bdaa346b9c2c20a66cab4f052b7527daf59545caf45fc22a1c0c17add3"
+  }
+}
