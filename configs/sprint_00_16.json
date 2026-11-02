@@ -1,0 +1,19 @@
+{
+  "sprint": "00-16",
+  "dataset": "data/processed/building_features.csv",
+  "spatial_layer": "data/processed/sprint_00-14/buildings.parquet",
+  "reported_metrics": "reports/sprint_00-10/model_comparison.csv",
+  "model_directory": "models",
+  "models": ["dummy", "logistic_regression", "random_forest"],
+  "features": ["building_area_m2", "building_perimeter_m", "shape_index"],
+  "target": "damage_class",
+  "id_column": "building_id",
+  "spatial_id_column": "feature_id",
+  "random_state": 42,
+  "test_size": 0.2,
+  "spatial_grid_metres": 1000,
+  "bootstrap_iterations": 300,
+  "low_confidence_threshold": 0.6,
+  "output_root": "reports/sprint_00-16"
+}
+

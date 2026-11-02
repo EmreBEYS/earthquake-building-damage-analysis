@@ -126,6 +126,8 @@ The project follows a reproducible analytical workflow.
 | 00-12 | Audited geospatial dashboard layers | Completed |
 | 00-13 | Sentinel-2 temporal GeoTIFF acquisition | Completed |
 | 00-14 | Geometry validation, metric features and GeoPackage/GeoParquet | Completed |
+| 00-15 | Gerçek Hasar Haritası with audited source separation | Completed |
+| 00-16 | Existing-model evaluation, spatial split and leakage audit | Completed |
 
 ### Sprint 00-08 — Official Damage Dataset Extraction
 
@@ -414,6 +416,27 @@ uv run ruff check .
 See [`docs/sprints/sprint-00-15.md`](docs/sprints/sprint-00-15.md) for the data contract, source
 semantics, map controls, and validation results.
 
+## Sprint 00-16 — Existing Model Evaluation
+
+Sprint 00-16 re-evaluates the preserved Dummy, Logistic Regression and Random Forest artifacts
+without overwriting them. It reproduces the original stratified holdout, runs an independent
+1 km grouped spatial holdout with in-memory model clones, reports macro-F1 bootstrap intervals,
+and audits feature leakage, record/group overlap, class imbalance and predictive uncertainty.
+
+The original random-split metrics reproduce exactly. On the spatial holdout, the best macro-F1
+is only 0.2397; high accuracy is dominated by the 90.3% `no_visible_damage` majority class. The
+saved model hashes and modification times remain unchanged. Reproduce the report with:
+
+```powershell
+uv run python scripts/14_evaluate_existing_models.py
+uv run pytest -q
+uv run ruff check .
+```
+
+The main deliverables are `reports/sprint_00-16/model_evaluation_report.json` and
+`reports/sprint_00-16/model_evaluation_report.md`. See
+[`docs/sprints/sprint-00-16.md`](docs/sprints/sprint-00-16.md) for interpretation limits.
+
 ## Repository Structure
 
 ```text
@@ -593,3 +616,4 @@ The models are not designed to replace official damage assessment procedures.
 The repository's source code is governed by the terms of its [LICENSE](LICENSE) file.
 
 Dataset, map, imagery, and pretrained-model licenses are separate and must be reviewed before redistribution.
+
