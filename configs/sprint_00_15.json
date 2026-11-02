@@ -1,0 +1,26 @@
+{
+  "sprint": "00-15",
+  "official_records_glob": "data/processed/official_damage/person_*.csv",
+  "official_boundary_layer": "data/dashboard/sprint_00-12/aoi05_neighborhoods.geojson",
+  "neighborhood_aliases": "configs/neighborhood_aliases.json",
+  "copernicus_layer": "data/dashboard/sprint_00-12/copernicus_damage_polygons.geojson",
+  "output_root": "data/dashboard/sprint_00-15",
+  "expected_official_records": 46563,
+  "expected_neighborhoods": 87,
+  "expected_copernicus_features": 3617,
+  "official_mapping_policy": "building_only_with_coordinate_evidence_otherwise_neighborhood",
+  "severe_classes": ["heavy_damage", "urgent_demolition", "destroyed"],
+  "official_classes": [
+    {"key": "no_damage", "label": "Hasarsız", "source_label": "Hasarsiz", "color": "#2ca25f"},
+    {"key": "slight_damage", "label": "Az hasarlı", "source_label": "Az hasarli", "color": "#a6d96a"},
+    {"key": "moderate_damage", "label": "Orta hasarlı", "source_label": "Orta hasarli", "color": "#fdae61"},
+    {"key": "heavy_damage", "label": "Ağır hasarlı", "source_label": "Agir hasarli", "color": "#d73027"},
+    {"key": "urgent_demolition", "label": "Acil yıktırılacak", "source_label": "Acil yiktirilacak", "color": "#7f0000"},
+    {"key": "destroyed", "label": "Yıkık", "source_label": "Yikik", "color": "#252525"}
+  ],
+  "satellite_basemap": {
+    "provider": "Esri World Imagery",
+    "tile_url": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    "attribution": "Esri, Maxar, Earthstar Geographics, and the GIS User Community"
+  }
+}

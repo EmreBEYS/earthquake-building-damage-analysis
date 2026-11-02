@@ -394,6 +394,26 @@ The reproducible pipeline writes a two-layer GeoPackage and equivalent GeoParque
 reopens every output to verify layer names, CRS, feature counts and geometry validity. See
 [`docs/sprints/sprint-00-14.md`](docs/sprints/sprint-00-14.md).
 
+## Sprint 00-15 — Gerçek Hasar Haritası
+
+Sprint 00-15 adds a dedicated Streamlit **Gerçek Hasar Haritası** page. The page exposes all
+six official damage classes, a discrete legend, neighborhood statistics, an attributed satellite
+basemap, and the independent Copernicus EMSR648 polygon layer. The 46,563 official PDF records
+contain no coordinate or geometry field, so they are mapped only as aggregates on 87 reviewed
+neighborhood boundaries. Street and building-number text is not treated as coordinate evidence.
+
+The Sprint 00-15 manifest and validation report explicitly record that official and Copernicus
+sources are not joined at building level. Reproduce and verify the committed artifacts with:
+
+```powershell
+uv run python scripts/13_prepare_real_damage_map.py
+uv run pytest -q
+uv run ruff check .
+```
+
+See [`docs/sprints/sprint-00-15.md`](docs/sprints/sprint-00-15.md) for the data contract, source
+semantics, map controls, and validation results.
+
 ## Repository Structure
 
 ```text

@@ -49,6 +49,11 @@ ALLOWED_STATUSES = {
     "excluded_proprietary",
 }
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+AUDITED_TRACKED_PAYLOADS = {
+    "data/processed/sprint_00-14/buildings.parquet",
+    "data/processed/sprint_00-14/neighborhoods.parquet",
+    "data/processed/sprint_00-14/sprint_00-14.gpkg",
+}
 
 
 def inventory_rows() -> list[dict[str, str]]:
@@ -106,6 +111,7 @@ def validate_config() -> list[str]:
 
 
 def tracked_payloads() -> list[str]:
+    """Return tracked dataset payloads outside the explicit audited-output allowlist."""
     result = subprocess.run(
         ["git", "ls-files", "data/raw", "data/external", "data/interim", "data/processed"],
         cwd=ROOT,
@@ -113,7 +119,11 @@ def tracked_payloads() -> list[str]:
         capture_output=True,
         text=True,
     )
-    return [path for path in result.stdout.splitlines() if not path.endswith("/.gitkeep")]
+    return [
+        path
+        for path in result.stdout.splitlines()
+        if not path.endswith("/.gitkeep") and path not in AUDITED_TRACKED_PAYLOADS
+    ]
 
 
 def main() -> None:

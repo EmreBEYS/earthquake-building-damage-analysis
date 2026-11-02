@@ -20,6 +20,7 @@ from earthquake_damage.geospatial_layers import (
     filter_feature_collection,
     load_map_layers,
 )
+from earthquake_damage.sprint_00_15 import RealDamageMapError, load_real_damage_map
 
 st.set_page_config(
     page_title="Malatya Deprem Hasar Araştırması",
@@ -28,7 +29,7 @@ st.set_page_config(
 )
 
 st.title("Malatya Deprem Hasar Araştırması")
-st.caption("Sprint 00-13 · doğrulanmış coğrafi katmanlar ve zamansal uydu edinimi")
+st.caption("Sprint 00-15 · Gerçek Hasar Haritası ve doğrulanmış coğrafi katmanlar")
 
 st.warning(
     "Bu arayüz araştırma amaçlıdır. Sonuçlar bina güvenliği, tahliye, güçlendirme veya "
@@ -49,6 +50,7 @@ page = st.sidebar.radio(
     "Bölüm",
     [
         "Genel bakış",
+        "Gerçek Hasar Haritası",
         "Harita · Katmanlar",
         "Uydu · Zaman Serisi",
         "V1 · Copernicus",
@@ -84,6 +86,229 @@ if page == "Genel bakış":
         "46.563 kayıt, gözlenen tüm bina stokunun rastgele örneklemi değildir. "
         "Sınıf dengesizliği ve değerlendirme kapsamı model metriklerini etkiler."
     )
+
+elif page == "Gerçek Hasar Haritası":
+    st.header("Gerçek Hasar Haritası")
+    st.info(
+        "Resmî PDF kayıtlarında doğrulanmış koordinat bulunmadığı için resmî hasar yalnız "
+        "mahalle düzeyinde gösterilir. Copernicus EMSR648 poligonları bağımsız bir uydu-temelli "
+        "gözlem katmanıdır; iki kaynak bina düzeyinde birleştirilmez."
+    )
+    try:
+        real_map = load_real_damage_map()
+    except RealDamageMapError as error:
+        st.error(str(error))
+        st.info("`python scripts/13_prepare_real_damage_map.py` komutuyla 00-15 çıktılarını üretin.")
+        st.stop()
+
+    official_classes = real_map.config["official_classes"]
+    class_by_label = {item["label"]: item for item in official_classes}
+    official_features = real_map.official_neighborhoods["features"]
+    copernicus_features = real_map.copernicus_damage["features"]
+    copernicus_grades = sorted(
+        {feature["properties"]["damage_grade"] for feature in copernicus_features}
+    )
+
+    with st.sidebar:
+        st.subheader("Gerçek hasar filtreleri")
+        basemap = st.radio("Altlık", ["Uydu", "Sokak"], horizontal=True)
+        show_official = st.checkbox("Resmî mahalle hasarı", value=True)
+        selected_labels = st.multiselect(
+            "Resmî hasar sınıfı",
+            [item["label"] for item in official_classes],
+            default=[item["label"] for item in official_classes],
+        )
+        min_official = st.slider("En az resmî kayıt", 0, 3_000, 0, 50)
+        show_copernicus = st.checkbox("Copernicus poligonları", value=True)
+        selected_copernicus = st.multiselect(
+            "Copernicus hasar sınıfı", copernicus_grades, default=copernicus_grades
+        )
+
+    selected_keys = [class_by_label[label]["key"] for label in selected_labels]
+    visible_official: list[dict] = []
+    stats_rows: list[dict] = []
+    for feature in official_features:
+        properties = {**feature["properties"]}
+        selected_count = sum(int(properties[key]) for key in selected_keys)
+        if properties["official_total"] < min_official or not selected_count:
+            continue
+        dominant_key = max(
+            selected_keys,
+            key=lambda key: (
+                int(properties[key]),
+                -next(i for i, item in enumerate(official_classes) if item["key"] == key),
+            ),
+        )
+        properties["display_count"] = selected_count
+        properties["display_ratio"] = selected_count / properties["official_total"]
+        properties["display_dominant_class"] = dominant_key
+        visible_official.append({**feature, "properties": properties})
+        stats_rows.append(properties)
+
+    figure = go.Figure()
+    if show_official:
+        for item in official_classes:
+            if item["key"] not in selected_keys:
+                continue
+            features = [
+                feature
+                for feature in visible_official
+                if feature["properties"]["display_dominant_class"] == item["key"]
+            ]
+            if not features:
+                continue
+            collection = {
+                **real_map.official_neighborhoods,
+                "features": features,
+            }
+            properties = [feature["properties"] for feature in features]
+            figure.add_trace(
+                go.Choroplethmap(
+                    geojson=collection,
+                    locations=[value["neighborhood_id"] for value in properties],
+                    z=[1] * len(properties),
+                    featureidkey="properties.neighborhood_id",
+                    colorscale=[[0, item["color"]], [1, item["color"]]],
+                    showscale=False,
+                    marker={"opacity": 0.52, "line": {"width": 1.2, "color": "#ffffff"}},
+                    customdata=[
+                        [
+                            value["mahalle"],
+                            value["official_total"],
+                            value["display_count"],
+                            value["display_ratio"],
+                        ]
+                        for value in properties
+                    ],
+                    hovertemplate=(
+                        "<b>%{customdata[0]}</b><br>Resmî toplam: %{customdata[1]:,}"
+                        "<br>Seçili sınıflar: %{customdata[2]:,} (%{customdata[3]:.1%})"
+                        f"<br>Baskın seçili sınıf: {item['label']}<extra></extra>"
+                    ),
+                    name=f"Resmî · {item['label']}",
+                )
+            )
+
+    copernicus_colors = {
+        "Destroyed": "#7f0000",
+        "Damaged": "#d7301f",
+        "Possibly damaged": "#fc8d59",
+        "No visible damage": "#2ca25f",
+        "Unknown": "#756bb1",
+    }
+    visible_copernicus_count = 0
+    if show_copernicus:
+        for grade in selected_copernicus:
+            collection = filter_feature_collection(
+                real_map.copernicus_damage,
+                property_name="damage_grade",
+                accepted_values={grade},
+            )
+            features = collection["features"]
+            visible_copernicus_count += len(features)
+            if not features:
+                continue
+            color = copernicus_colors.get(grade, "#756bb1")
+            figure.add_trace(
+                go.Choroplethmap(
+                    geojson=collection,
+                    locations=[feature["properties"]["feature_id"] for feature in features],
+                    z=[1] * len(features),
+                    featureidkey="properties.feature_id",
+                    colorscale=[[0, color], [1, color]],
+                    showscale=False,
+                    marker={"opacity": 0.78, "line": {"width": 0.25, "color": color}},
+                    customdata=[
+                        [feature["properties"]["feature_id"]] for feature in features
+                    ],
+                    hovertemplate=(
+                        f"<b>Copernicus · {grade}</b>"
+                        "<br>Poligon kimliği: %{customdata[0]}<extra></extra>"
+                    ),
+                    name=f"Copernicus · {grade}",
+                )
+            )
+
+    map_layout: dict = {
+        "center": {"lat": 38.343, "lon": 38.288},
+        "zoom": 11,
+        "style": "carto-positron",
+    }
+    if basemap == "Uydu":
+        satellite = real_map.config["satellite_basemap"]
+        map_layout = {
+            "center": {"lat": 38.343, "lon": 38.288},
+            "zoom": 11,
+            "style": "white-bg",
+            "layers": [
+                {
+                    "sourcetype": "raster",
+                    "source": [satellite["tile_url"]],
+                    "below": "traces",
+                }
+            ],
+        }
+    figure.update_layout(
+        map=map_layout,
+        height=760,
+        margin={"l": 0, "r": 0, "t": 10, "b": 0},
+        legend={"orientation": "h", "yanchor": "bottom", "y": 1.01},
+    )
+    st.plotly_chart(figure, use_container_width=True)
+    if basemap == "Uydu":
+        st.caption(
+            "Uydu altlığı: "
+            f"{real_map.config['satellite_basemap']['attribution']}. "
+            "Altlık yalnız görsel bağlamdır; resmî hasar kanıtı değildir."
+        )
+
+    selected_total = sum(row["display_count"] for row in stats_rows)
+    col1, col2, col3, col4 = st.columns(4)
+    col1.metric("Görünen mahalle", len(stats_rows))
+    col2.metric("Seçili resmî kayıt", f"{selected_total:,}")
+    col3.metric("Resmî toplam", f"{real_map.validation['official_record_count']:,}")
+    col4.metric("Görünen Copernicus poligonu", f"{visible_copernicus_count:,}")
+
+    st.subheader("Mahalle istatistikleri")
+    if stats_rows:
+        stats_frame = pd.DataFrame(stats_rows)
+        display_columns = [
+            "mahalle",
+            "official_total",
+            *[item["key"] for item in official_classes],
+            "severe_ratio",
+        ]
+        renamed = {
+            "mahalle": "Mahalle",
+            "official_total": "Toplam",
+            "severe_ratio": "Ağır/acil/yıkık payı",
+            **{item["key"]: item["label"] for item in official_classes},
+        }
+        st.dataframe(
+            stats_frame[display_columns]
+            .sort_values("official_total", ascending=False)
+            .rename(columns=renamed)
+            .style.format({"Ağır/acil/yıkık payı": "{:.1%}"}),
+            use_container_width=True,
+            hide_index=True,
+        )
+    else:
+        st.warning("Seçili sınıf ve kayıt eşiğiyle gösterilecek mahalle bulunamadı.")
+
+    with st.expander("Kaynak ve eşleme kanıtı"):
+        st.json(
+            {
+                "resmî_eşleme_düzeyi": real_map.manifest["official_mapping_level"],
+                "resmî_koordinat_kanıtı": real_map.manifest[
+                    "official_coordinate_evidence"
+                ],
+                "bina_düzeyi_kaynak_birleştirme": real_map.manifest["source_separation"][
+                    "joined_at_building_level"
+                ],
+                "resmî_kayıt": real_map.validation["official_record_count"],
+                "copernicus_poligonu": real_map.validation["copernicus_feature_count"],
+            }
+        )
 
 elif page == "Harita · Katmanlar":
     st.header("AOI05 coğrafi katmanları")

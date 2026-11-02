@@ -1,0 +1,88 @@
+neighborhood_id,mahalle,mapping_level,coordinate_evidence,source,official_total,severe_count,severe_ratio,dominant_damage_class,no_damage,slight_damage,moderate_damage,heavy_damage,urgent_demolition,destroyed
+relation/8825735,Orduzu Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,3034,675,0.22247857613711272,slight_damage,1052,1258,49,631,29,15
+relation/8825736,Hanımınçiftliği Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,2182,754,0.34555453712190654,slight_damage,359,981,88,721,7,26
+relation/12268770,Yakınca Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,1577,601,0.38110336081166774,slight_damage,359,576,41,548,17,36
+relation/11971750,Özalper Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,1345,167,0.1241635687732342,slight_damage,388,741,49,151,6,10
+relation/12268801,Topsöğüt Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,1326,428,0.32277526395173456,slight_damage,386,493,19,399,13,16
+relation/11704518,Kiltepe Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,1314,736,0.5601217656012176,heavy_damage,97,466,15,591,116,29
+relation/11971752,Melekbaba Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,1291,408,0.3160340821068939,slight_damage,154,719,10,397,4,7
+relation/8825733,Göztepe Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,1262,533,0.4223454833597464,slight_damage,104,596,29,521,3,9
+relation/12268729,Tecde Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,1249,378,0.3026421136909528,no_damage,447,397,27,348,10,20
+relation/11704522,Çavuşoğlu Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,1054,420,0.3984819734345351,slight_damage,130,466,38,378,14,28
+relation/11971658,Taştepe Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,1043,572,0.548418024928092,heavy_damage,74,393,4,563,7,2
+relation/8825732,Tandoğan Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,997,373,0.3741223671013039,slight_damage,114,488,22,350,17,6
+relation/12268662,Hoca Ahmet Yesevi Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,944,59,0.0625,no_damage,639,223,23,51,0,8
+relation/11971679,Merkez Beydağı Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,926,169,0.18250539956803455,slight_damage,338,411,8,164,2,3
+relation/12268776,Gedik Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,917,119,0.1297709923664122,no_damage,478,301,19,111,3,5
+relation/11971659,Hidayet Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,898,233,0.2594654788418708,slight_damage,121,526,18,210,8,15
+relation/8825730,Çöşnük Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,884,304,0.3438914027149321,slight_damage,136,388,56,289,3,12
+relation/11971748,Zaviye Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,841,253,0.30083234244946494,slight_damage,163,365,60,180,42,31
+relation/12268755,Bostanbaşı Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,825,382,0.463030303030303,slight_damage,92,332,19,284,23,75
+relation/11971673,Fırat Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,819,111,0.13553113553113552,slight_damage,180,438,90,104,4,3
+relation/11971681,Başharık Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,777,105,0.13513513513513514,slight_damage,265,389,18,103,2,0
+relation/12268769,Mullakasım Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,748,388,0.5187165775401069,heavy_damage,137,209,14,270,53,65
+relation/12268663,Yaka Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,705,106,0.150354609929078,no_damage,313,282,4,96,4,6
+relation/12268744,Cemal Gürsel Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,704,232,0.32954545454545453,slight_damage,78,380,14,232,0,0
+relation/8825734,Battalgazi Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,661,198,0.29954614220877457,slight_damage,170,288,5,180,16,2
+relation/12268641,Seyran Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,632,91,0.1439873417721519,slight_damage,213,323,5,82,1,8
+relation/12268728,Aşağı Bağlar Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,604,117,0.19370860927152317,slight_damage,151,332,4,108,1,8
+relation/11971751,Kaynarca Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,591,370,0.626057529610829,heavy_damage,55,162,4,316,42,12
+relation/12272441,Hıroğlu Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,568,432,0.7605633802816901,heavy_damage,46,83,7,354,18,60
+relation/12268670,Karakavak Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,565,145,0.25663716814159293,slight_damage,119,293,8,135,6,4
+relation/11971674,Zafer Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,542,169,0.3118081180811808,slight_damage,16,299,58,152,9,8
+relation/8825731,Yıldıztepe Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,468,194,0.41452991452991456,slight_damage,34,201,39,192,2,0
+relation/11971680,Paşaköşkü Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,459,36,0.0784313725490196,slight_damage,79,319,25,34,1,1
+relation/12268640,Cevatpaşa Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,458,36,0.07860262008733625,slight_damage,72,334,16,35,1,0
+relation/12268647,Çarmuzu Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,452,93,0.20575221238938052,no_damage,289,69,1,88,3,2
+relation/12270505,Çamurlu Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,452,93,0.20575221238938052,no_damage,289,69,1,88,3,2
+relation/11971693,Hacı Abdi Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,442,112,0.25339366515837103,slight_damage,13,259,58,98,4,10
+relation/12268634,Cumhuriyet Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,428,55,0.12850467289719625,slight_damage,150,223,0,50,4,1
+relation/11704530,Yeşilkaynak Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,421,93,0.2209026128266033,slight_damage,49,275,4,80,4,9
+relation/11704523,İnönü Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,402,54,0.13432835820895522,slight_damage,56,269,23,45,4,5
+relation/11707535,Gazi Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,400,68,0.17,slight_damage,91,240,1,67,1,0
+relation/11971747,Şeyh Bayram Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,392,46,0.11734693877551021,slight_damage,117,197,32,37,4,5
+relation/12268639,Turgut Özal Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,368,40,0.10869565217391304,slight_damage,125,194,9,32,3,5
+relation/11971662,Selçuklu Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,361,134,0.37119113573407203,slight_damage,24,174,29,125,8,1
+relation/11971694,Çukurdere Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,357,73,0.20448179271708683,slight_damage,24,230,30,60,4,9
+relation/11971663,Sarıcıoğlu Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,350,79,0.2257142857142857,slight_damage,27,204,40,75,4,0
+relation/11971749,Koyunoğlu Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,346,56,0.16184971098265896,slight_damage,72,194,24,55,0,1
+relation/12268748,Yavuz Selim Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,343,10,0.029154518950437316,no_damage,270,60,3,10,0,0
+relation/11971661,Beylerbaşı Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,342,167,0.48830409356725146,slight_damage,17,156,2,133,34,0
+relation/12268645,Çilesiz Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,337,97,0.2878338278931751,slight_damage,31,203,6,72,18,7
+relation/11971683,İstiklal Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,337,87,0.258160237388724,slight_damage,59,182,9,65,14,8
+relation/11971660,Şehit Feyzi Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,327,212,0.6483180428134556,heavy_damage,16,89,10,193,18,1
+relation/11707536,Koşu Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,327,84,0.25688073394495414,slight_damage,71,171,1,78,3,3
+relation/11971677,Kernek Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,322,65,0.20186335403726707,slight_damage,39,194,24,54,6,5
+relation/11971678,Hasan Varol Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,306,46,0.1503267973856209,slight_damage,18,225,17,46,0,0
+relation/11704531,Merkez Fatih Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,302,26,0.08609271523178808,slight_damage,101,175,0,25,0,1
+relation/11971682,Saray Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,273,177,0.6483516483516484,heavy_damage,23,58,15,115,26,36
+relation/11716832,Aslanbey Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,271,61,0.22509225092250923,slight_damage,17,160,33,52,3,6
+relation/11971667,İskender Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,265,22,0.0830188679245283,slight_damage,10,228,5,21,1,0
+relation/11704521,Salköprü Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,257,171,0.6653696498054474,heavy_damage,7,62,17,120,16,35
+relation/11716831,B.Mustafa Paşa Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,255,48,0.18823529411764706,slight_damage,31,147,29,44,3,1
+relation/11971672,Üçbağlar Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,249,100,0.40160642570281124,slight_damage,5,121,23,83,2,15
+relation/12268642,Atatürk Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,247,10,0.04048582995951417,no_damage,144,93,0,9,0,1
+relation/11971668,Cirikpınar Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,222,120,0.5405405405405406,heavy_damage,36,59,7,101,2,17
+relation/12268638,Samanlı Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,210,39,0.18571428571428572,slight_damage,36,130,5,39,0,0
+relation/11971685,Cevherizade Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,191,36,0.18848167539267016,slight_damage,13,135,7,35,0,1
+relation/11971691,K.Mustafa Paşa Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,186,38,0.20430107526881722,slight_damage,24,94,30,36,1,1
+relation/11707615,Şifa Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,182,62,0.34065934065934067,slight_damage,31,70,19,42,11,9
+relation/11971692,Nuriye Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,174,60,0.3448275862068966,slight_damage,7,91,16,57,2,1
+relation/12268774,Hamidiye Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,171,100,0.5847953216374269,heavy_damage,26,31,14,80,15,5
+relation/11971684,Ferhadiye Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,168,65,0.3869047619047619,slight_damage,9,80,14,64,0,1
+relation/11704519,İlyas Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,157,47,0.29936305732484075,slight_damage,9,94,7,43,1,3
+relation/11707614,Niyazi Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,151,86,0.5695364238410596,heavy_damage,11,41,13,74,4,8
+relation/11971670,Yenihamam Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,144,133,0.9236111111111112,urgent_demolition,3,7,1,8,108,17
+relation/11971671,Dabakhane Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,142,127,0.8943661971830986,urgent_demolition,2,10,3,7,71,49
+relation/11971746,Abdulgaffar Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,141,27,0.19148936170212766,slight_damage,29,74,11,27,0,0
+relation/11704520,Bentbaşı Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,138,44,0.3188405797101449,no_damage,48,37,9,40,0,4
+relation/11971690,Ataköy Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,132,9,0.06818181818181818,slight_damage,3,104,16,9,0,0
+relation/11971664,Kırçuval Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,130,63,0.4846153846153846,heavy_damage,0,52,15,60,1,2
+relation/11971669,Halfettin Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,122,72,0.5901639344262295,urgent_demolition,14,26,10,17,34,21
+relation/11971665,Sancaktar Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,122,65,0.5327868852459017,heavy_damage,4,41,12,59,2,4
+relation/11971666,Akpınar Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,119,68,0.5714285714285714,heavy_damage,10,36,5,49,7,12
+relation/11971689,Kavaklıbağ Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,103,75,0.7281553398058253,heavy_damage,0,17,11,41,9,25
+relation/11971675,B.Hüseyinbey Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,101,33,0.32673267326732675,slight_damage,16,48,4,27,4,2
+relation/12268934,Yamaç Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,100,12,0.12,no_damage,51,37,0,12,0,0
+relation/11971688,İsmetiye Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,64,45,0.703125,heavy_damage,4,10,5,21,6,18
+relation/11716833,Şıkşık Mahallesi,neighborhood,False,Official Ministry damage-assessment PDF records,52,34,0.6538461538461539,heavy_damage,1,9,8,28,3,3

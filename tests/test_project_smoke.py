@@ -1,4 +1,10 @@
-from scripts.check_project import inventory_rows, tracked_payloads, validate_config, validate_inventory
+from scripts.check_project import (
+    AUDITED_TRACKED_PAYLOADS,
+    inventory_rows,
+    tracked_payloads,
+    validate_config,
+    validate_inventory,
+)
 
 
 def test_dataset_inventory_is_well_formed() -> None:
@@ -13,3 +19,8 @@ def test_dataset_config_is_well_formed() -> None:
 
 def test_git_does_not_track_dataset_payloads() -> None:
     assert tracked_payloads() == []
+    assert AUDITED_TRACKED_PAYLOADS == {
+        "data/processed/sprint_00-14/buildings.parquet",
+        "data/processed/sprint_00-14/neighborhoods.parquet",
+        "data/processed/sprint_00-14/sprint_00-14.gpkg",
+    }

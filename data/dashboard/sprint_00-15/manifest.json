@@ -1,0 +1,33 @@
+{
+  "sprint": "00-15",
+  "generated_at_utc": "2026-11-02T16:12:00+00:00",
+  "official_mapping_level": "neighborhood",
+  "official_coordinate_evidence": false,
+  "building_level_official_geolocation_claimed": false,
+  "source_separation": {
+    "joined_at_building_level": false,
+    "official": {
+      "role": "neighborhood aggregates from official PDF records",
+      "layer": "data/dashboard/sprint_00-15/official_damage_neighborhoods.geojson"
+    },
+    "copernicus": {
+      "role": "independent EMSR648 mapped-damage polygons",
+      "layer": "data/dashboard/sprint_00-12/copernicus_damage_polygons.geojson"
+    }
+  },
+  "satellite_basemap": {
+    "provider": "Esri World Imagery",
+    "tile_url": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    "attribution": "Esri, Maxar, Earthstar Geographics, and the GIS User Community"
+  },
+  "inputs": {
+    "official_records": "data/processed/official_damage/person_*.csv",
+    "official_boundaries": "data/dashboard/sprint_00-12/aoi05_neighborhoods.geojson",
+    "neighborhood_aliases": "configs/neighborhood_aliases.json",
+    "copernicus_damage": "data/dashboard/sprint_00-12/copernicus_damage_polygons.geojson"
+  },
+  "outputs": {
+    "official_layer": "data/dashboard/sprint_00-15/official_damage_neighborhoods.geojson",
+    "statistics": "data/dashboard/sprint_00-15/official_neighborhood_statistics.csv"
+  }
+}
