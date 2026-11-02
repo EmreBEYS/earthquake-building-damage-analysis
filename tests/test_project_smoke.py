@@ -1,5 +1,5 @@
 from scripts.check_project import (
-    AUDITED_TRACKED_PAYLOADS,
+    ALLOWED_TRACKED_DATA_PAYLOADS,
     inventory_rows,
     tracked_payloads,
     validate_config,
@@ -17,10 +17,11 @@ def test_dataset_config_is_well_formed() -> None:
     assert validate_config() == []
 
 
-def test_git_does_not_track_dataset_payloads() -> None:
-    assert tracked_payloads() == []
-    assert AUDITED_TRACKED_PAYLOADS == {
+def test_git_tracks_only_approved_dataset_payloads() -> None:
+    assert ALLOWED_TRACKED_DATA_PAYLOADS == {
         "data/processed/sprint_00-14/buildings.parquet",
         "data/processed/sprint_00-14/neighborhoods.parquet",
         "data/processed/sprint_00-14/sprint_00-14.gpkg",
     }
+    assert tracked_payloads() == []
+
