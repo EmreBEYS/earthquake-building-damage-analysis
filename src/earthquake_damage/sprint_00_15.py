@@ -22,9 +22,51 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 CONFIG_PATH = PROJECT_ROOT / "configs" / "sprint_00_15.json"
 OUTPUT_ROOT = PROJECT_ROOT / "data" / "dashboard" / "sprint_00-15"
 
+OFFICIAL_SEVERE_RATIO_BANDS = (
+    {
+        "key": "low",
+        "label": "Düşük · %0–10",
+        "minimum": 0.0,
+        "maximum": 0.10,
+        "color": "#2ca25f",
+    },
+    {
+        "key": "elevated",
+        "label": "Yükselmiş · %10–25",
+        "minimum": 0.10,
+        "maximum": 0.25,
+        "color": "#fee08b",
+    },
+    {
+        "key": "high",
+        "label": "Yüksek · %25–40",
+        "minimum": 0.25,
+        "maximum": 0.40,
+        "color": "#f46d43",
+    },
+    {
+        "key": "very_high",
+        "label": "Çok yüksek · %40+",
+        "minimum": 0.40,
+        "maximum": None,
+        "color": "#a50026",
+    },
+)
+
 
 class RealDamageMapError(RuntimeError):
     """Raised when Sprint 00-15 inputs or outputs violate their contract."""
+
+
+def official_severe_ratio_band(ratio: float) -> dict[str, Any]:
+    """Classify the combined heavy/urgent/destroyed official-record share."""
+    if not 0 <= ratio <= 1:
+        raise ValueError("Official severe-damage ratio must be between 0 and 1")
+    for band in OFFICIAL_SEVERE_RATIO_BANDS:
+        maximum = band["maximum"]
+        if maximum is None or ratio < maximum:
+            return band
+    raise AssertionError("The final severe-ratio band must be open-ended")
 
 
 @dataclass(frozen=True)
@@ -357,3 +399,4 @@ def load_real_damage_map(
     except GeospatialLayerError as error:
         raise RealDamageMapError(str(error)) from error
     return RealDamageMap(official, copernicus, stats, manifest, validation, config)
+
