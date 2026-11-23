@@ -1,0 +1,19 @@
+{
+  "sprint": "00-17",
+  "model_name": "random_forest",
+  "model_path": "models/random_forest.joblib",
+  "model_sha256": "ba7c5087b8bac2d283374934c3b75380a9c90bd1ffc409fc4c53e75e84922818",
+  "source_layer": "data/processed/sprint_00-14/buildings.parquet",
+  "output_layer": "data/dashboard/sprint_00-17/predicted_damage.geojson",
+  "manifest": "data/dashboard/sprint_00-17/manifest.json",
+  "id_column": "feature_id",
+  "observed_damage_column": "damage_grade",
+  "metric_crs": "EPSG:32637",
+  "output_crs": "EPSG:4326",
+  "features": [
+    "building_area_m2",
+    "building_perimeter_m",
+    "shape_index"
+  ],
+  "low_confidence_threshold": 0.6
+}

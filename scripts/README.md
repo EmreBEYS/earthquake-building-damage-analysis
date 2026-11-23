@@ -53,6 +53,23 @@ an artifact changes.
 python scripts/14_evaluate_existing_models.py
 ```
 
+## `15_generate_prediction_map.py`
+
+Creates `data/dashboard/sprint_00-17/predicted_damage.geojson` from the exact Random Forest
+artifact evaluated in Sprint 00-16. The model file is intentionally not committed. Restore
+`models/random_forest.joblib` with SHA-256
+`ba7c5087b8bac2d283374934c3b75380a9c90bd1ffc409fc4c53e75e84922818` before running:
+
+```powershell
+python scripts/15_generate_prediction_map.py
+streamlit run dashboard.py
+```
+
+The generator derives area, perimeter and shape index from geometry. Observed Copernicus damage
+is copied only to the output for visual comparison and never enters `model.predict`. If the model
+supports `predict_proba`, the output also contains per-class probabilities, maximum confidence
+and a configurable low-confidence flag.
+
 ## `prepare_aoi_boundaries.py`
 
 This script will not run unless the boundary source has a passing validation report. It selects

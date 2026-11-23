@@ -26,6 +26,7 @@ from earthquake_damage.sprint_00_15 import (
     load_real_damage_map,
     official_severe_ratio_band,
 )
+from earthquake_damage.sprint_00_17 import PredictionMapError, load_prediction_map
 
 st.set_page_config(
     page_title="Malatya Deprem Hasar Araştırması",
@@ -34,7 +35,7 @@ st.set_page_config(
 )
 
 st.title("Malatya Deprem Hasar Araştırması")
-st.caption("Sprint 00-15 · Gerçek Hasar Haritası ve doğrulanmış coğrafi katmanlar")
+st.caption("Sprint 00-17 · Gerçek ve tahmin edilen bina hasarı katmanları")
 
 st.warning(
     "Bu arayüz araştırma amaçlıdır. Sonuçlar bina güvenliği, tahliye, güçlendirme veya "
@@ -56,6 +57,7 @@ page = st.sidebar.radio(
     [
         "Genel bakış",
         "Gerçek Hasar Haritası",
+        "Bina Tahmin Haritası",
         "Harita · Katmanlar",
         "Uydu · Zaman Serisi",
         "V1 · Copernicus",
@@ -318,6 +320,116 @@ elif page == "Gerçek Hasar Haritası":
                 ],
                 "resmî_kayıt": real_map.validation["official_record_count"],
                 "copernicus_poligonu": real_map.validation["copernicus_feature_count"],
+            }
+        )
+
+elif page == "Bina Tahmin Haritası":
+    st.header("Bina Bazlı Gerçek / Tahmin Haritası")
+    st.warning(
+        "Tahminler araştırma amaçlıdır; resmî hasar veya bina güvenliği kararı değildir. "
+        "Sprint 00-16 mekânsal değerlendirmesinde azınlık sınıfları zayıf kalmıştır."
+    )
+    try:
+        prediction_map = load_prediction_map()
+    except PredictionMapError as error:
+        st.error(str(error))
+        st.info(
+            "Sprint 00-16'da doğrulanan random_forest.joblib dosyasını models/ altına "
+            "yerleştirip `python scripts/15_generate_prediction_map.py` komutunu çalıştırın."
+        )
+        st.stop()
+
+    features = prediction_map.predictions["features"]
+    observed_classes = sorted({item["properties"]["observed_damage"] for item in features})
+    predicted_classes = sorted({item["properties"]["predicted_damage"] for item in features})
+    with st.sidebar:
+        st.subheader("Tahmin katmanları")
+        show_observed = st.checkbox("Gerçek Copernicus hasarı", value=True)
+        show_predicted = st.checkbox("Model tahmini", value=True)
+        show_low_confidence = st.checkbox("Düşük güvenli tahminler", value=True)
+        selected_observed = st.multiselect(
+            "Gerçek hasar sınıfı", observed_classes, default=observed_classes
+        )
+        selected_predicted = st.multiselect(
+            "Tahmin sınıfı", predicted_classes, default=predicted_classes
+        )
+
+    colors = {
+        "Destroyed": "#7f0000",
+        "destroyed": "#7f0000",
+        "Damaged": "#d7301f",
+        "damaged": "#d7301f",
+        "Possibly damaged": "#fc8d59",
+        "possibly_damaged": "#fc8d59",
+        "No visible damage": "#2ca25f",
+        "no_visible_damage": "#2ca25f",
+    }
+    figure = go.Figure()
+
+    def add_damage_traces(property_name: str, values: list[str], *, prefix: str, opacity: float) -> None:
+        for value in values:
+            layer_features = [
+                item
+                for item in features
+                if item["properties"][property_name] == value
+                and (show_low_confidence or not item["properties"]["low_confidence"])
+            ]
+            if not layer_features:
+                continue
+            color = colors.get(value, "#756bb1")
+            figure.add_trace(
+                go.Choroplethmap(
+                    geojson={**prediction_map.predictions, "features": layer_features},
+                    locations=[item["properties"]["feature_id"] for item in layer_features],
+                    z=[1] * len(layer_features),
+                    featureidkey="properties.feature_id",
+                    colorscale=[[0, color], [1, color]],
+                    showscale=False,
+                    marker={"opacity": opacity, "line": {"width": 0.25, "color": color}},
+                    customdata=[
+                        [
+                            item["properties"]["feature_id"],
+                            item["properties"]["observed_damage"],
+                            item["properties"]["predicted_damage"],
+                            item["properties"]["confidence"],
+                            item["properties"]["low_confidence"],
+                        ]
+                        for item in layer_features
+                    ],
+                    hovertemplate=(
+                        "<b>%{customdata[0]}</b>"
+                        "<br>Gerçek: %{customdata[1]}"
+                        "<br>Tahmin: %{customdata[2]}"
+                        "<br>Güven: %{customdata[3]:.1%}"
+                        "<br>Düşük güven: %{customdata[4]}<extra></extra>"
+                    ),
+                    name=f"{prefix} · {value}",
+                )
+            )
+
+    if show_observed:
+        add_damage_traces("observed_damage", selected_observed, prefix="Gerçek", opacity=0.42)
+    if show_predicted:
+        add_damage_traces("predicted_damage", selected_predicted, prefix="Tahmin", opacity=0.78)
+    figure.update_layout(
+        map={"style": "carto-positron", "center": {"lat": 38.343, "lon": 38.288}, "zoom": 11},
+        height=760,
+        margin={"l": 0, "r": 0, "t": 10, "b": 0},
+        legend={"orientation": "h", "yanchor": "bottom", "y": 1.01},
+    )
+    st.plotly_chart(figure, use_container_width=True)
+
+    low_confidence_count = sum(item["properties"]["low_confidence"] for item in features)
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Bina", f"{len(features):,}")
+    col2.metric("Düşük güven", f"{low_confidence_count:,}")
+    col3.metric("Güven eşiği", f"{prediction_map.config['low_confidence_threshold']:.0%}")
+    with st.expander("Model ve veri sızıntısı kanıtı"):
+        st.json(
+            {
+                "model": prediction_map.manifest["model"],
+                "veri_sızıntısı": prediction_map.manifest["leakage_audit"],
+                "sınırlamalar": prediction_map.manifest["limitations"],
             }
         )
 
