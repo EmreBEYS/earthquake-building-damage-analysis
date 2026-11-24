@@ -1,13 +1,6 @@
 name: sprint-00-18 real data
 on:
   workflow_dispatch:
-  push:
-    branches: [sprint/00-18-building-change]
-    paths:
-      - .github/workflows/sprint-00-18-data.yml
-      - src/earthquake_damage/building_change_analysis.py
-      - configs/sprint_00_18.json
-      - scripts/16_analyze_building_change.py
 permissions:
   contents: read
 jobs:

@@ -50,3 +50,9 @@ Yöntem ve komutlar: `docs/sprints/sprint-00-18.md`.
 Ayrı veri edinme iş akışı gerçek kaynaklara erişimi GitHub ortamında da dener;
 başarılı sonuçları veya engel kanıtlarını indirilebilir artifact olarak saklar.
 İş akışı başarısızsa veri çıktılarının doğrulandığı anlamına gelmez.
+
+GitHub ortamındaki gerçek veri edinimi de `ConnectTimeout: timed out` ile durdu.
+Bu çalışma tam analiz başarısı olarak sunulmaz:
+https://github.com/EmreBEYS/earthquake-building-damage-analysis/actions/runs/45361362159
+Engel kanıtı artifact'i:
+https://github.com/EmreBEYS/earthquake-building-damage-analysis/actions/runs/45361362159/artifacts/14905131301

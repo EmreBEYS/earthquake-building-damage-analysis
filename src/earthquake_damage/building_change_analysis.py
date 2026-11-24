@@ -161,6 +161,7 @@ def prepare_frame(document, aoi, metric_crs):
 def run_analysis(root, config):
     import geopandas as gpd
     import pandas as pd
+    from importlib.metadata import version
     from shapely.geometry import box
 
     snapshots = [root / f"data/external/building_change/buildings_{year}.geojson"
@@ -246,7 +247,13 @@ def run_analysis(root, config):
         raise ValueError("Invalid output geometry")
     return {"status": "completed_mapping_change_only", "before": before_audit,
             "after": after_audit, "counts": changes.status.value_counts().to_dict(),
-            "inputs_sha256": {str(p.relative_to(root)): sha256(p) for p in snapshots},
+            "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+            "inputs_sha256": {str(p.relative_to(root)): sha256(p) for p in
+                              [*snapshots, district_path, root / config["neighborhoods"],
+                               root / config["copernicus"]]},
+            "outputs_sha256": {p.name: sha256(p) for p in output.iterdir() if p.is_file()},
+            "versions": {p: version(p) for p in
+                         ("geopandas", "shapely", "pyarrow", "pyproj", "pandas")},
             "config": config, "comparison_pairs": len(comparisons),
             "district_boundary_sha256": sha256(district_path),
             "source_semantics": "Mapping changes between December 31 snapshots; not earthquake damage",
