@@ -1,0 +1,34 @@
+name: sprint-00-18 real data
+on:
+  workflow_dispatch:
+  push:
+    branches: [sprint/00-18-building-change]
+    paths:
+      - .github/workflows/sprint-00-18-data.yml
+      - src/earthquake_damage/building_change_analysis.py
+      - configs/sprint_00_18.json
+      - scripts/16_analyze_building_change.py
+permissions:
+  contents: read
+jobs:
+  acquire-and-validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - run: uv sync --locked --all-extras
+      - name: Acquire real snapshots and validate outputs
+        run: uv run python scripts/16_analyze_building_change.py --acquire
+      - name: Preserve verified results or blocking evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sprint-00-18-data-and-validation
+          path: |
+            data/dashboard/sprint_00-18/
+            data/external/building_change/
+            reports/sprint_00-18/
+          if-no-files-found: error

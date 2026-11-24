@@ -40,3 +40,13 @@ Bu kesitler OSM haritalama değişimini gösterir; fiziksel deprem etkisini doğ
 bağımsız görüntü veya saha örneklemi gerekir.
 
 Yöntem ve komutlar: `docs/sprints/sprint-00-18.md`.
+
+## GitHub CI doğrulaması
+
+İlk geliştirme commit'i `1e3379e` için tam kilitli ortam doğrulandı:
+**55 test geçti**, Ruff başarılı ve `scripts/check_project.py` hatasız.
+Çalıştırma: https://github.com/EmreBEYS/earthquake-building-damage-analysis/actions/runs/45361012331
+
+Ayrı veri edinme iş akışı gerçek kaynaklara erişimi GitHub ortamında da dener;
+başarılı sonuçları veya engel kanıtlarını indirilebilir artifact olarak saklar.
+İş akışı başarısızsa veri çıktılarının doğrulandığı anlamına gelmez.
