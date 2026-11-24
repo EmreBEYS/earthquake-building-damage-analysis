@@ -109,3 +109,12 @@ python scripts/prepare_aoi_boundaries.py
 When a source changes, create a new versioned destination and update the inventory/checksum after
 review. Do not bypass the overwrite refusal.
 
+
+
+### 16 — 2022–2023 building mapping change
+
+`uv run python scripts/16_analyze_building_change.py --acquire` retrieves immutable ohsome
+snapshots and checksum-pinned district boundaries, then compares footprints in EPSG:32637.
+Without `--acquire`, it uses previously downloaded inputs. Failures produce a blocked audit and
+nonzero exit; missing observations are never replaced with fabricated change results.
+See `docs/sprints/sprint-00-18.md` for source semantics, thresholds and output paths.

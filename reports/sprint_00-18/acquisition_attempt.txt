@@ -1,0 +1,27 @@
+{
+  "status": "blocked",
+  "error_type": "ConnectError",
+  "reason": "[Errno 8] nodename nor servname provided, or not known",
+  "config": {
+    "timestamps": {
+      "2022": "2022-12-31T00:00:00Z",
+      "2023": "2023-12-31T00:00:00Z"
+    },
+    "endpoint": "https://api.ohsome.org/v1/elements/geometry",
+    "bbox": [
+      38.210286,
+      38.287227,
+      38.364463,
+      38.398576
+    ],
+    "metric_crs": "EPSG:32637",
+    "minimum_iou": 0.5,
+    "unchanged_iou": 0.9,
+    "neighborhoods": "data/dashboard/sprint_00-12/aoi05_neighborhoods.geojson",
+    "neighborhood_name_field": "mahalle",
+    "copernicus": "data/dashboard/sprint_00-12/copernicus_damage_polygons.geojson",
+    "output_directory": "data/dashboard/sprint_00-18",
+    "district_boundaries": "data/external/building_change/districts.geojson"
+  },
+  "results_generated": false
+}
