@@ -17,7 +17,10 @@
 - Yeni uydu testleriyle birlikte Streamlit AppTest dışındaki 56 test geçti; Ruff ve
   `scripts/check_project.py` başarılı. `python dashboard.py` çıplak açılış kontrolü tamamlandı.
   İki Streamlit AppTest Windows yerel çalıştırıcısında çıktı vermeden bekledi; CI doğrulaması
-  tamamlanmadan bunlar geçti olarak işaretlenmez.
+  ayrı değerlendirildi. Commit `9d7a971` için GitHub CI'nin push ve PR çalışmaları başarılıdır;
+  kilitli bağımlılık kurulumu, Ruff, tam pytest paketi (iki AppTest dâhil) ve proje kontrolü geçti:
+  https://github.com/EmreBEYS/earthquake-building-damage-analysis/actions/runs/45436474375 ve
+  https://github.com/EmreBEYS/earthquake-building-damage-analysis/actions/runs/45436597148.
 
 ## Doğrulanmış durum
 

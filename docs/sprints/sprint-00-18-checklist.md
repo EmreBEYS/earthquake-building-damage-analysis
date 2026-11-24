@@ -11,7 +11,7 @@
 - [x] EMSR648 AOI05 poligonlarıyla mekânsal örtüşme ve piksel ölçümleri üretildi.
 - [x] Büyük/ara rasterlar Git dışında tutuldu; kaynak URL, tarih, lisans ve SHA-256 kaydedildi.
 - [x] 56 algoritma/regresyon testi, Ruff, çıplak dashboard açılışı ve proje kontrolü geçti.
-- [ ] İki Streamlit AppTest Windows yerel çalıştırıcısında çıktı vermeden bekledi; GitHub CI sonucu bekleniyor.
+- [x] Tam pytest paketi ve iki Streamlit AppTest GitHub CI Linux ortamında geçti.
 - [x] Yöntem, yeniden üretim, kaynak, sınırlılık ve gerçek ölçümler belgelendi.
 - [ ] Tarihli ohsome 2022/2023 bina kesitleri edinilemedi; OSM değişim alt iş akışı engelli.
 - [ ] Spektral eşikler bağımsız saha/çok yüksek çözünürlüklü görüntüyle kalibre edilmedi.
