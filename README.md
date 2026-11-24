@@ -618,3 +618,20 @@ The repository's source code is governed by the terms of its [LICENSE](LICENSE) 
 
 Dataset, map, imagery, and pretrained-model licenses are separate and must be reviewed before redistribution.
 
+
+
+## Sprint 00-18 — 2022–2023 mapping change
+
+A conservative IoU pipeline compares real dated OSM footprints inside the pinned Battalgazi /
+Yeşilyurt district boundaries and AOI05 bounding box. Ambiguous overlaps stay uncertain;
+unmatched footprints never imply demolition, and newly mapped footprints never imply construction.
+The dashboard offers separate pre-event, post-event, change, observed-damage and prediction layers.
+
+```bash
+uv run python scripts/16_analyze_building_change.py --acquire
+```
+
+Current status: implementation and local algorithm/UI checks are ready; real temporal outputs
+are **blocked by unavailable dated snapshots/network access**. No change counts are claimed.
+See [method](docs/sprints/sprint-00-18.md) and
+[verified work report](reports/sprint_00-18/sprint_00_18_report.md).

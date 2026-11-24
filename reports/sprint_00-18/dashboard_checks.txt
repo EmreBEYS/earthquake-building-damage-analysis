@@ -1,0 +1,5 @@
+PASS startup
+PASS 2022–2023 Değişim Analizi
+PASS Harita · Katmanlar
+PASS Bina Tahmin Haritası
+PASS Gerçek Hasar Haritası

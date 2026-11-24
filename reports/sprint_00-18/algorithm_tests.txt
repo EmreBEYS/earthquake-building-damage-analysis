@@ -1,0 +1,12 @@
+test_changed_and_low_overlap_with_real_intersections (test_building_change_analysis.BuildingChangeTests.test_changed_and_low_overlap_with_real_intersections) ... ok
+test_conservation_and_order_invariance (test_building_change_analysis.BuildingChangeTests.test_conservation_and_order_invariance) ... ok
+test_duplicate_candidates_are_uncertain (test_building_change_analysis.BuildingChangeTests.test_duplicate_candidates_are_uncertain) ... ok
+test_identical_real_footprint (test_building_change_analysis.BuildingChangeTests.test_identical_real_footprint) ... ok
+test_repair_and_threshold_guards (test_building_change_analysis.BuildingChangeTests.test_repair_and_threshold_guards) ... ok
+test_unmatched_is_never_destroyed (test_building_change_analysis.BuildingChangeTests.test_unmatched_is_never_destroyed) ... ok
+test_wrong_date_and_duplicate_source_rejected (test_building_change_analysis.BuildingChangeTests.test_wrong_date_and_duplicate_source_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.050s
+
+OK

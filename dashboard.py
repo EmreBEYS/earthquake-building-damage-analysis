@@ -35,7 +35,7 @@ st.set_page_config(
 )
 
 st.title("Malatya Deprem Hasar Araştırması")
-st.caption("Sprint 00-17 · Gerçek ve tahmin edilen bina hasarı katmanları")
+st.caption("Sprint 00-18 · Mekânsal değişim ve ayrı hasar katmanları")
 
 st.warning(
     "Bu arayüz araştırma amaçlıdır. Sonuçlar bina güvenliği, tahliye, güçlendirme veya "
@@ -60,6 +60,7 @@ page = st.sidebar.radio(
         "Bina Tahmin Haritası",
         "Harita · Katmanlar",
         "Uydu · Zaman Serisi",
+        "2022–2023 Değişim Analizi",
         "V1 · Copernicus",
         "V2 · Resmî kayıtlar",
         "V3 · Mekânsal",
@@ -93,6 +94,66 @@ if page == "Genel bakış":
         "46.563 kayıt, gözlenen tüm bina stokunun rastgele örneklemi değildir. "
         "Sınıf dengesizliği ve değerlendirme kapsamı model metriklerini etkiler."
     )
+
+elif page == "2022–2023 Değişim Analizi":
+    st.header("2022–2023 Değişim Analizi")
+    st.info(
+        "Tarihli OSM kesitleri haritalama durumunu gösterir. Yeni eşleşmeyen kayıtlar "
+        "yeni haritalanmış, eski eşleşmeyen kayıtlar eşleşmemiş olarak gösterilir. "
+        "Bunlar inşaat veya yıkım kanıtı değildir."
+    )
+    root = Path(__file__).resolve().parent
+    output = root / "data/dashboard/sprint_00-18"
+    report_path = root / "reports/sprint_00-18/validation_report.json"
+    if report_path.exists():
+        audit = json.loads(report_path.read_text(encoding="utf-8"))
+        if audit.get("status") == "blocked":
+            st.warning("Analiz henüz üretilemedi: " + audit.get("reason", "Veri eksik"))
+    if not (output / "building_change_2022_2023.geojson").exists():
+        st.info("2022 ve 2023 bina kesitlerini edinmek için: "
+                "`python scripts/16_analyze_building_change.py --acquire`")
+    layer_paths = {
+        "2022 · Deprem öncesi": output / "buildings_2022.geojson",
+        "2023 · Deprem sonrası": output / "buildings_2023.geojson",
+        "Mekânsal değişim": output / "building_change_2022_2023.geojson",
+        "Gerçek hasar · Copernicus": root / "data/dashboard/sprint_00-12/"
+        "copernicus_damage_polygons.geojson",
+        "Tahmin edilen hasar": root / "data/dashboard/sprint_00-17/predicted_damage.geojson",
+    }
+    colors = ["#2878b5", "#37a055", "#c97513", "#c74343", "#8b52bc"]
+    figure = go.Figure()
+    for (label, path), color in zip(layer_paths.items(), colors):
+        visible = st.sidebar.checkbox(label, value=(label == "Mekânsal değişim" and path.exists()),
+                                      disabled=not path.exists(), key="change_" + label)
+        if not path.exists():
+            st.caption(label + ": veri dosyası henüz yok.")
+        if not visible or not path.exists():
+            continue
+        collection = json.loads(path.read_text(encoding="utf-8"))
+        features = collection["features"]
+        groups = sorted({f["properties"].get("status", label) for f in features})
+        for group in groups:
+            subset = [dict(f, id=str(i)) for i, f in enumerate(features)
+                      if f["properties"].get("status", label) == group]
+            figure.add_trace(go.Choroplethmapbox(
+                geojson={"type": "FeatureCollection", "features": subset},
+                locations=[f["id"] for f in subset], z=[1] * len(subset),
+                colorscale=[[0, color], [1, color]], showscale=False,
+                marker_opacity=0.55, marker_line_width=1,
+                name=label + " · " + group, showlegend=True,
+                text=[json.dumps(f["properties"], ensure_ascii=False) for f in subset],
+                hovertemplate="%{text}<extra></extra>",
+            ))
+    figure.update_layout(mapbox_style="open-street-map", mapbox_zoom=11,
+                         mapbox_center={"lat": 38.34, "lon": 38.29}, height=650,
+                         margin={"l": 0, "r": 0, "t": 0, "b": 0})
+    st.plotly_chart(figure, use_container_width=True)
+    st.caption("© OpenStreetMap contributors · Copernicus EMS © European Union 2023")
+    summary_path = output / "neighborhood_change_summary.csv"
+    if summary_path.exists():
+        st.dataframe(pd.read_csv(summary_path), use_container_width=True)
+        st.download_button("Mahalle özetini indir", summary_path.read_bytes(),
+                           file_name=summary_path.name, mime="text/csv")
 
 elif page == "Gerçek Hasar Haritası":
     st.header("Gerçek Hasar Haritası")
@@ -887,4 +948,5 @@ else:
 - Arayüz yalnızca sürümlenmiş rapor çıktılarını okur; model çıkarımı veya bina düzeyi risk tahmini yapmaz.
 """
     )
+
 

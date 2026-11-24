@@ -11,3 +11,11 @@ def test_map_page_handles_an_empty_unmapped_official_table() -> None:
     app.sidebar.radio[0].set_value("Harita · Katmanlar").run(timeout=60)
 
     assert not app.exception
+
+
+
+def test_change_page_handles_missing_snapshots() -> None:
+    app = AppTest.from_file(ROOT / "dashboard.py").run(timeout=60)
+    app.sidebar.radio[0].set_value("2022–2023 Değişim Analizi").run(timeout=60)
+    assert not app.exception
+    assert any("veri dosyası henüz yok" in item.value for item in app.caption)
