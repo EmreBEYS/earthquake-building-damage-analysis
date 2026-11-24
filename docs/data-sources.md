@@ -86,6 +86,12 @@ Cloud percentage is product/tile metadata, not proof that AOI05 itself is cloud-
 scene download, visually inspect AOI coverage, cloud/shadow, snow, seasonal comparability,
 processing baseline and duplicate/reprocessed products.
 
+Sprint 00-18 additionally reads public Earth Search COG assets B02, B03, B04, B08, B11, B12 and
+SCL for exact items `S2A_37SDC_20221231_0_L2A` and `S2B_37SDC_20230224_0_L2A`. Only AOI clips
+are stored locally under ignored `data/external/sentinel_2/spectral/`; their source URLs,
+retrieval metadata and SHA-256 values are recorded in the local manifest. Derived vector/CSV
+outputs use the attribution `Contains modified Copernicus Sentinel data 2022–2023`.
+
 ## 4. Deliberately pending or excluded
 
 | Source | State | Reason |
@@ -93,7 +99,7 @@ processing baseline and duplicate/reprocessed products.
 | Official Malatya/Battalgazi/Yeşilyurt municipal or neighbourhood boundaries | Pending | No stable official bulk download with explicit reuse terms was verified in this pass. |
 | e-Devlet/account-bound records | Excluded | Private or restricted data must not enter this public repository. |
 | ESRI World Imagery / Pleiades pixels referenced by CEMS | Excluded | Proprietary imagery is not included in the CEMS vector package and must not be redistributed. |
-| Large Sentinel-2 assets | Pending deliberate selection | Catalogue discovery is complete; downloading scenes would be large and requires visual QA first. |
+| Full-tile Sentinel-2 spectral assets | Excluded from Git | Sprint 00-18 streams and stores only ignored AOI clips; full rasters remain external. |
 | 2022 building footprint baseline | Pending | EMSR648 does not provide one. It must be created later from a date-controlled, clearly licensed source. |
 
 ## 5. Acquisition candidates not yet downloaded

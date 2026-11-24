@@ -1,6 +1,23 @@
 # Sprint 00-18 çalışma raporu — 24 Kasım 2026
 
-**Kısmi tamamlandı: yöntem, kod ve arayüz hazır; gerçek dönem karşılaştırması engelli.**
+**Kısmi tamamlandı: Sentinel-2 gerçek veri taraması tamamlandı; tarihli OSM karşılaştırması engelli.**
+
+## 24 Kasım 2026 uydu tamamlaması
+
+- 31 Aralık 2022 ve 24 Şubat 2023 Sentinel-2 L2A B02/B03/B04/B08/B11/B12/SCL bantları
+  Earth Search kamu COG arşivinden AOI05'e kırpıldı.
+- EPSG:32637, 10 m, 2.014 × 1.901 ortak ızgara hizalaması doğrulandı.
+- SCL sonrası ortak geçerli AOI oranı %80,86; 24 Şubat maskeli oranı %19,14'tür.
+- NDVI/NDBI/NBR çoklu eşik taraması 6.017 aday bileşen ve 4,6082 km² aday alan üretti
+  (%2,75 ortak geçerli alan). Bunlar hasarlı bina sayısı değildir.
+- 3.617 EMSR648 poligonunun 1.414'ünde en az bir aday piksel örneklendi. Bu yalnız mekânsal
+  birlikteliktir; doğruluk, nedensellik veya etiket aktarımı değildir.
+- Teslim: `pre_post_change_map.geojson`, `satellite_emsr648_comparison.csv` ve
+  `satellite_change_validation.json`. Büyük rasterlar Git'e eklenmedi.
+- Yeni uydu testleriyle birlikte Streamlit AppTest dışındaki 56 test geçti; Ruff ve
+  `scripts/check_project.py` başarılı. `python dashboard.py` çıplak açılış kontrolü tamamlandı.
+  İki Streamlit AppTest Windows yerel çalıştırıcısında çıktı vermeden bekledi; CI doğrulaması
+  tamamlanmadan bunlar geçti olarak işaretlenmez.
 
 ## Doğrulanmış durum
 

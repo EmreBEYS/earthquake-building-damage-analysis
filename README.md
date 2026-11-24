@@ -620,18 +620,23 @@ Dataset, map, imagery, and pretrained-model licenses are separate and must be re
 
 
 
-## Sprint 00-18 — 2022–2023 mapping change
+## Sprint 00-18 — 2022–2023 mapping and spectral change
 
 A conservative IoU pipeline compares real dated OSM footprints inside the pinned Battalgazi /
 Yeşilyurt district boundaries and AOI05 bounding box. Ambiguous overlaps stay uncertain;
 unmatched footprints never imply demolition, and newly mapped footprints never imply construction.
-The dashboard offers separate pre-event, post-event, change, observed-damage and prediction layers.
+The dashboard also exposes a separate real Sentinel-2 candidate-change layer. It compares the
+31 December 2022 and 24 February 2023 L2A scenes on one cloud-masked, aligned 10 m EPSG:32637
+grid using NDVI, NDBI and NBR. It never converts spectral change into a building-damage label.
 
 ```bash
 uv run python scripts/16_analyze_building_change.py --acquire
+uv run python scripts/17_analyze_satellite_change.py all
 ```
 
-Current status: implementation and local algorithm/UI checks are ready; real temporal outputs
-are **blocked by unavailable dated snapshots/network access**. No change counts are claimed.
+Current status: the satellite screening is complete with real pixels; 80.86% of AOI pixels are
+jointly valid after SCL masking. The 6,017 candidate components (4.6082 km²) are screening
+results, not damaged-building counts. The dated OSM snapshot workflow remains blocked by source
+access, so no OSM construction/demolition result is claimed. Large raster clips remain ignored.
 See [method](docs/sprints/sprint-00-18.md) and
-[verified work report](reports/sprint_00-18/sprint_00_18_report.md).
+[checklist](docs/sprints/sprint-00-18-checklist.md).

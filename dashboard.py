@@ -98,13 +98,14 @@ if page == "Genel bakış":
 elif page == "2022–2023 Değişim Analizi":
     st.header("2022–2023 Değişim Analizi")
     st.info(
-        "Tarihli OSM kesitleri haritalama durumunu gösterir. Yeni eşleşmeyen kayıtlar "
-        "yeni haritalanmış, eski eşleşmeyen kayıtlar eşleşmemiş olarak gösterilir. "
-        "Bunlar inşaat veya yıkım kanıtı değildir."
+        "Tarihli OSM kesitleri haritalama durumunu; Sentinel-2 katmanı ise bulut maskeli "
+        "NDVI, NDBI ve NBR farklarından türetilen spektral değişim adaylarını gösterir. "
+        "İki katman da tek başına inşaat, yıkım veya bina hasarı kanıtı değildir."
     )
     root = Path(__file__).resolve().parent
     output = root / "data/dashboard/sprint_00-18"
     report_path = root / "reports/sprint_00-18/validation_report.json"
+    satellite_report_path = root / "reports/sprint_00-18/satellite_change_validation.json"
     if report_path.exists():
         audit = json.loads(report_path.read_text(encoding="utf-8"))
         if audit.get("status") == "blocked":
@@ -115,16 +116,21 @@ elif page == "2022–2023 Değişim Analizi":
     layer_paths = {
         "2022 · Deprem öncesi": output / "buildings_2022.geojson",
         "2023 · Deprem sonrası": output / "buildings_2023.geojson",
-        "Mekânsal değişim": output / "building_change_2022_2023.geojson",
+        "OSM haritalama değişimi": output / "building_change_2022_2023.geojson",
+        "Uydu spektral değişim adayı": output / "pre_post_change_map.geojson",
         "Gerçek hasar · Copernicus": root / "data/dashboard/sprint_00-12/"
         "copernicus_damage_polygons.geojson",
         "Tahmin edilen hasar": root / "data/dashboard/sprint_00-17/predicted_damage.geojson",
     }
-    colors = ["#2878b5", "#37a055", "#c97513", "#c74343", "#8b52bc"]
+    colors = ["#2878b5", "#37a055", "#c97513", "#f28e2b", "#c74343", "#8b52bc"]
     figure = go.Figure()
     for (label, path), color in zip(layer_paths.items(), colors):
-        visible = st.sidebar.checkbox(label, value=(label == "Mekânsal değişim" and path.exists()),
-                                      disabled=not path.exists(), key="change_" + label)
+        visible = st.sidebar.checkbox(
+            label,
+            value=(label == "Uydu spektral değişim adayı" and path.exists()),
+            disabled=not path.exists(),
+            key="change_" + label,
+        )
         if not path.exists():
             st.caption(label + ": veri dosyası henüz yok.")
         if not visible or not path.exists():
@@ -148,12 +154,51 @@ elif page == "2022–2023 Değişim Analizi":
                          mapbox_center={"lat": 38.34, "lon": 38.29}, height=650,
                          margin={"l": 0, "r": 0, "t": 0, "b": 0})
     st.plotly_chart(figure, use_container_width=True)
-    st.caption("© OpenStreetMap contributors · Copernicus EMS © European Union 2023")
+    st.caption(
+        "Sentinel-2 adayları 10 m çözünürlüktedir ve bina ölçeğinde karar değildir. "
+        "© OpenStreetMap contributors · Contains modified Copernicus Sentinel data 2022–2023 "
+        "· Copernicus EMS © European Union 2023"
+    )
+    if satellite_report_path.exists():
+        satellite_report = json.loads(satellite_report_path.read_text(encoding="utf-8"))
+        col1, col2, col3, col4 = st.columns(4)
+        col1.metric("Ortak geçerli AOI", f"{satellite_report['cloud_mask']['joint_valid_aoi_percent']:.1f}%")
+        col2.metric("Aday bileşen", f"{satellite_report['candidate_components']:,}")
+        col3.metric("Aday alan", f"{satellite_report['candidate_area_m2'] / 1_000_000:.2f} km²")
+        col4.metric(
+            "EMSR648 kesişen poligon",
+            f"{satellite_report['emsr648_polygons_with_candidate_pixels']:,}",
+        )
+        st.dataframe(
+            pd.DataFrame(satellite_report["emsr648_by_damage_grade"]),
+            use_container_width=True,
+            hide_index=True,
+        )
+        st.warning(
+            "Eşikler yerel saha verisiyle kalibre edilmemiş tarama kurallarıdır. "
+            "EMSR648 kesişimi mekânsal birlikteliktir; doğruluk veya nedensellik ölçüsü değildir."
+        )
     summary_path = output / "neighborhood_change_summary.csv"
     if summary_path.exists():
         st.dataframe(pd.read_csv(summary_path), use_container_width=True)
         st.download_button("Mahalle özetini indir", summary_path.read_bytes(),
                            file_name=summary_path.name, mime="text/csv")
+    comparison_path = output / "satellite_emsr648_comparison.csv"
+    map_path = output / "pre_post_change_map.geojson"
+    if comparison_path.exists():
+        st.download_button(
+            "Uydu–EMSR648 ölçümlerini indir",
+            comparison_path.read_bytes(),
+            file_name=comparison_path.name,
+            mime="text/csv",
+        )
+    if map_path.exists():
+        st.download_button(
+            "pre_post_change_map indir",
+            map_path.read_bytes(),
+            file_name=map_path.name,
+            mime="application/geo+json",
+        )
 
 elif page == "Gerçek Hasar Haritası":
     st.header("Gerçek Hasar Haritası")
