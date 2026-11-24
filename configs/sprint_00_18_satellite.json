@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "provider": "Earth Search public STAC / Sentinel-2 Level-2A COGs",
+  "collection": "sentinel-2-l2a",
+  "tile": "37SDC",
+  "metric_crs": "EPSG:32637",
+  "resolution_metres": 10,
+  "aoi": "data/dashboard/sprint_00-12/aoi05_neighborhoods.geojson",
+  "copernicus": "data/dashboard/sprint_00-12/copernicus_damage_polygons.geojson",
+  "local_raster_directory": "data/external/sentinel_2/spectral",
+  "output_directory": "data/dashboard/sprint_00-18",
+  "scenes": {
+    "pre": {
+      "item_id": "S2A_37SDC_20221231_0_L2A",
+      "datetime": "2022-12-31T08:29:21.956Z",
+      "catalog_cloud_cover_percent": 8.626486,
+      "base_url": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/37/S/DC/2022/12/S2A_37SDC_20221231_0_L2A"
+    },
+    "post": {
+      "item_id": "S2B_37SDC_20230224_0_L2A",
+      "datetime": "2023-02-24T08:29:23.341Z",
+      "catalog_cloud_cover_percent": 2.463634,
+      "base_url": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/37/S/DC/2023/2/S2B_37SDC_20230224_0_L2A"
+    }
+  },
+  "rejected_post_scenes_aoi_scl_invalid_percent": {
+    "2023-02-09": 99.687,
+    "2023-02-11": 99.666,
+    "2023-02-14": 99.556,
+    "2023-02-16": 98.990,
+    "2023-02-21": 88.425
+  },
+  "assets": {
+    "blue": {"filename": "B02.tif", "resampling": "bilinear"},
+    "green": {"filename": "B03.tif", "resampling": "bilinear"},
+    "red": {"filename": "B04.tif", "resampling": "bilinear"},
+    "nir": {"filename": "B08.tif", "resampling": "bilinear"},
+    "swir16": {"filename": "B11.tif", "resampling": "bilinear"},
+    "swir22": {"filename": "B12.tif", "resampling": "bilinear"},
+    "scl": {"filename": "SCL.tif", "resampling": "nearest"}
+  },
+  "scl_invalid_classes": [0, 1, 3, 8, 9, 10, 11],
+  "thresholds": {
+    "absolute_delta_ndvi": 0.20,
+    "absolute_delta_ndbi": 0.15,
+    "absolute_delta_nbr": 0.20,
+    "minimum_signals": 2,
+    "minimum_component_pixels": 4
+  }
+}

@@ -1,13 +1,14 @@
 # Sprint 00-18 — 2022–2023 mekânsal değişim
 
-Durum: **Kod ve yerel algoritma/arayüz kontrolleri hazır; tarihli veri edinimi engelli.**
-İki gerçek tarihli kesit elde edilmeden sprint bilimsel analiz bakımından tamamlanmış sayılmaz.
+Durum: **Sentinel-2 spektral değişim taraması gerçek verilerle tamamlandı; tarihli OSM bina
+kesitlerinin edinimi engelli.** Uydu sonucu bina hasar sınıfı veya nedensellik sonucu değildir.
 
 ## Tekrar üretim
 
 ```bash
 uv sync --locked --all-extras
 uv run python scripts/16_analyze_building_change.py --acquire
+uv run python scripts/17_analyze_satellite_change.py all
 uv run pytest -q
 uv run ruff check .
 uv run streamlit run dashboard.py
@@ -84,3 +85,41 @@ bilimsel doğrulama değildir; kaynak ve saha değerlendirmesi ayrıca gereklidi
 
 Dashboard ayrı açılıp kapanan beş katman sunar: 2022, 2023, değişim, Copernicus ve tahmin.
 Eksik katmanlar devre dışıdır; boş veri gerçek sıfır değişim olarak gösterilmez.
+
+## Sentinel-2 öncesi/sonrası taraması
+
+Gerçek L2A yüzey yansıtım sahneleri Earth Search kamu COG arşivinden alınır:
+
+| Rol | Ürün | Çekim | Depreme uzaklık | Katalog bulutu |
+|---|---|---|---:|---:|
+| Öncesi | `S2A_37SDC_20221231_0_L2A` | 31 Aralık 2022 08:29 UTC | −37 gün | %8,63 |
+| Hemen sonrası | `S2B_37SDC_20230224_0_L2A` | 24 Şubat 2023 08:29 UTC | +18 gün | %2,46 |
+
+9, 11, 14 ve 16 Şubat sahnelerinin AOI05 alanının yaklaşık %99'u SCL bulut/gölge/kar
+sınıflarında; 21 Şubat için bu oran %88'dir. 24 Şubat, AOI'ye özgü maskeli oranı %19,14'e
+inen ilk kullanılabilir sahnedir. Ürün-geneli katalog bulutu tek başına seçim ölçütü değildir.
+
+AOI, önceki sprintteki 87 doğrulanmış mahalle sınırının birleşimidir; özgün CEMS AOI05
+poligonunun birebir kopyası değildir. B02, B03, B04, B08, B11, B12 ve SCL yalnız bu kapsam için
+kırpılır. Tüm bantlar EPSG:32637, 10 m, 2.014 × 1.901 piksel ve aynı affine ızgaraya getirilir.
+SCL 0, 1, 3, 8, 9, 10 ve 11 geçersizdir. Ortak geçerli AOI oranı %80,86'dır.
+
+NDVI, NDBI ve NBR her tarihte hesaplanır. Bir pikselin aday olması için geçerli ve yapılı çevre
+bağlamında bulunması, üç mutlak fark eşiğinden (`0,20`, `0,15`, `0,20`) en az ikisini aşması
+gerekir. Sekiz komşulukta dört pikselden küçük bileşenler çıkarılır. Bu eşikler yerel saha
+etiketiyle kalibre edilmemiş temkinli tarama kurallarıdır.
+
+Gerçek çalıştırma 6.017 aday bileşen ve 4,6082 km² aday alan üretmiştir; bu, ortak geçerli
+alanın %2,75'idir. Bu sayılar hasarlı bina veya yıkım sayısı değildir. 3.617 EMSR648 poligonunun
+1.414'ünde `all_touched` örnekleme ile en az bir aday piksel vardır. Hasar sınıfına göre ayrıntılı
+ölçümler `satellite_emsr648_comparison.csv` içindedir; ilişki doğruluk/duyarlılık ölçüsü değildir.
+
+Teslimler:
+
+- `data/dashboard/sprint_00-18/pre_post_change_map.geojson`;
+- `data/dashboard/sprint_00-18/satellite_emsr648_comparison.csv`; ve
+- `reports/sprint_00-18/satellite_change_validation.json`.
+
+Kırpılmış rasterlar ve kaynak karma manifesti `data/external/sentinel_2/spectral/` altında
+Git dışında kalır. Yeniden üretimde kaynak COG erişimi gerekir. Kontrol listesi:
+[`sprint-00-18-checklist.md`](sprint-00-18-checklist.md).

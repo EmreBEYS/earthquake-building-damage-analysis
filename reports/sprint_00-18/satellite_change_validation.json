@@ -1,0 +1,138 @@
+{
+  "status": "completed_candidate_screening",
+  "generated_at_utc": "2026-11-24T16:21:01.509031+00:00",
+  "scenes": {
+    "pre": {
+      "item_id": "S2A_37SDC_20221231_0_L2A",
+      "datetime": "2022-12-31T08:29:21.956Z",
+      "catalog_cloud_cover_percent": 8.626486,
+      "base_url": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/37/S/DC/2022/12/S2A_37SDC_20221231_0_L2A"
+    },
+    "post": {
+      "item_id": "S2B_37SDC_20230224_0_L2A",
+      "datetime": "2023-02-24T08:29:23.341Z",
+      "catalog_cloud_cover_percent": 2.463634,
+      "base_url": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/37/S/DC/2023/2/S2B_37SDC_20230224_0_L2A"
+    }
+  },
+  "aoi": "data/dashboard/sprint_00-12/aoi05_neighborhoods.geojson",
+  "crs": "EPSG:32637",
+  "resolution_metres": 10,
+  "grid": {
+    "width": 2014,
+    "height": 1901,
+    "transform": [
+      10.0,
+      0.0,
+      429720.0,
+      0.0,
+      -10.0,
+      4253850.0
+    ],
+    "aligned": true
+  },
+  "cloud_mask": {
+    "scl_invalid_classes": [
+      0,
+      1,
+      3,
+      8,
+      9,
+      10,
+      11
+    ],
+    "pre_invalid_aoi_percent": 1.4527034533526415,
+    "post_invalid_aoi_percent": 19.14037631661062,
+    "joint_valid_aoi_percent": 80.85827120802134
+  },
+  "rejected_post_scenes_aoi_scl_invalid_percent": {
+    "2023-02-09": 99.687,
+    "2023-02-11": 99.666,
+    "2023-02-14": 99.556,
+    "2023-02-16": 98.99,
+    "2023-02-21": 88.425
+  },
+  "indices": [
+    "NDVI",
+    "NDBI",
+    "NBR"
+  ],
+  "thresholds": {
+    "absolute_delta_ndvi": 0.2,
+    "absolute_delta_ndbi": 0.15,
+    "absolute_delta_nbr": 0.2,
+    "minimum_signals": 2,
+    "minimum_component_pixels": 4
+  },
+  "candidate_components": 6017,
+  "candidate_pixels": 46082,
+  "candidate_area_m2": 4608200.0,
+  "valid_area_m2": 167399100.0,
+  "candidate_fraction_of_valid": 0.027528224464767135,
+  "built_context_valid_pixels": 1308279,
+  "scene_gap_days": 55.00001603009259,
+  "emsr648_polygons": 3617,
+  "emsr648_polygons_with_candidate_pixels": 1414,
+  "emsr648_by_damage_grade": [
+    {
+      "damage_grade": "Damaged",
+      "polygons": 157,
+      "polygons_with_candidate": 55,
+      "valid_pixels": 14648,
+      "candidate_pixels": 560,
+      "candidate_fraction_valid": 0.0382304752
+    },
+    {
+      "damage_grade": "Destroyed",
+      "polygons": 102,
+      "polygons_with_candidate": 59,
+      "valid_pixels": 2381,
+      "candidate_pixels": 264,
+      "candidate_fraction_valid": 0.1108777824
+    },
+    {
+      "damage_grade": "No visible damage",
+      "polygons": 3265,
+      "polygons_with_candidate": 1253,
+      "valid_pixels": 348584,
+      "candidate_pixels": 15683,
+      "candidate_fraction_valid": 0.0449905905
+    },
+    {
+      "damage_grade": "Possibly damaged",
+      "polygons": 93,
+      "polygons_with_candidate": 47,
+      "valid_pixels": 11560,
+      "candidate_pixels": 667,
+      "candidate_fraction_valid": 0.0576989619
+    }
+  ],
+  "input_clip_sha256": {
+    "pre/blue.tif": "7ef7ea8844028e4691687b99e1aad2ac5cb4333f512f55c6162b8468afdd192a",
+    "pre/green.tif": "d8b41c161465be684d2cfb0afa54dac8f2ca39deb299183b35ac60f5aaa5135b",
+    "pre/red.tif": "21d1b21189d6d46bdd024f1d7332f7039c60ccd7de736f3af2f962176d9bae4f",
+    "pre/nir.tif": "152dac4280abc0128a5602ee131bc1e5e59e1c7032c45b374f94e32a04106461",
+    "pre/swir16.tif": "539d33a51df207457cb06016fdf795c744a5ccc5a7835acc29e660165e33569d",
+    "pre/swir22.tif": "38af61c2d32109021ca60afc4e0bdb72a8f8fc8df8a45e79371d768d8b4f4c19",
+    "pre/scl.tif": "1cd98fd71b4b9020ecc020f513be0b4407cfd278ee489b79935645ce7dffd750",
+    "post/blue.tif": "0c159ee8d2c4db71dfd4424148ef234dcb504823a9622e0d120e017c1123abb8",
+    "post/green.tif": "d639ac9967464090153d4695da941b9aca8dd0285e6697077ca1e15e403cd0dc",
+    "post/red.tif": "456a4793522e16672f45b3516bb0414f47010528ebc139e53e2cfc42ca9cb0a0",
+    "post/nir.tif": "24e85f3eeda0dc84fee9e6171b2949a200d0adb8a7330f88ccda215591254283",
+    "post/swir16.tif": "9a2177a97d7e15b5aa26b3af6f2f8071691424eb9984c7435884df8d8811ad01",
+    "post/swir22.tif": "d8a74f8859c9eb36f173252b22d41821864acb7fe2f47aafcd7bebc452c0ecb5",
+    "post/scl.tif": "970683e3888b2e84c2ce3c6c6c286bd1b5dc792d79180226d4f43956e5c5aacc"
+  },
+  "outputs_sha256": {
+    "pre_post_change_map.geojson": "e1296d3dc2b7ce66b77cde6562b415967abfae5dc709d096f86b1392c8a17b72",
+    "satellite_emsr648_comparison.csv": "c49166a4741a0cf2984683fd27b1a31c2a6cd0ea035840670e4324cc714d8bd7"
+  },
+  "roundtrip_valid": true,
+  "limitations": [
+    "Thresholds are conservative screening rules, not locally calibrated damage labels.",
+    "Ten-metre pixels are coarser than most buildings and mix roofs, roads and vegetation.",
+    "SCL masking cannot remove every haze, shadow or co-registration artefact.",
+    "Scene dates differ by 55 days and may include seasonal or non-earthquake change.",
+    "EMSR648 overlap is spatial association, not causal validation or accuracy."
+  ]
+}

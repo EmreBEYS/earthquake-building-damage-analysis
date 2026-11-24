@@ -118,3 +118,11 @@ snapshots and checksum-pinned district boundaries, then compares footprints in E
 Without `--acquire`, it uses previously downloaded inputs. Failures produce a blocked audit and
 nonzero exit; missing observations are never replaced with fabricated change results.
 See `docs/sprints/sprint-00-18.md` for source semantics, thresholds and output paths.
+
+### 17 — Sentinel-2 pre/post spectral change
+
+`python scripts/17_analyze_satellite_change.py all` reads public Earth Search Sentinel-2 L2A
+COGs, writes only AOI clips to ignored storage, aligns B02/B03/B04/B08/B11/B12/SCL to a common
+10 m EPSG:32637 grid, applies the SCL mask and derives NDVI/NDBI/NBR change candidates.
+Use `acquire` or `analyze` instead of `all` to run one phase. The committed GeoJSON and CSV are
+screening and spatial-comparison products, never building-level damage labels.
