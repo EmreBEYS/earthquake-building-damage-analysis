@@ -1,37 +1,72 @@
 from pathlib import Path
 
+import pytest
 from streamlit.testing.v1 import AppTest
-
 
 ROOT = Path(__file__).resolve().parents[1]
 
+ALL_PAGES = [
+    ("Ana Sayfa", None),
+    ("Harita Analizi", "Gerçek Hasar Haritası"),
+    ("Harita Analizi", "Harita · Katmanlar"),
+    ("Model Tahmini", "Bina Tahmin Haritası"),
+    ("Model Tahmini", "Model performansı"),
+    ("Veri Setleri", "Veri kaynakları"),
+    ("Veri Setleri", "V1 · Copernicus"),
+    ("Veri Setleri", "V2 · Resmî kayıtlar"),
+    ("İstatistikler", "Mekânsal Analiz ve Mahalle Karşılaştırması"),
+    ("İstatistikler", "V3 · Mekânsal"),
+    ("Karşılaştırma", "2022–2023 Değişim Analizi"),
+    ("Karşılaştırma", "2023–2026 Yeniden Yapılanma"),
+    ("Karşılaştırma", "Uydu · Zaman Serisi"),
+    ("Yöntem", None),
+]
 
-def test_map_page_handles_an_empty_unmapped_official_table() -> None:
-    app = AppTest.from_file(ROOT / "dashboard.py").run(timeout=60)
-    app.sidebar.radio[0].set_value("Harita · Katmanlar").run(timeout=60)
 
+def open_page(menu: str, page: str | None = None) -> AppTest:
+    app = AppTest.from_file(ROOT / "dashboard.py").run(timeout=120)
+    app.sidebar.radio(key="menu").set_value(menu).run(timeout=120)
+    if page is not None:
+        app.radio(key=f"page_{menu}").set_value(page).run(timeout=120)
+    return app
+
+
+@pytest.mark.parametrize(("menu", "page"), ALL_PAGES)
+def test_every_page_renders_without_exceptions(menu, page) -> None:
+    app = open_page(menu, page)
+    assert not app.exception, [item.value for item in app.exception]
+
+
+def test_home_page_kpis_come_from_project_outputs() -> None:
+    app = AppTest.from_file(ROOT / "dashboard.py").run(timeout=120)
     assert not app.exception
+    html = "".join(item.body for item in app.markdown)
+    assert "46.563" in html  # official record total, formatted with a Turkish separator
+    assert "kpi-card" in html and "source-badge" in html
 
+
+@pytest.mark.parametrize("period", ["2022", "2023", "2026"])
+def test_period_selector_switches_home_map(period) -> None:
+    app = AppTest.from_file(ROOT / "dashboard.py").run(timeout=120)
+    app.radio(key="period").set_value(period).run(timeout=120)
+    assert not app.exception
 
 
 def test_change_page_handles_missing_snapshots() -> None:
-    app = AppTest.from_file(ROOT / "dashboard.py").run(timeout=60)
-    app.sidebar.radio[0].set_value("2022–2023 Değişim Analizi").run(timeout=60)
+    app = open_page("Karşılaştırma", "2022–2023 Değişim Analizi")
     assert not app.exception
-    assert any("veri dosyası henüz yok" in item.value for item in app.caption)
+    if not (ROOT / "data/external/building_change/buildings_2022.geojson").exists():
+        assert any("veri dosyası henüz yok" in item.value for item in app.caption)
 
 
 def test_reconstruction_page_renders_with_or_without_outputs() -> None:
-    app = AppTest.from_file(ROOT / "dashboard.py").run(timeout=60)
-    app.sidebar.radio[0].set_value("2023–2026 Yeniden Yapılanma").run(timeout=120)
+    app = open_page("Karşılaştırma", "2023–2026 Yeniden Yapılanma")
     assert not app.exception
     assert any("Yeniden Yapılanma" in item.value for item in app.header)
 
 
 def test_spatial_analysis_page_renders_all_display_modes() -> None:
-    page = "Mekânsal Analiz ve Mahalle Karşılaştırması"
-    app = AppTest.from_file(ROOT / "dashboard.py").run(timeout=60)
-    app.sidebar.radio[0].set_value(page).run(timeout=120)
+    app = open_page("İstatistikler", "Mekânsal Analiz ve Mahalle Karşılaştırması")
     assert not app.exception
     assert any("Mekânsal Analiz" in item.value for item in app.header)
     if (ROOT / "data/dashboard/sprint_00-20/neighborhood_spatial_analysis.geojson").exists():

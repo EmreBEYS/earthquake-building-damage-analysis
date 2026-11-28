@@ -1,4 +1,9 @@
-"""Sprint 00-11 Streamlit research dashboard."""
+"""Malatya Deprem Projesi — Streamlit dashboard (Sprint 00-21 tasarımı).
+
+Koyu tema, sol menü, KPI kartları, dönem seçimi ve her sayfada veri kaynağı göstergeleri.
+Sayfa içerikleri önceki sprintlerin bölümleridir; ana sayfa yalnız depodaki çıktılardan
+hesaplanan değerleri gösterir.
+"""
 
 from __future__ import annotations
 
@@ -12,7 +17,6 @@ import streamlit as st
 
 from earthquake_damage.dashboard_data import (
     DashboardDataError,
-    aggregate_damage_distribution,
     load_dashboard_reports,
 )
 from earthquake_damage.geospatial_layers import (
@@ -27,20 +31,111 @@ from earthquake_damage.sprint_00_15 import (
     official_severe_ratio_band,
 )
 from earthquake_damage.sprint_00_17 import PredictionMapError, load_prediction_map
+from earthquake_damage.ui.overview import (
+    PERIOD_SOURCES,
+    PERIODS,
+    district_class_summary,
+    official_class_summary,
+    source_status,
+)
+from earthquake_damage.ui.theme import (
+    CSS,
+    format_int,
+    format_pct,
+    header_html,
+    kpi_card_html,
+    kpi_grid_html,
+    source_badges_html,
+)
+
+ROOT = Path(__file__).resolve().parent
+MAP_CENTER = {"lat": 38.345, "lon": 38.30}
+SATELLITE_TILES = (
+    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+)
+SATELLITE_ATTRIBUTION = "Esri, Maxar, Earthstar Geographics, and the GIS User Community"
+CHART_LAYOUT = {
+    "paper_bgcolor": "rgba(0,0,0,0)",
+    "plot_bgcolor": "rgba(0,0,0,0)",
+    "font": {"color": "#E6EDF6"},
+    "margin": {"l": 10, "r": 10, "t": 30, "b": 10},
+}
 
 st.set_page_config(
-    page_title="Malatya Deprem Hasar Araştırması",
-    page_icon="🔬",
+    page_title="Malatya Deprem Projesi",
+    page_icon="🏙️",
     layout="wide",
+    initial_sidebar_state="expanded",
 )
+st.markdown(CSS, unsafe_allow_html=True)
 
-st.title("Malatya Deprem Hasar Araştırması")
-st.caption("Sprint 00-20 · Mekânsal analiz, sıcak noktalar ve mahalle karşılaştırması")
 
-st.warning(
-    "Bu arayüz araştırma amaçlıdır. Sonuçlar bina güvenliği, tahliye, güçlendirme veya "
-    "resmî hasar kararı için kullanılamaz. Gösterilen ilişkiler nedensellik kanıtlamaz."
-)
+def show_sources(*keys: str) -> None:
+    """Data-source indicator row: which files this page reads and whether they exist."""
+    st.markdown(source_badges_html([source_status(ROOT, key) for key in keys]),
+                unsafe_allow_html=True)
+
+
+def satellite_map_layout(height: int, zoom: float = 11.2) -> dict:
+    return {
+        "map": {
+            "style": "white-bg",
+            "center": MAP_CENTER,
+            "zoom": zoom,
+            "layers": [{"sourcetype": "raster", "source": [SATELLITE_TILES], "below": "traces"}],
+        },
+        "height": height,
+        "margin": {"l": 0, "r": 0, "t": 0, "b": 0},
+        "paper_bgcolor": "rgba(0,0,0,0)",
+        "legend": {"orientation": "h", "y": 1.02, "font": {"color": "#E6EDF6"}},
+    }
+
+
+@st.cache_data(show_spinner=False)
+def read_csv(relative: str) -> pd.DataFrame | None:
+    path = ROOT / relative
+    return pd.read_csv(path) if path.exists() else None
+
+
+@st.cache_data(show_spinner=False)
+def read_json(relative: str) -> dict | None:
+    path = ROOT / relative
+    return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+
+
+# ---------------------------------------------------------------------------
+# Header: title, period selector, project info
+# ---------------------------------------------------------------------------
+
+title_col, period_col, about_col = st.columns([5, 4, 1.4], vertical_alignment="center")
+with title_col:
+    st.markdown(
+        header_html(
+            "Malatya Deprem Projesi",
+            "Açık Coğrafi Veriler ile Bina Hasar Seviyelerinin Makine Öğrenmesiyle Tahmini",
+        ),
+        unsafe_allow_html=True,
+    )
+with period_col:
+    period = st.radio(
+        "Dönem seçin",
+        list(PERIODS),
+        index=1,
+        format_func=PERIODS.get,
+        horizontal=True,
+        key="period",
+    )
+with about_col:
+    with st.popover("Proje hakkında", icon=":material/info:", width="stretch"):
+        st.markdown(
+            "6 Şubat 2023 depremlerinden sonra Malatya'nın Battalgazi ve Yeşilyurt ilçelerinde "
+            "bina hasarını ve kent dönüşümünü açık verilerle inceleyen, tekrar üretilebilir bir "
+            "araştırma projesi.\n\n"
+            "- Resmî hasar kayıtları, Copernicus EMSR648, OpenStreetMap ve Sentinel-2\n"
+            "- Keşif amaçlı makine öğrenmesi modelleri ve mekânsal istatistik\n\n"
+            "**Bu arayüz araştırma amaçlıdır.** Sonuçlar bina güvenliği, tahliye, güçlendirme "
+            "veya resmî hasar kararı için kullanılamaz."
+        )
 
 try:
     reports = load_dashboard_reports()
@@ -52,53 +147,191 @@ except DashboardDataError as error:
     )
     st.stop()
 
-page = st.sidebar.radio(
-    "Bölüm",
-    [
-        "Genel bakış",
-        "Gerçek Hasar Haritası",
-        "Bina Tahmin Haritası",
-        "Harita · Katmanlar",
-        "Uydu · Zaman Serisi",
-        "2022–2023 Değişim Analizi",
-        "2023–2026 Yeniden Yapılanma",
-        "Mekânsal Analiz ve Mahalle Karşılaştırması",
-        "V1 · Copernicus",
-        "V2 · Resmî kayıtlar",
-        "V3 · Mekânsal",
-        "Yöntem",
-    ],
-)
 
-if page == "Genel bakış":
-    damage = aggregate_damage_distribution(reports["damage_distribution"])
-    neighborhoods = reports["v3_neighborhoods"]
-    total_records = int(damage["records"].sum())
+# ---------------------------------------------------------------------------
+# Home page (Sprint 00-21)
+# ---------------------------------------------------------------------------
 
-    col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Resmî kayıt", f"{total_records:,}")
-    col2.metric("Copernicus poligonu", "3.619")
-    col3.metric("Tarihsel OSM binası", "3.545")
-    col4.metric("Yüksek kapsamlı mahalle", f"{len(neighborhoods)}")
 
-    st.plotly_chart(
-        px.bar(
-            damage,
-            x="records",
-            y="damage_class",
-            orientation="h",
-            labels={"records": "Kayıt", "damage_class": "Hasar sınıfı"},
-            title="Resmî hasar kayıtlarının sınıf dağılımı",
-        ),
-        use_container_width=True,
-    )
-    st.caption(
-        "46.563 kayıt, gözlenen tüm bina stokunun rastgele örneklemi değildir. "
-        "Sınıf dengesizliği ve değerlendirme kapsamı model metriklerini etkiler."
-    )
+def section_home() -> None:
+    """Ana Sayfa"""
+    statistics = read_csv("data/dashboard/sprint_00-15/official_neighborhood_statistics.csv")
+    districts = read_csv("data/dashboard/sprint_00-21/neighborhood_districts.csv")
+    if statistics is None:
+        st.warning("Resmî hasar istatistikleri bulunamadı (Sprint 00-15 çıktısı).")
+        return
+    show_sources(*PERIOD_SOURCES[period])
 
-elif page == "2022–2023 Değişim Analizi":
+    classes = official_class_summary(statistics)
+    total = sum(row["count"] for row in classes)
+    icons = {"no_damage": "✓", "slight_damage": "◔", "moderate_damage": "◑",
+             "heavy_damage": "◕", "urgent_demolition": "⚠", "destroyed": "✕"}
+    cards = [kpi_card_html("Resmî hasar tespit kaydı", format_int(total),
+                           "87 mahalle · Bakanlık", "#93A3BD", "▦")]
+    cards += [
+        kpi_card_html(row["label"], format_int(row["count"]), format_pct(row["share"]),
+                      row["color"], icons[row["key"]])
+        for row in classes
+    ]
+    st.markdown(kpi_grid_html(cards), unsafe_allow_html=True)
+
+    map_col, chart_col = st.columns([2, 1], gap="medium")
+    with map_col, st.container(border=True):
+        period_maps = {
+            "2022": ("spectral_change_2022_2023_pct",
+                     "2022→2023 spektral değişim alanı payı (%) · Sentinel-2", "Purples"),
+            "2023": ("official_severe_ratio", "Resmî ağır hasar oranı · Bakanlık kayıtları",
+                     "YlOrRd"),
+            "2026": ("removed_share_of_2023_pct",
+                     "2023→2026 kaldırılan yapı payı (%) · OSM", "Reds"),
+        }
+        column, caption, scale = period_maps[period]
+        st.markdown(f'<div class="panel-title">Malatya mahalle haritası — {PERIODS[period]}</div>',
+                    unsafe_allow_html=True)
+        layer = read_json("data/dashboard/sprint_00-20/neighborhood_spatial_analysis.geojson")
+        if layer is None:
+            st.info("Mahalle analiz katmanı yok: `python scripts/19_analyze_spatial_neighborhoods.py`")
+        else:
+            features = [dict(f, id=str(i)) for i, f in enumerate(layer["features"])]
+            values = [f["properties"].get(column) for f in features]
+            figure = go.Figure(go.Choroplethmap(
+                geojson={"type": "FeatureCollection", "features": features},
+                locations=[f["id"] for f in features], z=values, colorscale=scale,
+                marker_opacity=0.72, marker_line_width=0.6, marker_line_color="#0B1220",
+                colorbar={"title": "", "thickness": 12, "tickfont": {"color": "#E6EDF6"}},
+                text=[f"<b>{f['properties']['mahalle']}</b><br>{caption}: {v}"
+                      for f, v in zip(features, values, strict=True)],
+                hovertemplate="%{text}<extra></extra>",
+            ))
+            figure.update_layout(**satellite_map_layout(height=470))
+            st.plotly_chart(figure, width="stretch")
+            st.caption(f"{caption}. Uydu altlığı: {SATELLITE_ATTRIBUTION}.")
+
+    with chart_col:
+        with st.container(border=True):
+            st.markdown('<div class="panel-title">Hasar sınıfı dağılımı</div>',
+                        unsafe_allow_html=True)
+            donut = go.Figure(go.Pie(
+                labels=[row["label"] for row in classes],
+                values=[row["count"] for row in classes],
+                marker={"colors": [row["color"] for row in classes]},
+                hole=0.55, sort=False, textinfo="percent",
+            ))
+            donut.update_layout(**CHART_LAYOUT, height=260, showlegend=True,
+                                legend={"font": {"size": 11}})
+            st.plotly_chart(donut, width="stretch")
+        with st.container(border=True):
+            st.markdown('<div class="panel-title">İlçelere göre hasar dağılımı</div>',
+                        unsafe_allow_html=True)
+            if districts is None:
+                st.caption("Mahalle–ilçe tablosu yok: `python scripts/20_prepare_dashboard_overview.py`")
+            else:
+                rows = pd.DataFrame(district_class_summary(statistics, districts))
+                bars = px.bar(rows, x="district", y="count", color="label", barmode="group",
+                              color_discrete_map={r["label"]: r["color"] for r in classes},
+                              labels={"district": "", "count": "Kayıt", "label": ""})
+                bars.update_layout(**CHART_LAYOUT, height=260,
+                                   legend={"orientation": "h", "y": -0.25, "font": {"size": 10}})
+                st.plotly_chart(bars, width="stretch")
+
+    change_col, model_col = st.columns([3, 2], gap="medium")
+    with change_col, st.container(border=True):
+        st.markdown('<div class="panel-title">Zaman içinde değişim</div>', unsafe_allow_html=True)
+        recon = read_json("reports/sprint_00-19/reconstruction_validation.json")
+        osm_2022 = source_status(ROOT, "osm_2022")
+        c2022, c2023, c2026 = st.columns(3)
+        c2022.metric("2022 · Deprem öncesi", "OSM kesiti" if osm_2022["available"] else "—",
+                     help="2022-12-31 OSM bina kesiti (Sprint 00-18).")
+        if not osm_2022["available"]:
+            c2022.caption("2022 kesiti indiriliyor; Overpass yoğun.")
+        if recon:
+            post = recon["osm"]["post_event"]["selected"]
+            current = recon["osm"]["current"]["selected"]
+            counts = recon["osm"]["reconstruction_class_counts"]
+            c2023.metric("2023 · Deprem sonrası", format_int(post) + " bina",
+                         help="24 Şubat 2023 OSM kesiti, çalışma alanı içinde.")
+            c2026.metric("2026 · Güncel", format_int(current) + " bina",
+                         delta=format_int(current - post), delta_color="off",
+                         help="27 Temmuz 2026 OSM kesiti.")
+            st.caption(
+                f"2023→2026: {format_int(counts['removed_candidate'])} kaldırılan, "
+                f"{format_int(counts['new_candidate'])} yeni yapı adayı. OSM haritalama "
+                "durumudur; yeni yapılar geç çizildiği için yeni yapılaşma eksik ölçülür."
+            )
+    with model_col, st.container(border=True):
+        st.markdown('<div class="panel-title">Model performansı (mekânsal doğrulama)</div>',
+                    unsafe_allow_html=True)
+        metrics = read_csv("reports/sprint_00-16/model_comparison.csv")
+        if metrics is None:
+            st.caption("Model karşılaştırma raporu yok (Sprint 00-16).")
+        else:
+            spatial = metrics[metrics["split"] == "spatial_1km_groups"].set_index("model")
+            forest, dummy = spatial.loc["random_forest"], spatial.loc["dummy"]
+            m1, m2, m3 = st.columns(3)
+            m1.metric("Doğruluk", f"{forest['accuracy']:.2f}".replace(".", ","))
+            m2.metric("Macro-F1", f"{forest['macro_f1']:.2f}".replace(".", ","),
+                      delta=f"{forest['macro_f1'] - dummy['macro_f1']:+.3f} dummy'ye göre",
+                      delta_color="off")
+            m3.metric("Ağırlıklı F1", f"{forest['weighted_f1']:.2f}".replace(".", ","))
+            st.caption(
+                "Random forest, 1 km mekânsal gruplu test. Yüksek doğruluk sınıf "
+                "dengesizliğinden gelir (%90 hasarsız); macro-F1 sabit tahmin yapan dummy "
+                "modelle aynı düzeydedir. Model operasyonel karar için yeterli değildir."
+            )
+
+
+def section_sources() -> None:
+    """Veri kaynakları"""
+    st.header("Veri kaynakları")
+    st.caption("Panelin okuduğu her veri seti, rolü, kullanım koşulları ve dosya durumu.")
+    from earthquake_damage.ui.overview import DATA_SOURCES
+
+    rows = []
+    for key in DATA_SOURCES:
+        entry = source_status(ROOT, key)
+        state = ("Eksik" if not entry["available"]
+                 else "Yerel (Git dışı)" if entry["local_only"] else "Depoda")
+        rows.append({"Veri seti": entry["name"], "Rol": entry["role"], "Sprint": entry["sprint"],
+                     "Durum": state, "Boyut (MB)": entry.get("size_mb"),
+                     "Güncelleme": entry.get("modified"), "Koşullar": entry["terms"],
+                     "Dosya": entry["path"]})
+    st.dataframe(pd.DataFrame(rows), width="stretch", hide_index=True)
+    st.markdown(source_badges_html([source_status(ROOT, key) for key in DATA_SOURCES]),
+                unsafe_allow_html=True)
+    st.caption("Yeşil: depoda · Sarı: yalnız yerel, Git dışında (lisans/boyut) · Kırmızı: eksik.")
+
+
+def section_model_performance() -> None:
+    """Model performansı"""
+    st.header("Model performansı")
+    show_sources("emsr648", "predictions")
+    metrics = read_csv("reports/sprint_00-16/model_comparison.csv")
+    if metrics is None:
+        st.info("Sprint 00-16 model karşılaştırma raporu bulunamadı.")
+        return
+    labels = {"stratified_random": "Rastgele tabakalı", "spatial_1km_groups": "Mekânsal (1 km)"}
+    table = metrics.assign(split=metrics["split"].map(labels))
+    figure = px.bar(table, x="model", y="macro_f1", color="split", barmode="group",
+                    error_y=table["macro_f1_ci_upper"] - table["macro_f1"],
+                    error_y_minus=table["macro_f1"] - table["macro_f1_ci_lower"],
+                    labels={"model": "", "macro_f1": "Macro-F1 (%95 GA)", "split": "Bölme"})
+    figure.update_layout(**CHART_LAYOUT, height=380)
+    st.plotly_chart(figure, width="stretch")
+    st.dataframe(table.round(4), width="stretch", hide_index=True)
+    report = read_json("reports/sprint_00-16/model_evaluation_report.json")
+    if report:
+        st.warning(report["conclusion"])
+
+
+# ---------------------------------------------------------------------------
+# Sections from earlier sprints
+# ---------------------------------------------------------------------------
+
+
+def section_change_2022_2023() -> None:
+    """2022–2023 Değişim Analizi"""
     st.header("2022–2023 Değişim Analizi")
+    show_sources("osm_2022", "change_2022_2023", "emsr648")
     st.info(
         "Tarihli OSM kesitleri haritalama durumunu; Sentinel-2 katmanı ise bulut maskeli "
         "NDVI, NDBI ve NBR farklarından türetilen spektral değişim adaylarını gösterir. "
@@ -143,7 +376,7 @@ elif page == "2022–2023 Değişim Analizi":
         for group in groups:
             subset = [dict(f, id=str(i)) for i, f in enumerate(features)
                       if f["properties"].get("status", label) == group]
-            figure.add_trace(go.Choroplethmapbox(
+            figure.add_trace(go.Choroplethmap(
                 geojson={"type": "FeatureCollection", "features": subset},
                 locations=[f["id"] for f in subset], z=[1] * len(subset),
                 colorscale=[[0, color], [1, color]], showscale=False,
@@ -152,10 +385,10 @@ elif page == "2022–2023 Değişim Analizi":
                 text=[json.dumps(f["properties"], ensure_ascii=False) for f in subset],
                 hovertemplate="%{text}<extra></extra>",
             ))
-    figure.update_layout(mapbox_style="open-street-map", mapbox_zoom=11,
-                         mapbox_center={"lat": 38.34, "lon": 38.29}, height=650,
+    figure.update_layout(map_style="open-street-map", map_zoom=11,
+                         map_center={"lat": 38.34, "lon": 38.29}, height=650,
                          margin={"l": 0, "r": 0, "t": 0, "b": 0})
-    st.plotly_chart(figure, use_container_width=True)
+    st.plotly_chart(figure, width="stretch")
     st.caption(
         "Sentinel-2 adayları 10 m çözünürlüktedir ve bina ölçeğinde karar değildir. "
         "© OpenStreetMap contributors · Contains modified Copernicus Sentinel data 2022–2023 "
@@ -173,7 +406,7 @@ elif page == "2022–2023 Değişim Analizi":
         )
         st.dataframe(
             pd.DataFrame(satellite_report["emsr648_by_damage_grade"]),
-            use_container_width=True,
+            width="stretch",
             hide_index=True,
         )
         st.warning(
@@ -182,7 +415,7 @@ elif page == "2022–2023 Değişim Analizi":
         )
     summary_path = output / "neighborhood_change_summary.csv"
     if summary_path.exists():
-        st.dataframe(pd.read_csv(summary_path), use_container_width=True)
+        st.dataframe(pd.read_csv(summary_path), width="stretch")
         st.download_button("Mahalle özetini indir", summary_path.read_bytes(),
                            file_name=summary_path.name, mime="text/csv")
     comparison_path = output / "satellite_emsr648_comparison.csv"
@@ -202,10 +435,14 @@ elif page == "2022–2023 Değişim Analizi":
             mime="application/geo+json",
         )
 
-elif page == "2023–2026 Yeniden Yapılanma":
+
+
+def section_reconstruction() -> None:
+    """2023–2026 Yeniden Yapılanma"""
     from earthquake_damage.reconstruction_change_analysis import CLASS_LABELS_TR
 
     st.header("2023–2026 Yeniden Yapılanma Analizi")
+    show_sources("osm_2023", "osm_2026", "reconstruction", "emsr648")
     st.info(
         "24 Şubat 2023 ile 2026 arasındaki fiziksel kent dönüşümünü iki bağımsız kanıtla "
         "gösterir: tarihli OSM bina ayak izleri ve ofset düzeltilmiş Sentinel-2 L2A spektral "
@@ -257,7 +494,7 @@ elif page == "2023–2026 Yeniden Yapılanma":
             if not subset:
                 continue
             figure.add_trace(
-                go.Choroplethmapbox(
+                go.Choroplethmap(
                     geojson={"type": "FeatureCollection", "features": subset},
                     locations=[feature["id"] for feature in subset],
                     z=[1] * len(subset),
@@ -282,14 +519,14 @@ elif page == "2023–2026 Yeniden Yapılanma":
                 )
             )
         figure.update_layout(
-            mapbox_style="open-street-map",
-            mapbox_zoom=11.5,
-            mapbox_center={"lat": 38.345, "lon": 38.31},
+            map_style="open-street-map",
+            map_zoom=11.5,
+            map_center={"lat": 38.345, "lon": 38.31},
             height=650,
             margin={"l": 0, "r": 0, "t": 0, "b": 0},
             legend={"orientation": "h", "y": 1.02},
         )
-        st.plotly_chart(figure, use_container_width=True)
+        st.plotly_chart(figure, width="stretch")
         st.caption(
             "© OpenStreetMap contributors (ODbL) · Contains modified Copernicus Sentinel "
             "data 2023–2026 · Sürekli (persistent) ayak izleri haritada çizilmez, sayılır."
@@ -344,9 +581,9 @@ elif page == "2023–2026 Yeniden Yapılanma":
                 color_discrete_map={"Kaldırılmış aday": "#c74343", "Yeni aday": "#2e9d5b"},
                 title="Yenilenme devri en yüksek 15 mahalle",
             ).update_layout(height=520, yaxis_title=None),
-            use_container_width=True,
+            width="stretch",
         )
-        st.dataframe(indicators, use_container_width=True, hide_index=True)
+        st.dataframe(indicators, width="stretch", hide_index=True)
         st.download_button(
             "Mahalle göstergelerini indir",
             indicators_path.read_bytes(),
@@ -359,12 +596,16 @@ elif page == "2023–2026 Yeniden Yapılanma":
                 "Bu tablo değişim birimlerinin Copernicus hasar poligonlarıyla kesişimini sayar. "
                 "Bir yapının kaldırılması hasar sınıfı anlamına gelmez; doğruluk ölçüsü değildir."
             )
-            st.dataframe(pd.read_csv(context_path), use_container_width=True, hide_index=True)
+            st.dataframe(pd.read_csv(context_path), width="stretch", hide_index=True)
 
-elif page == "Mekânsal Analiz ve Mahalle Karşılaştırması":
+
+
+def section_spatial() -> None:
+    """Mekânsal Analiz ve Mahalle Karşılaştırması"""
     from earthquake_damage.spatial_analysis import HOTSPOT_LABELS_TR, LISA_LABELS_TR
 
     st.header("Mekânsal Analiz ve Mahalle Karşılaştırması")
+    show_sources("official", "emsr648", "predictions", "osm_2023", "spatial")
     st.info(
         "Resmî hasar kayıtları, EMSR648, bina yoğunluğu ve 2023–2026 değişimi mahalle "
         "düzeyinde yan yana konur. Sıcak noktalar Getis-Ord Gi*, kümeler yerel Moran (LISA) "
@@ -409,7 +650,7 @@ elif page == "Mekânsal Analiz ve Mahalle Karşılaştırması":
         ]
         figure = go.Figure()
         if mode == "Değer":
-            figure.add_trace(go.Choroplethmapbox(
+            figure.add_trace(go.Choroplethmap(
                 geojson={"type": "FeatureCollection", "features": features},
                 locations=[f["id"] for f in features],
                 z=[p.get(variable) for p in props],
@@ -429,7 +670,7 @@ elif page == "Mekânsal Analiz ve Mahalle Karşılaştırması":
                 ]
                 if not members:
                     continue
-                figure.add_trace(go.Choroplethmapbox(
+                figure.add_trace(go.Choroplethmap(
                     geojson={"type": "FeatureCollection",
                              "features": [features[i] for i in members]},
                     locations=[features[i]["id"] for i in members], z=[1] * len(members),
@@ -439,11 +680,11 @@ elif page == "Mekânsal Analiz ve Mahalle Karşılaştırması":
                     text=[hover[i] for i in members], hovertemplate="%{text}<extra></extra>",
                 ))
         figure.update_layout(
-            mapbox_style="open-street-map", mapbox_zoom=11.3,
-            mapbox_center={"lat": 38.345, "lon": 38.31}, height=620,
+            map_style="open-street-map", map_zoom=11.3,
+            map_center={"lat": 38.345, "lon": 38.31}, height=620,
             margin={"l": 0, "r": 0, "t": 0, "b": 0}, legend={"orientation": "h", "y": 1.02},
         )
-        st.plotly_chart(figure, use_container_width=True)
+        st.plotly_chart(figure, width="stretch")
         st.caption(
             "Queen komşuluk, 999 permütasyon. %90/%95/%99 sınıfları tek tek testtir; 87 eşzamanlı "
             "test için doğrulayıcı ifade FDR bayrağına dayanmalıdır."
@@ -451,12 +692,12 @@ elif page == "Mekânsal Analiz ve Mahalle Karşılaştırması":
     if summary_path.exists():
         st.subheader("Küresel Moran's I")
         summary = pd.read_csv(summary_path)
-        st.dataframe(summary, use_container_width=True, hide_index=True)
+        st.dataframe(summary, width="stretch", hide_index=True)
     if report_path.exists():
         spatial_report = json.loads(report_path.read_text(encoding="utf-8"))
         st.subheader("Kaynaklar arası sıra korelasyonu (Spearman)")
         st.dataframe(pd.DataFrame(spatial_report["source_rank_correlations"]),
-                     use_container_width=True, hide_index=True)
+                     width="stretch", hide_index=True)
         st.caption(
             "Uyum ölçüsüdür, nedensellik değildir. 00-17 tahminleri modelin eğitildiği EMSR648 "
             "binalarını kapsadığından EMSR648 ile yüksek uyumu doğrulama sayılmaz."
@@ -476,7 +717,7 @@ elif page == "Mekânsal Analiz ve Mahalle Karşılaştırması":
                            if c["properties"].get(grid_variable + "__hotspot") == category]
                 if not members or category == "no_data":
                     continue
-                grid_figure.add_trace(go.Choroplethmapbox(
+                grid_figure.add_trace(go.Choroplethmap(
                     geojson={"type": "FeatureCollection", "features": members},
                     locations=[c["id"] for c in members], z=[1] * len(members),
                     colorscale=[[0, color], [1, color]], showscale=False,
@@ -484,11 +725,11 @@ elif page == "Mekânsal Analiz ve Mahalle Karşılaştırması":
                     name=f"{HOTSPOT_LABELS_TR[category]} ({len(members)})",
                 ))
             grid_figure.update_layout(
-                mapbox_style="open-street-map", mapbox_zoom=11.3,
-                mapbox_center={"lat": 38.345, "lon": 38.31}, height=520,
+                map_style="open-street-map", map_zoom=11.3,
+                map_center={"lat": 38.345, "lon": 38.31}, height=520,
                 margin={"l": 0, "r": 0, "t": 0, "b": 0},
             )
-            st.plotly_chart(grid_figure, use_container_width=True)
+            st.plotly_chart(grid_figure, width="stretch")
     if table_path.exists():
         st.subheader("Mahalle karşılaştırma tablosu")
         table = pd.read_csv(table_path)
@@ -498,15 +739,19 @@ elif page == "Mekânsal Analiz ve Mahalle Karşılaştırması":
                 "removed_share_of_2023_pct", "new_footprint_density_per_km2",
                 "spectral_change_2022_2023_pct", "rank_official_severe_ratio"]
         st.dataframe(table[core].sort_values("rank_official_severe_ratio"),
-                     use_container_width=True, hide_index=True)
+                     width="stretch", hide_index=True)
         st.download_button("Karşılaştırma tablosunu indir (CSV)", table_path.read_bytes(),
                            file_name=table_path.name, mime="text/csv")
         st.download_button("Mahalle analiz katmanını indir (GeoJSON)",
                            layer_path.read_bytes(), file_name=layer_path.name,
                            mime="application/geo+json")
 
-elif page == "Gerçek Hasar Haritası":
+
+
+def section_real_damage_map() -> None:
+    """Gerçek Hasar Haritası"""
     st.header("Gerçek Hasar Haritası")
+    show_sources("official", "emsr648", "neighborhoods")
     st.info(
         "Resmî PDF kayıtlarında doğrulanmış koordinat bulunmadığı için resmî hasar yalnız "
         "mahalle düzeyinde gösterilir. Copernicus EMSR648 poligonları bağımsız bir uydu-temelli "
@@ -678,7 +923,7 @@ elif page == "Gerçek Hasar Haritası":
         margin={"l": 0, "r": 0, "t": 10, "b": 0},
         legend={"orientation": "h", "yanchor": "bottom", "y": 1.01},
     )
-    st.plotly_chart(figure, use_container_width=True)
+    st.plotly_chart(figure, width="stretch")
     if basemap == "Uydu":
         st.caption(
             "Uydu altlığı: "
@@ -713,7 +958,7 @@ elif page == "Gerçek Hasar Haritası":
             .sort_values("severe_ratio", ascending=False)
             .rename(columns=renamed)
             .style.format({"Ağır/acil/yıkık payı": "{:.1%}"}),
-            use_container_width=True,
+            width="stretch",
             hide_index=True,
         )
     else:
@@ -734,8 +979,12 @@ elif page == "Gerçek Hasar Haritası":
             }
         )
 
-elif page == "Bina Tahmin Haritası":
+
+
+def section_prediction_map() -> None:
+    """Bina Tahmin Haritası"""
     st.header("Bina Bazlı Gerçek / Tahmin Haritası")
+    show_sources("predictions", "emsr648")
     st.warning(
         "Tahminler araştırma amaçlıdır; resmî hasar veya bina güvenliği kararı değildir. "
         "Sprint 00-16 mekânsal değerlendirmesinde azınlık sınıfları zayıf kalmıştır."
@@ -828,7 +1077,7 @@ elif page == "Bina Tahmin Haritası":
         margin={"l": 0, "r": 0, "t": 10, "b": 0},
         legend={"orientation": "h", "yanchor": "bottom", "y": 1.01},
     )
-    st.plotly_chart(figure, use_container_width=True)
+    st.plotly_chart(figure, width="stretch")
 
     low_confidence_count = sum(item["properties"]["low_confidence"] for item in features)
     col1, col2, col3 = st.columns(3)
@@ -844,8 +1093,12 @@ elif page == "Bina Tahmin Haritası":
             }
         )
 
-elif page == "Harita · Katmanlar":
+
+
+def section_map_layers() -> None:
+    """Harita · Katmanlar"""
     st.header("AOI05 coğrafi katmanları")
+    show_sources("neighborhoods", "emsr648")
     st.info(
         "Resmî hasar kayıtları yalnızca mahalle toplamları olarak renklendirilir. "
         "Haritadaki Copernicus poligonları ayrı bir gözlem kaynağıdır; resmî kayıtların "
@@ -1037,7 +1290,7 @@ elif page == "Harita · Katmanlar":
         margin={"l": 0, "r": 0, "t": 10, "b": 0},
         legend={"orientation": "h", "yanchor": "bottom", "y": 1.01},
     )
-    st.plotly_chart(figure, use_container_width=True)
+    st.plotly_chart(figure, width="stretch")
 
     coverage_frame = pd.DataFrame(layers.official_coverage)
     coverage_frame["seçili_kayıt"] = sum(
@@ -1105,7 +1358,7 @@ elif page == "Harita · Katmanlar":
                 "seçili_ağır_oran": "{:.1%}",
             }
         ),
-        use_container_width=True,
+        width="stretch",
     )
 
     with st.expander("Sınır eşleşmesi olmayan resmî kayıt grupları"):
@@ -1122,10 +1375,13 @@ elif page == "Harita · Katmanlar":
                 ]
                 .sort_values("official_total", ascending=False)
                 .style.format({"severe_ratio": "{:.1%}"}),
-                use_container_width=True,
+                width="stretch",
             )
 
-elif page == "Uydu · Zaman Serisi":
+
+
+def section_satellite_series() -> None:
+    """Uydu · Zaman Serisi"""
     st.header("Sprint 00-13 · Sentinel-2 zamansal GeoTIFF edinimi")
     st.info(
         "Bu bölüm ekran görüntüsü kullanmaz. AOI05'i kapsayan 37SDC karesi için gerçek "
@@ -1173,7 +1429,7 @@ elif page == "Uydu · Zaman Serisi":
         col2.metric("Yerel GeoTIFF", downloaded)
         col3.metric("Çözünürlük", f"{plan['output']['pixel_size_metres']} m")
         col4.metric("Bant", len(plan["output"]["bands"]))
-        st.dataframe(pd.DataFrame(scene_rows), use_container_width=True, hide_index=True)
+        st.dataframe(pd.DataFrame(scene_rows), width="stretch", hide_index=True)
         st.caption(
             f"Çıktı: {plan['output']['crs']} · tam MGRS {plan['target_mgrs']['tile']} karesi · "
             f"{', '.join(plan['output']['bands'])}. Herkese açık HTTPS kaynağı kullanılır; "
@@ -1185,7 +1441,10 @@ elif page == "Uydu · Zaman Serisi":
             language="powershell",
         )
 
-elif page == "V1 · Copernicus":
+
+
+def section_v1_copernicus() -> None:
+    """V1 · Copernicus"""
     st.header("V1 · Copernicus EMSR648 AOI05")
     st.write(
         "Alan, çevre ve şekil indeksi kullanılarak dört sınıflı bir mekânsal holdout "
@@ -1205,14 +1464,17 @@ elif page == "V1 · Copernicus":
             range_y=[0, 1],
             labels={"value": "Skor", "model": "Model", "variable": "Metrik"},
         ),
-        use_container_width=True,
+        width="stretch",
     )
     st.warning(
         "Yüksek accuracy çoğunluk sınıfından kaynaklanmaktadır. Düşük macro-F1, "
         "azınlık hasar sınıflarının güvenilir biçimde yakalanmadığını gösterir."
     )
 
-elif page == "V2 · Resmî kayıtlar":
+
+
+def section_v2_official() -> None:
+    """V2 · Resmî kayıtlar"""
     st.header("V2 · Altı sınıflı resmî hasar kaydı baseline'ı")
     st.write("Tek açıklayıcı değişken mahalle adıdır; sonuçlar stratified random split'e aittir.")
     v2 = reports["v2_models"].copy()
@@ -1226,7 +1488,7 @@ elif page == "V2 · Resmî kayıtlar":
             range_y=[0, 1],
             labels={"value": "Skor", "model": "Model", "variable": "Metrik"},
         ),
-        use_container_width=True,
+        width="stretch",
     )
     st.dataframe(v2.style.format({"accuracy": "{:.3f}", "macro_f1": "{:.3f}"}))
     st.warning(
@@ -1234,7 +1496,10 @@ elif page == "V2 · Resmî kayıtlar":
         "Bu nedenle sonuçlar görülmemiş coğrafyalara genelleme kanıtı değildir."
     )
 
-elif page == "V3 · Mekânsal":
+
+
+def section_v3_spatial() -> None:
+    """V3 · Mekânsal"""
     st.header("V3 · Tarihsel OSM ve mahalle düzeyi analiz")
     data = reports["v3_neighborhoods"].copy()
     min_records = st.slider("En az resmî kayıt", 0, 1_000, 100, 50)
@@ -1255,7 +1520,7 @@ elif page == "V3 · Mekânsal":
             },
             title="Mahalle düzeyinde hasar payı ve tarihsel OSM kapsamı",
         ),
-        use_container_width=True,
+        width="stretch",
     )
 
     left, right = st.columns(2)
@@ -1281,10 +1546,13 @@ elif page == "V3 · Mekânsal":
                 "aoi_coverage_ratio",
             ]
         ].sort_values("severe_ratio", ascending=False),
-        use_container_width=True,
+        width="stretch",
     )
 
-else:
+
+
+def section_method() -> None:
+    """Yöntem"""
     st.header("Yöntem, kapsam ve yeniden üretilebilirlik")
     st.markdown(
         """
@@ -1300,3 +1568,70 @@ else:
     )
 
 
+
+# ---------------------------------------------------------------------------
+# Navigation
+# ---------------------------------------------------------------------------
+
+NAVIGATION = {
+    "Ana Sayfa": {"icon": ":material/home:", "pages": {"Ana Sayfa": section_home}},
+    "Harita Analizi": {
+        "icon": ":material/map:",
+        "pages": {
+            "Gerçek Hasar Haritası": section_real_damage_map,
+            "Harita · Katmanlar": section_map_layers,
+        },
+    },
+    "Model Tahmini": {
+        "icon": ":material/model_training:",
+        "pages": {
+            "Bina Tahmin Haritası": section_prediction_map,
+            "Model performansı": section_model_performance,
+        },
+    },
+    "Veri Setleri": {
+        "icon": ":material/database:",
+        "pages": {
+            "Veri kaynakları": section_sources,
+            "V1 · Copernicus": section_v1_copernicus,
+            "V2 · Resmî kayıtlar": section_v2_official,
+        },
+    },
+    "İstatistikler": {
+        "icon": ":material/bar_chart:",
+        "pages": {
+            "Mekânsal Analiz ve Mahalle Karşılaştırması": section_spatial,
+            "V3 · Mekânsal": section_v3_spatial,
+        },
+    },
+    "Karşılaştırma": {
+        "icon": ":material/compare:",
+        "pages": {
+            "2022–2023 Değişim Analizi": section_change_2022_2023,
+            "2023–2026 Yeniden Yapılanma": section_reconstruction,
+            "Uydu · Zaman Serisi": section_satellite_series,
+        },
+    },
+    "Yöntem": {"icon": ":material/menu_book:", "pages": {"Yöntem": section_method}},
+}
+
+with st.sidebar:
+    menu = st.radio(
+        "Menü",
+        list(NAVIGATION),
+        format_func=lambda name: f"{NAVIGATION[name]['icon']} {name}",
+        label_visibility="collapsed",
+        key="menu",
+    )
+    st.divider()
+    st.caption(
+        "Araştırma amaçlıdır; resmî hasar veya bina güvenliği kararı değildir. "
+        "Gösterilen ilişkiler nedensellik kanıtlamaz."
+    )
+
+pages = NAVIGATION[menu]["pages"]
+if len(pages) > 1:
+    page = st.radio("Bölüm", list(pages), horizontal=True, key=f"page_{menu}")
+else:
+    page = next(iter(pages))
+pages[page]()

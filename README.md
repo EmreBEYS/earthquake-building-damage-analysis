@@ -132,6 +132,7 @@ The project follows a reproducible analytical workflow.
 | 00-18 | 2022–2023 mapping and spectral change | Completed (OSM part pending) |
 | 00-19 | 2023–2026 reconstruction change map and neighbourhood indicators | Completed |
 | 00-20 | Neighbourhood damage density, hot spots and comparison table | Completed |
+| 00-21 | New dark-theme Streamlit dashboard | Completed |
 
 ### Sprint 00-08 — Official Damage Dataset Extraction
 
@@ -682,3 +683,18 @@ damage ratio forms an FDR-confirmed hot spot in the historic centre (Dabakhane, 
 Kavaklıbağ, Yenihamam, Cirikpınar, Salköprü). Neighbourhoods with more severe damage also lost
 more buildings by 2026 (Spearman ρ = 0.61). See [method](docs/sprints/sprint-00-20.md) and
 [checklist](docs/sprints/sprint-00-20-checklist.md).
+
+## Sprint 00-21 — New dashboard
+
+`dashboard.py` has a dark theme, a left menu, KPI cards, a 2022/2023/2026 period selector and
+data-source badges on every page. Earlier pages live as sub-tabs under seven menu headings. Every
+home-page number is computed from committed outputs: 46,563 official records, the class shares,
+district split and building counts. The model card reports the spatial-split macro-F1 next to
+the dummy baseline.
+
+```bash
+uv run python scripts/20_prepare_dashboard_overview.py
+uv run python -m streamlit run dashboard.py
+```
+
+See [design notes](docs/sprints/sprint-00-21.md) and [checklist](docs/sprints/sprint-00-21-checklist.md).
