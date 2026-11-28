@@ -134,6 +134,7 @@ The project follows a reproducible analytical workflow.
 | 00-20 | Neighbourhood damage density, hot spots and comparison table | Completed |
 | 00-21 | New dark-theme Streamlit dashboard | Completed |
 | 00-22 | Interactive map, period panel and building details | Completed |
+| 00-23 | Reporting and download system | Completed |
 
 ### Sprint 00-08 — Official Damage Dataset Extraction
 
@@ -679,7 +680,7 @@ carries a Benjamini–Hochberg FDR flag.
 uv run python scripts/19_analyze_spatial_neighborhoods.py
 ```
 
-All four indicators cluster significantly (Moran's I 0.18–0.52, p ≤ 0.006). The official severe
+All five indicators cluster significantly (Moran's I 0.18–0.52, p ≤ 0.006). The official severe
 damage ratio forms an FDR-confirmed hot spot in the historic centre (Dabakhane, İsmetiye,
 Kavaklıbağ, Yenihamam, Cirikpınar, Salköprü). Neighbourhoods with more severe damage also lost
 more buildings by 2026 (Spearman ρ = 0.61). See [method](docs/sprints/sprint-00-20.md) and
@@ -714,3 +715,17 @@ uv run python scripts/21_prepare_interactive_map.py
 ```
 
 See [notes](docs/sprints/sprint-00-22.md) and [checklist](docs/sprints/sprint-00-22-checklist.md).
+
+## Sprint 00-23 — Reporting and downloads
+
+`src/earthquake_damage/reporting.py` builds neighbourhood, building, model-performance and
+data-quality reports. Each exports to CSV, Excel, PNG and PDF from the dashboard's
+**Rapor & İndirme** page or the command line. The model report recomputes the random-forest
+confusion matrix on the exact Sprint 00-16 spatial split (macro-F1 0.2388, identical). It shows
+that no minority damage class is recovered.
+
+```bash
+uv run python scripts/22_generate_reports.py
+```
+
+See [notes](docs/sprints/sprint-00-23.md) and [checklist](docs/sprints/sprint-00-23-checklist.md).

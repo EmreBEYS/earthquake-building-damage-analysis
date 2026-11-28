@@ -1,6 +1,6 @@
 {
   "status": "completed_spatial_analysis",
-  "generated_at_utc": "2026-11-28T12:15:57.479330+00:00",
+  "generated_at_utc": "2026-11-28T12:38:27.348386+00:00",
   "neighborhoods": 87,
   "weights": {
     "type": "queen contiguity (buffered intersects)",
@@ -69,6 +69,21 @@
       "lisa_hh": 8,
       "lisa_ll": 16,
       "lisa_outliers": 2
+    },
+    {
+      "variable": "net_building_loss_pct",
+      "label_tr": "Net OSM bina kaybı 2023→2026 (%)",
+      "units": 87,
+      "morans_i": 0.4304,
+      "expected_i": -0.0116,
+      "z_sim": 6.996,
+      "p_sim": 0.001,
+      "hot_spots_95": 13,
+      "cold_spots_95": 0,
+      "gi_fdr_significant": 10,
+      "lisa_hh": 8,
+      "lisa_ll": 12,
+      "lisa_outliers": 5
     }
   ],
   "source_rank_correlations": [
@@ -95,6 +110,18 @@
       "b": "removed_share_of_2023_pct",
       "n": 87,
       "spearman_rho": 0.6118
+    },
+    {
+      "a": "official_severe_ratio",
+      "b": "net_building_loss_pct",
+      "n": 87,
+      "spearman_rho": 0.6249
+    },
+    {
+      "a": "removed_share_of_2023_pct",
+      "b": "net_building_loss_pct",
+      "n": 87,
+      "spearman_rho": 0.9008
     },
     {
       "a": "official_severe_per_km2",
@@ -179,10 +206,10 @@
     }
   },
   "outputs_sha256": {
-    "neighborhood_comparison.csv": "400451db45d69cd9c083d1ab85071fafcac2919494bbf0e2de9164b8bc64da65",
-    "neighborhood_spatial_analysis.geojson": "3ef5c77c250c52ba7e049bcb5cb47c738120c9c0f0c778e9e7cc0273cca4c698",
+    "neighborhood_comparison.csv": "22eee7637fc576f7158bcac798a92c08d8297f7f70698ce91e465c5575cd2cbf",
+    "neighborhood_spatial_analysis.geojson": "c36e2b9cbc64487d1688d9700af92f53f050fc347ec27dca1c4468aab7a78a66",
     "hotspot_grid.geojson": "18a5c07cabf2205e640d1d26f5ab578e08eeb127897130e82cd528f996cdf469",
-    "spatial_autocorrelation_summary.csv": "b8312d135d530e1b7341e7665aeecf77a4e330848ee17431d1df02ab17229385"
+    "spatial_autocorrelation_summary.csv": "ce9cc6e5f390a99b4ec1843bc077df3bb5fae874a322c7144203d68bc01c46fb"
   },
   "roundtrip_valid": true,
   "limitations": [

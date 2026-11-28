@@ -42,6 +42,11 @@ içindedir.
   bırakılır, sıfır yazılmaz.
 - **Model tahmini payı:** aynı ölçütle 00-17'de damaged/destroyed tahmin edilen bina payı.
 - **Yapı yoğunluğu:** 2023 OSM bina sayısı / km² ve taban alanı kaplama yüzdesi.
+- **Net OSM bina kaybı:** (2023 − 2026) / 2023 OSM bina sayısı. Kaldırılan yapı payını
+  tamamlar. 00-19'un temkinli bire bir eşleştirmesi, 2026'da bölünen ya da birleşen ayak
+  izlerini "belirsiz" bırakır ve kaldırılmış saymaz. Örneğin Dabakhane'de 185 bina 38'e iner,
+  ama 211 birim belirsiz olduğu için kaldırılan payı yalnız %5,9 görünür. Net kayıp burada
+  %79'dur.
 - **Değişim:** 00-19 kaldırılan yapı payı, yeni yapı yoğunluğu, yenilenme devri ve spektral
   değişim payı. Buna 00-18'in 2022→2023 spektral aday alanının mahalle alanına oranı eklenir.
 
@@ -75,8 +80,9 @@ dizide Moran I = 0,4, Gi\* z = 1,549, BH adım-yukarı ve LISA kadranları. Yeni
 | Resmî ağır hasar yoğunluğu | 0,521 | 8,31 | 0,001 | 16 | 6 | 9 | 14 / 20 |
 | Bina yoğunluğu 2023 | 0,436 | 6,92 | 0,001 | 13 | 10 | 11 | 11 / 10 |
 | Kaldırılan yapı payı 2023→2026 | 0,180 | 3,23 | 0,006 | 10 | 0 | 2 | 8 / 16 |
+| Net OSM bina kaybı 2023→2026 | 0,430 | 7,00 | 0,001 | 13 | 0 | 10 | 8 / 12 |
 
-Dört göstergenin hepsi rastgele dağılımdan anlamlı biçimde kümelenmiştir.
+Beş göstergenin hepsi rastgele dağılımdan anlamlı biçimde kümelenmiştir.
 
 - **Ağır hasar oranı:** FDR ile doğrulanan sıcak noktalar Dabakhane, İsmetiye, Kavaklıbağ,
   Yenihamam, Cirikpınar ve Salköprü'dür. LISA Yüksek-Yüksek kümesi bunlara Niyazi, Akpınar,
@@ -84,6 +90,9 @@ Dört göstergenin hepsi rastgele dağılımdan anlamlı biçimde kümelenmişti
   çekirdek oluşturur.
 - **Ağır hasar yoğunluğu:** FDR sıcak noktaları aynı çekirdeğe Akpınar, B.Hüseyinbey, Saray ve
   İstiklal'i ekler.
+- **Net OSM bina kaybı:** FDR sıcak noktaları Niyazi, Şıkşık, Cirikpınar, Yenihamam, Dabakhane,
+  Saray, İstiklal, İsmetiye, Kavaklıbağ ve Nuriye'dir. Bu, hasar çekirdeğiyle büyük ölçüde örtüşen
+  bitişik bir kayıp kümesidir.
 - **Kaldırılan yapı payı:** FDR sıcak noktaları Kavaklıbağ ve Şıkşık'tır. LISA HH kümesi
   Niyazi, Kırçuval, Yenihamam, B.Hüseyinbey, İsmetiye ve Nuriye'yi de içerir. Yani yıkım/temizlik,
   hasarın yoğunlaştığı merkez çekirdekte toplanmıştır.
@@ -93,6 +102,8 @@ Dört göstergenin hepsi rastgele dağılımdan anlamlı biçimde kümelenmişti
 | Karşılaştırma | n | ρ |
 |---|---:|---:|
 | Resmî ağır hasar oranı ↔ kaldırılan yapı payı | 87 | 0,61 |
+| Resmî ağır hasar oranı ↔ net OSM bina kaybı | 87 | 0,62 |
+| Kaldırılan yapı payı ↔ net OSM bina kaybı | 87 | 0,90 |
 | Bina yoğunluğu ↔ resmî ağır hasar yoğunluğu | 87 | 0,72 |
 | Resmî ağır hasar oranı ↔ EMSR648 ağır hasar payı | 72 | 0,30 |
 | Resmî ağır hasar oranı ↔ model tahmini payı | 72 | 0,35 |
@@ -118,7 +129,7 @@ Dört göstergenin hepsi rastgele dağılımdan anlamlı biçimde kümelenmişti
 
 `data/dashboard/sprint_00-20/`:
 
-- `neighborhood_comparison.csv`: 87 mahalle, 67 sütun; göstergeler, sıralar ve her değişken için
+- `neighborhood_comparison.csv`: 87 mahalle, 75 sütun; göstergeler, sıralar ve her değişken için
   Gi\* z/p/FDR/sınıf ile LISA p/sınıf.
 - `neighborhood_spatial_analysis.geojson`: aynı tablo; WGS84, Türkçe sınıf etiketleriyle.
 - `hotspot_grid.geojson`: 500 m grid Gi\* sonuçları.

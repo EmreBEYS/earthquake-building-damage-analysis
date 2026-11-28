@@ -13,19 +13,30 @@
   "osm_post_event_snapshot": "data/external/reconstruction/osm/buildings_post_event.geojson",
   "output_directory": "data/dashboard/sprint_00-20",
   "report_directory": "reports/sprint_00-20",
-  "severe_copernicus_grades": ["Damaged", "Destroyed"],
-  "severe_predicted_classes": ["damaged", "destroyed"],
+  "severe_copernicus_grades": [
+    "Damaged",
+    "Destroyed"
+  ],
+  "severe_predicted_classes": [
+    "damaged",
+    "destroyed"
+  ],
   "contiguity_tolerance_metres": 1.0,
   "permutations": 999,
   "random_seed": 20,
-  "significance_levels": [0.01, 0.05, 0.10],
+  "significance_levels": [
+    0.01,
+    0.05,
+    0.1
+  ],
   "fdr_alpha": 0.05,
   "copernicus_minimum_coverage_ratio": 0.5,
   "hotspot_variables": {
     "official_severe_ratio": "Resmî ağır hasar oranı",
     "official_severe_per_km2": "Resmî ağır hasar yoğunluğu (km² başına)",
     "building_density_2023_km2": "Bina yoğunluğu 2023 (km² başına)",
-    "removed_share_of_2023_pct": "Kaldırılan yapı payı 2023→2026 (%)"
+    "removed_share_of_2023_pct": "Kaldırılan yapı payı 2023→2026 (%)",
+    "net_building_loss_pct": "Net OSM bina kaybı 2023→2026 (%)"
   },
   "grid": {
     "cell_size_metres": 500,

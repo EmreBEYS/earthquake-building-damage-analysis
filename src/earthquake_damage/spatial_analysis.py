@@ -351,6 +351,14 @@ def build_comparison(root: Path, config: dict):
     if table["osm_buildings_2023"].isna().any():
         raise ValueError("Reconstruction indicators missing for some neighbourhoods")
     table["building_density_2023_km2"] = table["osm_buildings_2023"] / table["area_km2"]
+    # Net loss complements the removed share: footprints replaced through splits or merges
+    # stay "uncertain" in the conservative one-to-one matching and are not counted as removed.
+    table["net_building_loss_pct"] = np.where(
+        table["osm_buildings_2023"] > 0,
+        100 * (table["osm_buildings_2023"] - table["osm_buildings_2026"])
+        / table["osm_buildings_2023"].where(table["osm_buildings_2023"] > 0),
+        np.nan,
+    )
     table["footprint_coverage_2023_pct"] = (
         100 * table["footprint_area_2023_m2"] / (table["area_km2"] * 1e6)
     )
@@ -541,6 +549,7 @@ def run(root: Path, config: dict) -> dict:
         "official_severe_per_km2": "rank_official_severe_density",
         "building_density_2023_km2": "rank_building_density",
         "removed_share_of_2023_pct": "rank_removed_share",
+        "net_building_loss_pct": "rank_net_building_loss",
     }
     for variable, rank_column in ranked.items():
         table[rank_column] = table[variable].rank(ascending=False, method="min").astype("Int64")
@@ -548,7 +557,8 @@ def run(root: Path, config: dict) -> dict:
     # Agreement between independent sources, as rank correlation only.
     def spearman(a: str, b: str) -> dict:
         pair = table[[a, b]].dropna()
-        rho = pair[a].rank().corr(pair[b].rank()) if len(pair) > 2 else float("nan")
+        varies = len(pair) > 2 and pair[a].nunique() > 1 and pair[b].nunique() > 1
+        rho = pair[a].rank().corr(pair[b].rank()) if varies else float("nan")  # undefined
         return {"a": a, "b": b, "n": len(pair), "spearman_rho": round(float(rho), 4)}
 
     correlations = [
@@ -556,6 +566,8 @@ def run(root: Path, config: dict) -> dict:
         spearman("official_severe_ratio", "predicted_severe_share"),
         spearman("emsr_severe_share", "predicted_severe_share"),
         spearman("official_severe_ratio", "removed_share_of_2023_pct"),
+        spearman("official_severe_ratio", "net_building_loss_pct"),
+        spearman("removed_share_of_2023_pct", "net_building_loss_pct"),
         spearman("official_severe_per_km2", "removed_candidates"),
         spearman("building_density_2023_km2", "official_severe_per_km2"),
         spearman("official_severe_ratio", "spectral_change_2022_2023_pct"),
