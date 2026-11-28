@@ -193,7 +193,7 @@ def prepare(root: Path, config: dict) -> dict:
     output = root / config["output_directory"]
     output.mkdir(parents=True, exist_ok=True)
     path = output / "neighborhood_districts.csv"
-    table.round({"district_share": 4}).to_csv(path, index=False, encoding="utf-8")
+    table.round({"district_share": 4}).to_csv(lineterminator="\n", path_or_buf=path, index=False, encoding="utf-8")
     summary = {
         "generated_at_utc": datetime.now(UTC).isoformat(),
         "neighborhoods": len(table),

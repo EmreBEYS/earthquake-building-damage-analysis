@@ -146,3 +146,12 @@ def test_hotspot_columns_are_internally_consistent():
         assert (hot[p >= 0.10] == "not_significant").all()
         # An FDR discovery is always significant on its own as well.
         assert (p[table[f"{variable}__gi_fdr"]] < 0.05).all()
+
+
+@pytest.mark.parametrize("folder", ["data/dashboard/sprint_00-19", "data/dashboard/sprint_00-20",
+                                    "data/dashboard/sprint_00-21", "data/dashboard/sprint_00-22",
+                                    "reports/sprint_00-23"])
+def test_pipeline_csvs_use_lf_line_endings(folder):
+    """CSV bytes must not depend on the OS that produced them, or checksums differ in CI."""
+    for path in (ROOT / folder).glob("*.csv"):
+        assert b"\r\n" not in path.read_bytes(), path.name

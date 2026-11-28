@@ -585,7 +585,7 @@ def to_csv(report: Report) -> bytes:
         long["Bölüm"] = long.index.map(lambda i: f"satır {i + 1}")
         parts.append(long.assign(Tablo=name).reset_index(drop=True))
     combined = pd.concat(parts, ignore_index=True)[["Tablo", "Bölüm", "Alan", "Değer"]]
-    return combined.to_csv(index=False).encode("utf-8-sig")
+    return combined.to_csv(index=False, lineterminator="\n").encode("utf-8-sig")
 
 
 def to_excel(report: Report) -> bytes:

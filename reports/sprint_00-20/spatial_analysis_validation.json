@@ -1,6 +1,6 @@
 {
   "status": "completed_spatial_analysis",
-  "generated_at_utc": "2026-11-28T12:38:27.348386+00:00",
+  "generated_at_utc": "2026-11-28T13:54:43.958677+00:00",
   "neighborhoods": 87,
   "weights": {
     "type": "queen contiguity (buffered intersects)",
@@ -206,10 +206,10 @@
     }
   },
   "outputs_sha256": {
-    "neighborhood_comparison.csv": "22eee7637fc576f7158bcac798a92c08d8297f7f70698ce91e465c5575cd2cbf",
+    "neighborhood_comparison.csv": "b86efb1bafcf2994008da17b5f365af973bf9139afbe952f3ea45e8436b29e84",
     "neighborhood_spatial_analysis.geojson": "c36e2b9cbc64487d1688d9700af92f53f050fc347ec27dca1c4468aab7a78a66",
     "hotspot_grid.geojson": "18a5c07cabf2205e640d1d26f5ab578e08eeb127897130e82cd528f996cdf469",
-    "spatial_autocorrelation_summary.csv": "ce9cc6e5f390a99b4ec1843bc077df3bb5fae874a322c7144203d68bc01c46fb"
+    "spatial_autocorrelation_summary.csv": "8f1f668de81f966bf4975c70184d0a5156c614200e16ac521468d03f0cda8504"
   },
   "roundtrip_valid": true,
   "limitations": [

@@ -229,10 +229,10 @@ def run_analysis(root, config):
     summary = changes.groupby(["neighborhood", "status"]).size().unstack(fill_value=0)
     summary = summary.reindex(columns=STATUSES, fill_value=0)
     summary["analysis_units"] = summary.sum(axis=1)
-    summary.to_csv(output / "neighborhood_change_summary.csv")
+    summary.to_csv(lineterminator="\n", path_or_buf=output / "neighborhood_change_summary.csv")
     pd.DataFrame(comparisons, columns=["change_id", "status", "damage_grade",
                                      "intersection_area_m2", "change_area_fraction",
-                                     "copernicus_index"]).to_csv(
+                                     "copernicus_index"]).to_csv(lineterminator="\n", path_or_buf=
         output / "copernicus_overlap_comparison.csv", index=False)
     reopened = gpd.read_parquet(output / "building_change_2022_2023.parquet")
     geojson = gpd.read_file(output / "building_change_2022_2023.geojson")

@@ -584,7 +584,7 @@ def run(root: Path, config: dict) -> dict:
     float_columns = csv_table.select_dtypes("float").columns
     csv_table[float_columns] = csv_table[float_columns].round(4)
     comparison_path = output / "neighborhood_comparison.csv"
-    csv_table.to_csv(comparison_path, index=False, encoding="utf-8")
+    csv_table.to_csv(lineterminator="\n", path_or_buf=comparison_path, index=False, encoding="utf-8")
 
     web = table.to_crs(4326)
     web[float_columns] = web[float_columns].round(4)
@@ -601,7 +601,7 @@ def run(root: Path, config: dict) -> dict:
     grid_web.to_file(grid_path, driver="GeoJSON")
 
     summary_path = output / "spatial_autocorrelation_summary.csv"
-    pd.DataFrame(moran_summary).to_csv(summary_path, index=False, encoding="utf-8")
+    pd.DataFrame(moran_summary).to_csv(lineterminator="\n", path_or_buf=summary_path, index=False, encoding="utf-8")
 
     reopened = gpd.read_file(layer_path)
     if len(reopened) != len(table) or not reopened.geometry.is_valid.all():
