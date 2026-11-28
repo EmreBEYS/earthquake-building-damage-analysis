@@ -287,7 +287,8 @@ def focus_view(bounds) -> tuple[dict, float]:
 
 
 def categorical_traces(frame, column: str, colors: dict, labels: dict | None = None,
-                       opacity: float = 0.75, hover_columns: tuple = ()) -> list:
+                       opacity: float = 0.75, hover_columns: tuple = (),
+                       customdata_column: str | None = None) -> list:
     """One Choroplethmap trace per category so each has its own legend entry."""
     import plotly.graph_objects as go
 
@@ -308,6 +309,10 @@ def categorical_traces(frame, column: str, colors: dict, labels: dict | None = N
             marker_line_width=0.4, marker_line_color="#0B1220",
             name=f"{(labels or {}).get(category, category)} ({len(subset):,})".replace(",", "."),
             showlegend=True, text=hover, hovertemplate="%{text}<extra></extra>",
+            customdata=list(subset[customdata_column]) if customdata_column else None,
+            # Keep every trace at full strength after a click selection.
+            selected={"marker": {"opacity": opacity}},
+            unselected={"marker": {"opacity": opacity}},
         ))
     return traces
 
@@ -376,7 +381,8 @@ def render(root: Path, period: str, key: str = "imap") -> None:  # pragma: no co
                 colorscale=[[0, "rgba(255,255,255,0.02)"], [1, "rgba(255,255,255,0.02)"]],
                 marker_line_width=1.2, marker_line_color="#E6EDF6", name="Mahalle sınırları",
                 text=list(frame["mahalle"]), hovertemplate="%{text}<extra></extra>",
-                showlegend=False,
+                showlegend=False, selected={"marker": {"opacity": 1}},
+                unselected={"marker": {"opacity": 1}},
             )], None
         if layer == "official":
             frame = clip(hoods)
@@ -390,6 +396,7 @@ def render(root: Path, period: str, key: str = "imap") -> None:  # pragma: no co
                 text=[f"{m}: {v:.2f}" for m, v in
                       zip(frame["mahalle"], frame["official_severe_ratio"], strict=True)],
                 hovertemplate="%{text}<extra></extra>", name="Resmî ağır hasar oranı",
+                selected={"marker": {"opacity": 0.6}}, unselected={"marker": {"opacity": 0.6}},
             )], None
         if layer == "hotspots":
             frame = clip(hoods)
@@ -406,7 +413,7 @@ def render(root: Path, period: str, key: str = "imap") -> None:  # pragma: no co
             prefix = "Tahmin: " if layer == "predictions" else ""
             labels = {k: prefix + v for k, v in DAMAGE_LABELS_TR.items()}
             return categorical_traces(frame, "grade", DAMAGE_COLORS, labels, 0.8,
-                                      ("feature_id", "grade")), None
+                                      ("feature_id", "grade"), "feature_id"), None
         if layer == "reconstruction":
             frame = clip(load_layer("reconstruction"))
             frame = frame[frame["layer"] == "osm_footprint"]
@@ -432,11 +439,13 @@ def render(root: Path, period: str, key: str = "imap") -> None:  # pragma: no co
         frame = details
         if focus_geometry is not None:
             frame = frame[frame["mahalle"] == focus]
-        colors = [DAMAGE_COLORS.get(g, "#94A3B8") for g in frame["damage_grade"]]
-        sizes = [13 if f == selected else 6 for f in frame["feature_id"]]
+        # White points stand out on the grade-coloured polygons; the selection is large yellow.
+        colors = ["#FACC15" if f == selected else "#FFFFFF" for f in frame["feature_id"]]
+        sizes = [15 if f == selected else 7 for f in frame["feature_id"]]
         return go.Scattermap(
             lat=frame["lat"], lon=frame["lon"], mode="markers",
-            marker={"size": sizes, "color": colors, "opacity": 0.9},
+            marker={"size": sizes, "color": colors, "opacity": 0.95},
+            selected={"marker": {"opacity": 0.95}}, unselected={"marker": {"opacity": 0.95}},
             customdata=frame["feature_id"], name="Poligon merkezleri (tıklanabilir)",
             text=frame["feature_id"], hovertemplate="%{text}<extra></extra>",
         )
@@ -473,9 +482,13 @@ def render(root: Path, period: str, key: str = "imap") -> None:  # pragma: no co
         with map_col:
             event = draw(period, layers, 640, f"{key}_single",
                          st.session_state.get(selected_key), clickable=period == "2023")
-            points = selected_points(event)
-            if points and points[0].get("customdata"):
-                st.session_state[selected_key] = points[0]["customdata"]
+            clicked = clicked_feature(selected_points(event))
+            # Apply a click once: the event persists across reruns and must not override a
+            # later choice made in the picker.
+            if clicked and clicked != st.session_state.get(f"{key}_last_click"):
+                st.session_state[f"{key}_last_click"] = clicked
+                st.session_state[selected_key] = clicked
+                st.session_state[f"{key}_picker"] = clicked
             if basemap == "Uydu":
                 st.caption("Uydu altlığı: Esri, Maxar, Earthstar Geographics, and the GIS User "
                            "Community · yalnız görsel bağlam.")
@@ -518,6 +531,17 @@ def selected_points(event) -> list[dict]:
     return list((selection or {}).get("points", []))
 
 
+def clicked_feature(points: list[dict]) -> str | None:
+    """Feature id of the first clicked point (``customdata`` may be a scalar or a list)."""
+    for point in points:
+        data = point.get("customdata")
+        if isinstance(data, (list, tuple)):
+            data = data[0] if data else None
+        if data:
+            return str(data)
+    return None
+
+
 def _osm_layer(period: str) -> list[str]:
     return [f"osm_{period}"]
 
@@ -534,9 +558,11 @@ def render_building_panel(details, focus: str, selected_key: str,
             st.caption("Bu mahallede EMSR648 poligonu yok.")
             return
         ids = list(pool.sort_values(["damage_grade", "feature_id"])["feature_id"])
-        current = st.session_state.get(selected_key)
-        index = ids.index(current) if current in ids else 0
-        chosen = st.selectbox("Poligon", ids, index=index, key=f"{key}_picker",
+        picker_key = f"{key}_picker"
+        if st.session_state.get(picker_key) not in ids:  # focus changed or first run
+            current = st.session_state.get(selected_key)
+            st.session_state[picker_key] = current if current in ids else ids[0]
+        chosen = st.selectbox("Poligon", ids, key=picker_key,
                               help="Haritada 2023 döneminde bir noktaya tıklayarak da seçilir.")
         st.session_state[selected_key] = chosen
         building = details.set_index("feature_id").loc[chosen].to_dict()

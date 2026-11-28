@@ -11,6 +11,7 @@ from earthquake_damage.interactive_map import (
     LAYER_LABELS,
     PERIOD_LAYERS,
     available_layers,
+    clicked_feature,
     count_points_within,
     detail_rows,
     focus_view,
@@ -99,3 +100,10 @@ def test_committed_building_details_are_complete():
     # Removed candidates are a subset of the 2023 footprints, so never outnumber them.
     known = table[table["osm_buildings_2023"] >= 0]
     assert (known["removed_by_2026"] <= known["osm_buildings_2023"]).all()
+
+
+def test_clicked_feature_reads_scalar_or_list_customdata():
+    assert clicked_feature([]) is None
+    assert clicked_feature([{"customdata": "EMSR_1"}]) == "EMSR_1"
+    assert clicked_feature([{"customdata": ["EMSR_2", 5]}]) == "EMSR_2"
+    assert clicked_feature([{"x": 1}, {"customdata": "EMSR_3"}]) == "EMSR_3"

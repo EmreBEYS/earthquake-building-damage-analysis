@@ -2,6 +2,9 @@
 
 Data-driven analysis of how structural, geographical, and seismic characteristics influence post-earthquake building damage levels.
 
+> **V4 final:** [final report](docs/final-report.md) · [limitations](docs/limitations.md) ·
+> [demo guide](docs/demo.md). Research use only; never a building-safety decision.
+
 ## Overview
 
 This project investigates relationships between building attributes, ground motion indicators, geographical characteristics, and observed post-earthquake damage.
@@ -135,6 +138,7 @@ The project follows a reproducible analytical workflow.
 | 00-21 | New dark-theme Streamlit dashboard | Completed |
 | 00-22 | Interactive map, period panel and building details | Completed |
 | 00-23 | Reporting and download system | Completed |
+| 00-24 | Tests, academic validation and demo (V4) | Completed |
 
 ### Sprint 00-08 — Official Damage Dataset Extraction
 
@@ -448,83 +452,65 @@ The main deliverables are `reports/sprint_00-16/model_evaluation_report.json` an
 
 ```text
 earthquake-building-damage-analysis/
-├── configs/
+├── dashboard.py                 # Streamlit app (Sprint 00-21 design)
+├── .streamlit/config.toml       # dark theme
+├── configs/                     # one JSON config per sprint
 ├── data/
-│   ├── external/
-│   ├── final/                 # Integrated datasets (not committed)
-│   ├── interim/               # Extracted intermediate records
-│   ├── processed/             # Validated per-group datasets
-│   └── raw/                   # Original source data
+│   ├── dashboard/sprint_00-*/   # committed, checksummed map layers and tables
+│   ├── processed/               # validated datasets (partly committed)
+│   ├── external/                # large or licence-restricted inputs (git-ignored)
+│   └── inventory.csv            # every source with licence and SHA-256
 ├── docs/
-│   ├── sprints/
-│   └── data-sources.md
-├── models/
-├── notebooks/
-├── reports/
-│   ├── figures/
-│   └── sprint_00-09/
-├── scripts/
-│   ├── 08_build_official_dataset.py
-│   ├── 09_validate_and_merge.py
-│   └── README.md
-├── src/earthquake_damage/
-│   ├── data/
-│   ├── evaluation/
-│   ├── features/
-│   ├── modeling/
-│   └── visualization/
-└── tests/
+│   ├── final-report.md          # V4 final report
+│   ├── limitations.md           # uncertainties, limitations and citations
+│   ├── demo.md                  # Windows / macOS setup and demo script
+│   ├── data-sources.md
+│   └── sprints/                 # method notes and checklists per sprint
+├── reports/sprint_00-*/         # validation reports, model and data-quality reports
+├── scripts/                     # numbered pipeline entry points + demo_check.py
+├── src/earthquake_damage/       # analysis, reporting and UI modules
+└── tests/                       # unit, end-to-end, dashboard (AppTest) and GIS quality tests
 ```
-
-The structure above describes the current and intended locations of the main project components. Some planned directories may not yet contain implementation files.
 
 ## Getting Started
 
-### Requirements
+Requirements: Git, Python 3.11 and [uv](https://docs.astral.sh/uv/). The lock file pins every
+dependency, so Windows and macOS get the same environment.
 
-- Python 3.11
-- [uv](https://docs.astral.sh/uv/)
-- pandas
-- PyMuPDF
+**Windows (PowerShell)**
 
-The committed dependency lock file is the reproducible default for the project's declared dependencies.
+```powershell
+git clone https://github.com/EmreBEYS/earthquake-building-damage-analysis.git
+cd earthquake-building-damage-analysis
+uv sync --locked --all-extras
+uv run python scripts/demo_check.py
+uv run python -m streamlit run dashboard.py
+```
+
+**macOS (MacBook)**
 
 ```bash
+git clone https://github.com/EmreBEYS/earthquake-building-damage-analysis.git
+cd earthquake-building-damage-analysis
 uv sync --locked --all-extras
-uv run pytest -q
+uv run python scripts/demo_check.py
+uv run python -m streamlit run dashboard.py
+```
+
+Use `python -m streamlit` and `python -m pytest` through uv. On Windows,
+`uv run streamlit` can fail with "uv trampoline failed to canonicalize script path".
+
+Checks:
+
+```bash
+uv run python -m pytest -q
 uv run ruff check .
 uv run python scripts/check_project.py
-uv run streamlit run dashboard.py
 ```
 
-A conventional Python virtual environment can also be used:
-
-```bash
-python -m venv .venv
-
-# Windows PowerShell
-.venv\Scripts\Activate.ps1
-
-python -m pip install --upgrade pip
-python -m pip install -e ".[dev]"
-```
-
-`PyMuPDF` is a declared runtime dependency because scripts 07 and 08 open PDF
-documents through the `pymupdf` module. The old `inspect_Dataset.py` file and its
-unused import are not part of the current repository.
-
-On Windows PowerShell, start the dashboard from the repository root:
-
-```powershell
-uv sync --locked
-uv run streamlit run dashboard.py
-```
-
-To reproduce the optional Sprint 00-10 geospatial analyses, install all extras:
-
-```powershell
-uv sync --locked --all-extras
-```
+A clean clone runs the full dashboard from committed outputs. Only the OSM building layers in
+the interactive map need the git-ignored snapshots (see [`docs/demo.md`](docs/demo.md)).
+`PyMuPDF` is a runtime dependency because scripts 07 and 08 read the official PDFs.
 
 ### Official Damage Dataset Processing
 Place authorized source PDFs in the following local structure:
@@ -729,3 +715,18 @@ uv run python scripts/22_generate_reports.py
 ```
 
 See [notes](docs/sprints/sprint-00-23.md) and [checklist](docs/sprints/sprint-00-23-checklist.md).
+
+## Sprint 00-24 — Validation and demo (V4)
+
+Adds GIS quality tests on every committed layer:
+
+- WGS84, valid and non-empty geometry, inside a Malatya envelope
+- neighbourhood topology without material overlaps
+- identical neighbourhood identities and the 46,563 official record total across sprints
+- report and manifest checksums matching the committed files
+- consistent hot-spot classes
+
+A cross-platform `scripts/demo_check.py` and compile checks for every script complete the
+suite. Uncertainties are consolidated in [limitations](docs/limitations.md), setup and the demo
+script are in [demo](docs/demo.md), and results are in the [V4 final report](docs/final-report.md).
+See [checklist](docs/sprints/sprint-00-24-checklist.md).

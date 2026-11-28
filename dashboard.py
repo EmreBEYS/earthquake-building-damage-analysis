@@ -107,7 +107,7 @@ def read_json(relative: str) -> dict | None:
 # Header: title, period selector, project info
 # ---------------------------------------------------------------------------
 
-title_col, period_col, about_col = st.columns([5, 4, 1.4], vertical_alignment="center")
+title_col, period_col, about_col = st.columns([4, 4.3, 1.5], vertical_alignment="center")
 with title_col:
     st.markdown(
         header_html(
@@ -126,7 +126,7 @@ with period_col:
         key="period",
     )
 with about_col:
-    with st.popover("Proje hakkında", icon=":material/info:", width="stretch"):
+    with st.popover("Hakkında", icon=":material/info:", width="stretch"):
         st.markdown(
             "6 Şubat 2023 depremlerinden sonra Malatya'nın Battalgazi ve Yeşilyurt ilçelerinde "
             "bina hasarını ve kent dönüşümünü açık verilerle inceleyen, tekrar üretilebilir bir "
@@ -166,8 +166,8 @@ def section_home() -> None:
     total = sum(row["count"] for row in classes)
     icons = {"no_damage": "✓", "slight_damage": "◔", "moderate_damage": "◑",
              "heavy_damage": "◕", "urgent_demolition": "⚠", "destroyed": "✕"}
-    cards = [kpi_card_html("Resmî hasar tespit kaydı", format_int(total),
-                           "87 mahalle · Bakanlık", "#93A3BD", "▦")]
+    cards = [kpi_card_html("Resmî kayıt", format_int(total),
+                           "87 mahalle", "#93A3BD", "▦")]
     cards += [
         kpi_card_html(row["label"], format_int(row["count"]), format_pct(row["share"]),
                       row["color"], icons[row["key"]])
@@ -212,13 +212,15 @@ def section_home() -> None:
             st.markdown('<div class="panel-title">Hasar sınıfı dağılımı</div>',
                         unsafe_allow_html=True)
             donut = go.Figure(go.Pie(
-                labels=[row["label"] for row in classes],
+                labels=[f"{row['label']} · {format_pct(row['share'])}" for row in classes],
                 values=[row["count"] for row in classes],
                 marker={"colors": [row["color"] for row in classes]},
-                hole=0.55, sort=False, textinfo="percent",
+                hole=0.55, sort=False, textinfo="none",
+                hovertemplate="%{label}: %{value:,} kayıt (%{percent})<extra></extra>",
             ))
-            donut.update_layout(**CHART_LAYOUT, height=260, showlegend=True,
-                                legend={"font": {"size": 11}})
+            donut.update_layout(**{**CHART_LAYOUT, "margin": {"l": 0, "r": 0, "t": 0, "b": 0}},
+                                height=300, showlegend=True,
+                                legend={"orientation": "h", "y": -0.05, "font": {"size": 11}})
             st.plotly_chart(donut, width="stretch")
         with st.container(border=True):
             st.markdown('<div class="panel-title">İlçelere göre hasar dağılımı</div>',
@@ -240,7 +242,7 @@ def section_home() -> None:
         recon = read_json("reports/sprint_00-19/reconstruction_validation.json")
         osm_2022 = source_status(ROOT, "osm_2022")
         c2022, c2023, c2026 = st.columns(3)
-        c2022.metric("2022 · Deprem öncesi", "OSM kesiti" if osm_2022["available"] else "—",
+        c2022.metric("2022 · OSM binası", "kesit var" if osm_2022["available"] else "—",
                      help="2022-12-31 OSM bina kesiti (Sprint 00-18).")
         if not osm_2022["available"]:
             c2022.caption("2022 kesiti indiriliyor; Overpass yoğun.")
@@ -248,9 +250,9 @@ def section_home() -> None:
             post = recon["osm"]["post_event"]["selected"]
             current = recon["osm"]["current"]["selected"]
             counts = recon["osm"]["reconstruction_class_counts"]
-            c2023.metric("2023 · Deprem sonrası", format_int(post) + " bina",
+            c2023.metric("2023 · OSM binası", format_int(post),
                          help="24 Şubat 2023 OSM kesiti, çalışma alanı içinde.")
-            c2026.metric("2026 · Güncel", format_int(current) + " bina",
+            c2026.metric("2026 · OSM binası", format_int(current),
                          delta=format_int(current - post), delta_color="off",
                          help="27 Temmuz 2026 OSM kesiti.")
             st.caption(
@@ -270,8 +272,8 @@ def section_home() -> None:
             m1, m2, m3 = st.columns(3)
             m1.metric("Doğruluk", f"{forest['accuracy']:.2f}".replace(".", ","))
             m2.metric("Macro-F1", f"{forest['macro_f1']:.2f}".replace(".", ","),
-                      delta=f"{forest['macro_f1'] - dummy['macro_f1']:+.3f} dummy'ye göre",
-                      delta_color="off")
+                      delta=f"{forest['macro_f1'] - dummy['macro_f1']:+.3f}".replace(".", ","),
+                      delta_color="off", help="Fark: sabit tahmin yapan dummy modele göre.")
             m3.metric("Ağırlıklı F1", f"{forest['weighted_f1']:.2f}".replace(".", ","))
             st.caption(
                 "Random forest, 1 km mekânsal gruplu test. Yüksek doğruluk sınıf "

@@ -30,17 +30,35 @@ CSS = """
 .block-container { padding-top: 1.2rem; padding-bottom: 2rem; max-width: 1600px; }
 header[data-testid="stHeader"] { background: transparent; }
 
-/* Sidebar navigation: the main radio looks like a vertical menu. */
+/* Sidebar navigation: the main menu radio (key="menu") looks like a vertical nav list. */
 section[data-testid="stSidebar"] { background: #0D1526; border-right: 1px solid var(--border); }
-section[data-testid="stSidebar"] div[role="radiogroup"] > label {
-  padding: 0.55rem 0.75rem; margin: 0.1rem 0; border-radius: 8px; width: 100%;
+.st-key-menu [role="radiogroup"] { gap: 0.15rem; width: 100%; }
+.st-key-menu [role="radiogroup"] > div { width: 100%; }
+.st-key-menu label[data-testid="stRadioOption"] {
+  width: 100%; padding: 0.6rem 0.8rem; border-radius: 9px; cursor: pointer;
   transition: background 0.15s ease;
 }
-section[data-testid="stSidebar"] div[role="radiogroup"] > label:hover { background: #18243F; }
-section[data-testid="stSidebar"] div[role="radiogroup"] > label:has(input:checked) {
+.st-key-menu label[data-testid="stRadioOption"]:hover { background: #18243F; }
+.st-key-menu [role="radiogroup"] > div[data-selected="true"] label[data-testid="stRadioOption"] {
   background: var(--primary);
 }
-section[data-testid="stSidebar"] div[role="radiogroup"] > label > div:first-child { display: none; }
+.st-key-menu label[data-testid="stRadioOption"] > div > div:not([data-testid="stMarkdownContainer"]) {
+  display: none;
+}
+.st-key-menu label[data-testid="stRadioOption"] p { font-size: 0.98rem; font-weight: 500; }
+
+/* Period selector: segmented look. */
+.st-key-period [role="radiogroup"] { flex-wrap: nowrap; gap: 0.4rem; }
+.st-key-period label[data-testid="stRadioOption"] {
+  border: 1px solid var(--border); border-radius: 8px; padding: 0.35rem 0.7rem;
+  background: var(--surface); white-space: nowrap;
+}
+.st-key-period [role="radiogroup"] > div[data-selected="true"] label[data-testid="stRadioOption"] {
+  background: #1E3A6E; border-color: var(--primary);
+}
+.st-key-period label[data-testid="stRadioOption"] > div > div:not([data-testid="stMarkdownContainer"]) {
+  display: none;
+}
 
 /* App header */
 .app-header { display: flex; align-items: center; gap: 0.9rem; margin-bottom: 0.2rem; }
@@ -53,14 +71,16 @@ section[data-testid="stSidebar"] div[role="radiogroup"] > label > div:first-chil
 .app-header p { margin: 0; color: var(--muted); font-size: 0.95rem; }
 
 /* KPI cards */
-.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
   gap: 0.75rem; margin: 0.6rem 0 1rem 0; }
-.kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
-  padding: 0.85rem 1rem; display: flex; gap: 0.8rem; align-items: center; min-height: 92px; }
-.kpi-icon { width: 44px; height: 44px; border-radius: 10px; flex: 0 0 44px;
-  display: flex; align-items: center; justify-content: center; font-size: 1.35rem; }
-.kpi-label { color: var(--muted); font-size: 0.82rem; line-height: 1.2; }
-.kpi-value { color: var(--text); font-size: 1.55rem; font-weight: 700; line-height: 1.25; }
+.kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; min-width: 0;
+  padding: 0.75rem 0.8rem; display: flex; gap: 0.6rem; align-items: center; min-height: 92px; }
+.kpi-icon { width: 36px; height: 36px; border-radius: 9px; flex: 0 0 36px;
+  display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+.kpi-label { color: var(--muted); font-size: 0.78rem; line-height: 1.2; }
+.kpi-card > div:last-child { min-width: 0; }
+.kpi-value { color: var(--text); font-size: clamp(1.05rem, 1.35vw, 1.45rem); font-weight: 700;
+  line-height: 1.25; white-space: nowrap; }
 .kpi-sub { font-size: 0.82rem; font-weight: 600; }
 
 /* Panels */
