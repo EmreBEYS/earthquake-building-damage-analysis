@@ -1,0 +1,221 @@
+{
+  "status": "completed_reconstruction_screening",
+  "generated_at_utc": "2026-11-28T11:46:36.331243+00:00",
+  "period": {
+    "osm_post_event": "2023-02-24T00:00:00Z",
+    "osm_current": "2026-07-27T00:00:00Z",
+    "sentinel2_post": "2023-02-24T08:29:23.341Z",
+    "sentinel2_current": "2026-03-05T08:29:23.330Z",
+    "sentinel2_gap_days": 1105.0
+  },
+  "osm": {
+    "post_event": {
+      "source_count": 60598,
+      "invalid_before_repair": 0,
+      "collapsed_excluded": 0,
+      "selected": 49842
+    },
+    "current": {
+      "source_count": 57468,
+      "invalid_before_repair": 0,
+      "collapsed_excluded": 0,
+      "selected": 47043
+    },
+    "reconstruction_class_counts": {
+      "persistent": 45309,
+      "uncertain": 3409,
+      "removed_candidate": 2414,
+      "new_candidate": 166,
+      "modified_candidate": 119
+    },
+    "evidence_counts": [
+      {
+        "reconstruction_class": "modified_candidate",
+        "evidence": "osm_and_spectral",
+        "count": 31
+      },
+      {
+        "reconstruction_class": "modified_candidate",
+        "evidence": "osm_only",
+        "count": 88
+      },
+      {
+        "reconstruction_class": "new_candidate",
+        "evidence": "osm_and_spectral",
+        "count": 86
+      },
+      {
+        "reconstruction_class": "new_candidate",
+        "evidence": "osm_only",
+        "count": 55
+      },
+      {
+        "reconstruction_class": "new_candidate",
+        "evidence": "osm_only_no_clear_pixels",
+        "count": 25
+      },
+      {
+        "reconstruction_class": "persistent",
+        "evidence": "osm_and_spectral",
+        "count": 11631
+      },
+      {
+        "reconstruction_class": "persistent",
+        "evidence": "osm_only",
+        "count": 32043
+      },
+      {
+        "reconstruction_class": "persistent",
+        "evidence": "osm_only_no_clear_pixels",
+        "count": 1635
+      },
+      {
+        "reconstruction_class": "removed_candidate",
+        "evidence": "osm_and_spectral",
+        "count": 1061
+      },
+      {
+        "reconstruction_class": "removed_candidate",
+        "evidence": "osm_only",
+        "count": 1309
+      },
+      {
+        "reconstruction_class": "removed_candidate",
+        "evidence": "osm_only_no_clear_pixels",
+        "count": 44
+      },
+      {
+        "reconstruction_class": "uncertain",
+        "evidence": "osm_and_spectral",
+        "count": 1025
+      },
+      {
+        "reconstruction_class": "uncertain",
+        "evidence": "osm_only",
+        "count": 2111
+      },
+      {
+        "reconstruction_class": "uncertain",
+        "evidence": "osm_only_no_clear_pixels",
+        "count": 273
+      }
+    ],
+    "net_footprint_count_change": -2799,
+    "post_footprint_area_m2": 12678389.34711269,
+    "current_footprint_area_m2": 12005423.032491572,
+    "threshold_sensitivity_raw_matching": {
+      "0.3": {
+        "persistent": 45349,
+        "uncertain": 3274,
+        "removed_candidate": 2415,
+        "modified_candidate": 166,
+        "new_candidate": 166
+      },
+      "0.5": {
+        "persistent": 45349,
+        "uncertain": 3368,
+        "removed_candidate": 2415,
+        "new_candidate": 166,
+        "modified_candidate": 119
+      },
+      "0.7": {
+        "persistent": 45349,
+        "uncertain": 3496,
+        "removed_candidate": 2415,
+        "new_candidate": 166,
+        "modified_candidate": 55
+      }
+    }
+  },
+  "sentinel2": {
+    "scenes": {
+      "post": {
+        "item_id": "S2B_37SDC_20230224_0_L2A",
+        "datetime": "2023-02-24T08:29:23.341Z",
+        "catalog_cloud_cover_percent": 2.463634,
+        "processing_baseline": "05.09",
+        "reflectance_scale": 0.0001,
+        "reflectance_offset": -0.1,
+        "base_url": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/37/S/DC/2023/2/S2B_37SDC_20230224_0_L2A"
+      },
+      "current": {
+        "item_id": "S2C_37SDC_20260305_0_L2A",
+        "datetime": "2026-03-05T08:29:23.330Z",
+        "catalog_cloud_cover_percent": 0.060859,
+        "processing_baseline": "05.12",
+        "reflectance_scale": 0.0001,
+        "reflectance_offset": -0.1,
+        "base_url": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/37/S/DC/2026/3/S2C_37SDC_20260305_0_L2A"
+      }
+    },
+    "reflectance_correction": "DN * scale + offset (offset -0.1 for baseline >= 04.00)",
+    "indices": [
+      "NDVI",
+      "NDBI",
+      "BSI"
+    ],
+    "thresholds": {
+      "absolute_delta_ndvi": 0.2,
+      "absolute_delta_ndbi": 0.15,
+      "absolute_delta_bsi": 0.15,
+      "minimum_signals": 2,
+      "minimum_component_pixels": 4,
+      "footprint_support_fraction": 0.5
+    },
+    "post_invalid_aoi_percent": 19.14037631661062,
+    "current_invalid_aoi_percent": 8.964351647459907,
+    "joint_valid_aoi_percent": 80.71911115318812,
+    "candidate_pixels": 244787,
+    "candidate_area_m2": 24478700.0,
+    "candidate_fraction_of_valid": 0.14648167984154245,
+    "spectral_only_components": 8981
+  },
+  "map_features": 15089,
+  "map_feature_counts": {
+    "spectral_only_change": 8981,
+    "uncertain": 3409,
+    "removed_candidate": 2414,
+    "new_candidate": 166,
+    "modified_candidate": 119
+  },
+  "neighborhoods_reported": 88,
+  "units_without_neighborhood": 17,
+  "emsr648_context_rows": 24,
+  "damage_fields_in_change_outputs": false,
+  "inputs_sha256": {
+    "data/external/reconstruction/osm/buildings_post_event.geojson": "9f7b327c98466b536c2d74b978806587cb8d84dd60b8f1bd4d85009069157544",
+    "data/external/reconstruction/osm/buildings_current.geojson": "c2d65264d07630ec85e9909cfb02389fdcf237d8d5b4574bbbc74692ed454b26",
+    "data/dashboard/sprint_00-12/aoi05_neighborhoods.geojson": "98dd5a12a75b98eba4bb2a87c3abd39f6d9ba991bea0586d3c423522ecaf265e",
+    "data/dashboard/sprint_00-12/copernicus_damage_polygons.geojson": "82f15fe31f22ccc3ad701e72316f29971370e56df1e01eb06ec51c44b96a6ca5",
+    "post/blue.tif": "0c159ee8d2c4db71dfd4424148ef234dcb504823a9622e0d120e017c1123abb8",
+    "post/green.tif": "d639ac9967464090153d4695da941b9aca8dd0285e6697077ca1e15e403cd0dc",
+    "post/red.tif": "456a4793522e16672f45b3516bb0414f47010528ebc139e53e2cfc42ca9cb0a0",
+    "post/nir.tif": "24e85f3eeda0dc84fee9e6171b2949a200d0adb8a7330f88ccda215591254283",
+    "post/swir16.tif": "9a2177a97d7e15b5aa26b3af6f2f8071691424eb9984c7435884df8d8811ad01",
+    "post/swir22.tif": "d8a74f8859c9eb36f173252b22d41821864acb7fe2f47aafcd7bebc452c0ecb5",
+    "post/scl.tif": "970683e3888b2e84c2ce3c6c6c286bd1b5dc792d79180226d4f43956e5c5aacc",
+    "current/blue.tif": "a88b75e08e97717ac3a1b180425e74adbcba3bb1b57cd915556395dfb94ea836",
+    "current/green.tif": "0ad1004a822bfc7a9de64deb972d305a16961bd3202a649c59b42721e991fc89",
+    "current/red.tif": "f03190ffc0172842a04448eb0c42d7fd0d9089d4967fc75c4989289f42a2bc7b",
+    "current/nir.tif": "3f21fd847404a64dfcbfe68be97742fd61a548da78866ea77a005bb0132cba26",
+    "current/swir16.tif": "04bd317806abb9777e525ba0b65cceff9259131ff8afd169abf48c2812be3cba",
+    "current/swir22.tif": "e1de1c13715142f52b31042afec62bc5f64d2bd13901e53ab9f7f20971bd23f6",
+    "current/scl.tif": "b16aab192f2b265952f65f8b1423271050aad944e8190895c96acc20a5b03afa"
+  },
+  "outputs_sha256": {
+    "reconstruction_change_map.geojson": "ba205b81c5e0a5ceadbf16db343619d0b17834e53c73acae282c8e73d1c97fe7",
+    "reconstruction_change_map.parquet": "696b40625afecb5cae10a72f6f9e913d807720eca27d697a2e590db8c398bca3",
+    "neighborhood_reconstruction_indicators.csv": "ec65c9a6a2e7bb936b5c5f93d8930421762bc0da583a3e4130563e7ab6fe82c3",
+    "reconstruction_vs_emsr648_context.csv": "ff8ad15c6685b25a7718cae9b76318fbdd2759d2804a9cc3ae2f4211f5821665"
+  },
+  "roundtrip_valid": true,
+  "limitations": [
+    "OSM snapshots record mapping state; a footprint absent in 2026 may be an editing correction, and a new one may be a pre-existing building mapped late.",
+    "The 2026 OSM snapshot (2026-07-27) and the 2026 Sentinel-2 scene (2026-03-05) are not simultaneous; buildings changed between the two dates are mislabelled.",
+    "Sentinel-2 pixels are 10 m; most footprints cover only a few mixed pixels.",
+    "Spectral change still includes phenology, soil-moisture and snow differences between the two scenes; persistent footprints are spectrally supported too, so spectral support is corroboration, not proof.",
+    "Season-matched to the 24 Feb 2023 post scene (9 days apart in day of year). The 12 Nov 2026 scene was run first and rejected: its spectral change covered 22% of the valid AOI and supported 50% of persistent footprints, so it did not separate change from phenology.",
+    "Spectral thresholds are screening rules, not calibrated against field data.",
+    "Change classes are never damage classes; EMSR648 co-occurrence is descriptive."
+  ]
+}

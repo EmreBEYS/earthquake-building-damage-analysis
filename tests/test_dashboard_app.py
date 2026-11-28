@@ -19,3 +19,10 @@ def test_change_page_handles_missing_snapshots() -> None:
     app.sidebar.radio[0].set_value("2022–2023 Değişim Analizi").run(timeout=60)
     assert not app.exception
     assert any("veri dosyası henüz yok" in item.value for item in app.caption)
+
+
+def test_reconstruction_page_renders_with_or_without_outputs() -> None:
+    app = AppTest.from_file(ROOT / "dashboard.py").run(timeout=60)
+    app.sidebar.radio[0].set_value("2023–2026 Yeniden Yapılanma").run(timeout=120)
+    assert not app.exception
+    assert any("Yeniden Yapılanma" in item.value for item in app.header)

@@ -129,6 +129,7 @@ The project follows a reproducible analytical workflow.
 | 00-15 | Gerçek Hasar Haritası with audited source separation | Completed |
 | 00-16 | Existing-model evaluation, spatial split and leakage audit | Completed |
 | 00-17 | Building-level prediction GeoJSON and separate map layers | In progress |
+| 00-19 | 2023–2026 reconstruction change map and neighbourhood indicators | Completed |
 
 ### Sprint 00-08 — Official Damage Dataset Extraction
 
@@ -640,3 +641,22 @@ results, not damaged-building counts. The dated OSM snapshot workflow remains bl
 access, so no OSM construction/demolition result is claimed. Large raster clips remain ignored.
 See [method](docs/sprints/sprint-00-18.md) and
 [checklist](docs/sprints/sprint-00-18-checklist.md).
+
+## Sprint 00-19 — 2023–2026 reconstruction
+
+Measures physical urban change from just after the earthquake to today. Dated OSM building
+snapshots for 24 February 2023 and 27 July 2026 (Overpass attic queries, ODbL) are matched one to
+one with the Sprint 00-18 IoU rules. Each footprint becomes a removed, new, modified, persistent or
+uncertain candidate. Season-matched Sentinel-2 L2A scenes (24 February 2023 and 5 March 2026)
+add NDVI/NDBI/BSI change evidence per footprint. Change classes are never damage classes:
+a guard rejects damage-like fields, and EMSR648 appears only in a separate context CSV.
+
+```bash
+uv run python scripts/18_analyze_reconstruction_change.py all
+```
+
+Real run: 49,842 → 47,043 footprints in the AOI; 2,414 removed, 166 new and 119 modified
+candidates, 45,309 persistent, 3,409 uncertain, plus 8,981 satellite-only change components.
+Neighbourhood indicators cover all 87 neighbourhoods. New construction is under-counted because
+OSM maps new buildings late. See [method](docs/sprints/sprint-00-19.md) and
+[checklist](docs/sprints/sprint-00-19-checklist.md).

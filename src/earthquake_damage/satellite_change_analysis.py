@@ -136,7 +136,7 @@ def acquire_clips(root: Path, config: dict) -> dict:
         "status": "acquired",
         "generated_at_utc": datetime.now(UTC).isoformat(),
         "records": records,
-        "license": "Contains modified Copernicus Sentinel data 2022–2023",
+        "license": config.get("license", "Contains modified Copernicus Sentinel data 2022–2023"),
     }
     manifest_path = directory / "acquisition_manifest.json"
     manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")

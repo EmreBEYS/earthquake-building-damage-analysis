@@ -92,6 +92,24 @@ are stored locally under ignored `data/external/sentinel_2/spectral/`; their sou
 retrieval metadata and SHA-256 values are recorded in the local manifest. Derived vector/CSV
 outputs use the attribution `Contains modified Copernicus Sentinel data 2022–2023`.
 
+Sprint 00-19 reads the same Earth Search COG assets for `S2B_37SDC_20230224_0_L2A` and the
+season-matched `S2C_37SDC_20260305_0_L2A` (5 March 2026, processing baseline 05.12). The first
+run used `S2A_37SDC_20261112_1_L2A`; it was rejected because its seasonal difference from
+February masked reconstruction change. Clips are stored under ignored
+`data/external/sentinel_2/reconstruction/` with a SHA-256 manifest. Derived outputs use
+`Contains modified Copernicus Sentinel data 2023–2026`.
+
+### Dated OSM building snapshots (Sprint 00-19)
+
+- Source: Overpass API attic queries (`[date:"…"]`), endpoints `overpass.private.coffee` and
+  `overpass-api.de`; licence ODbL 1.0, © OpenStreetMap contributors.
+- Timestamps: 2023-02-24T00:00:00Z (60,598 ways) and 2026-07-27T00:00:00Z (57,468 ways).
+- Downloaded 25–28 November 2026 as 16 resumable tiles; merged snapshots and their query,
+  `osm_base` and SHA-256 sidecars stay under ignored `data/external/reconstruction/osm/`.
+- The ohsome `elements/geometry` endpoint used by Sprint 00-18 returned HTTP 403 for every
+  extraction request on 25 November 2026.
+- Snapshots record mapping state, not a physical survey date.
+
 ## 4. Deliberately pending or excluded
 
 | Source | State | Reason |
