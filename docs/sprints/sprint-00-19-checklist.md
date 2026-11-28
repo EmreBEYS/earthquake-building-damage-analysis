@@ -18,4 +18,4 @@
 - [x] 76 test (17'si yeni), Ruff ve `check_project` geçti.
 - [ ] Kaldırılan/yeni adaylar saha veya çok yüksek çözünürlüklü görüntüyle doğrulanmadı.
 - [ ] Spektral eşikler kalibre edilmedi; kalıcı binaların %25,7'si de spektral destekli.
-- [ ] 00-18 hattındaki eksik −0,1 yansıtım offseti ayrı işte düzeltilmeli.
+- [x] 00-18 hattındaki eksik −0,1 yansıtım offseti düzeltildi (28 Kasım 2026).

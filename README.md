@@ -636,8 +636,10 @@ uv run python scripts/17_analyze_satellite_change.py all
 ```
 
 Current status: the satellite screening is complete with real pixels; 80.86% of AOI pixels are
-jointly valid after SCL masking. The 6,017 candidate components (4.6082 km²) are screening
-results, not damaged-building counts. The dated OSM snapshot workflow remains blocked by source
+jointly valid after SCL masking. After the reflectance-offset fix (28 November 2026) the screening
+yields 22,048 candidate components (21.7564 km², 13.0% of valid area); the earlier 6,017 figure
+was an artefact of ignoring the −0.1 L2A offset. Candidates are screening results, not
+damaged-building counts. The dated OSM snapshot workflow remains blocked by source
 access, so no OSM construction/demolition result is claimed. Large raster clips remain ignored.
 See [method](docs/sprints/sprint-00-18.md) and
 [checklist](docs/sprints/sprint-00-18-checklist.md).

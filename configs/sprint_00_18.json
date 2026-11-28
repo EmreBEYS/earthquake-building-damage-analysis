@@ -3,7 +3,15 @@
     "2022": "2022-12-31T00:00:00Z",
     "2023": "2023-12-31T00:00:00Z"
   },
-  "endpoint": "https://api.ohsome.org/v1/elements/geometry",
+  "endpoints": [
+    "https://overpass.private.coffee/api/interpreter",
+    "https://overpass-api.de/api/interpreter"
+  ],
+  "tiles_per_axis": 3,
+  "rejected_endpoint": {
+    "url": "https://api.ohsome.org/v1/elements/geometry",
+    "reason": "HTTP 403 for every data-extraction request on 2026-11-25"
+  },
   "bbox": [
     38.210286,
     38.287227,

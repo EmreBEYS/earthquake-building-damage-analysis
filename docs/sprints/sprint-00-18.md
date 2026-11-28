@@ -109,9 +109,26 @@ bağlamında bulunması, üç mutlak fark eşiğinden (`0,20`, `0,15`, `0,20`) e
 gerekir. Sekiz komşulukta dört pikselden küçük bileşenler çıkarılır. Bu eşikler yerel saha
 etiketiyle kalibre edilmemiş temkinli tarama kurallarıdır.
 
-Gerçek çalıştırma 6.017 aday bileşen ve 4,6082 km² aday alan üretmiştir; bu, ortak geçerli
-alanın %2,75'idir. Bu sayılar hasarlı bina veya yıkım sayısı değildir. 3.617 EMSR648 poligonunun
-1.414'ünde `all_touched` örnekleme ile en az bir aday piksel vardır. Hasar sınıfına göre ayrıntılı
+Yansıtım `DN × 0,0001 − 0,1` ile hesaplanır (işleme sürümü 05.09; ≥ 04.00 ürünlerde −0,1
+offset vardır). İlk sürüm bu offseti uygulamıyordu; 28 Kasım 2026'da düzeltildi ve sonuçlar
+yeniden üretildi:
+
+| Ölçüm | Offset'siz (hatalı) | Düzeltilmiş |
+|---|---:|---:|
+| Aday bileşen | 6.017 | 22.048 |
+| Aday alan | 4,6082 km² | 21,7564 km² |
+| Ortak geçerli alana oranı | %2,75 | %13,00 |
+| En az bir aday pikseli olan EMSR648 poligonu | 1.414 / 3.617 | 3.276 / 3.617 |
+| Ortalama aday oranı: Destroyed / No visible damage | 0,104 / 0,040 | 0,428 / 0,240 |
+
+Önceki düşük oran offset hatasının yan etkisiydi: offset'siz yansıtım normalize indeks farklarını
+küçültüyordu. Aynı eşikler doğru yansıtımla çok daha az seçicidir; Aralık–Şubat arasındaki
+mevsim, güneş açısı ve nem farkını da yakalar. Destroyed poligonları hâlâ belirgin olarak daha
+yüksek aday oranı taşır (0,43'e karşı 0,24), ama tarama artık geniş bir "değişmiş olabilir"
+maskesidir. Eşikler EMSR648 etiketine göre yeniden ayarlanmadı; bu, karşılaştırmayı değerlendirme
+verisine uydurmak olurdu. Kalibrasyon bağımsız saha/çok yüksek çözünürlüklü etiket gerektirir.
+
+Bu sayılar hasarlı bina veya yıkım sayısı değildir. Hasar sınıfına göre ayrıntılı
 ölçümler `satellite_emsr648_comparison.csv` içindedir; ilişki doğruluk/duyarlılık ölçüsü değildir.
 
 Teslimler:
