@@ -52,6 +52,8 @@ uv run pytest -q
 uv run ruff check .
 ```
 
-Model dosyası depoda olmadığı için gerçek `predicted_damage.geojson` temiz klonda üretilmez. Birim
+Model dosyası depoda olmadığı için gerçek `predicted_damage.geojson` temiz klonda yeniden üretilemez;
+bu yüzden üretilmiş dosya ve manifest depoya eklendi (28 Kasım 2026). Yerel model ile yeniden üretim
+bayt bayt aynı dosyayı verdi (SHA-256 `307a114c…1509`). Birim
 testleri sentetik ve bağımsız bir modelle şema, olasılık, düşük güven, karma doğrulaması ve sızıntı
 reddini sınar.

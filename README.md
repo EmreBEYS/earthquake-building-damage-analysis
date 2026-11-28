@@ -128,7 +128,8 @@ The project follows a reproducible analytical workflow.
 | 00-14 | Geometry validation, metric features and GeoPackage/GeoParquet | Completed |
 | 00-15 | Gerçek Hasar Haritası with audited source separation | Completed |
 | 00-16 | Existing-model evaluation, spatial split and leakage audit | Completed |
-| 00-17 | Building-level prediction GeoJSON and separate map layers | In progress |
+| 00-17 | Building-level prediction GeoJSON and separate map layers | Completed |
+| 00-18 | 2022–2023 mapping and spectral change | Completed (OSM part pending) |
 | 00-19 | 2023–2026 reconstruction change map and neighbourhood indicators | Completed |
 
 ### Sprint 00-08 — Official Damage Dataset Extraction

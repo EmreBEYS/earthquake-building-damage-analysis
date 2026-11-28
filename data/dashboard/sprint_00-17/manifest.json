@@ -1,0 +1,47 @@
+{
+  "sprint": "00-17",
+  "generated_at_utc": "2026-11-28T12:10:23+00:00",
+  "model": {
+    "name": "random_forest",
+    "path": "models/random_forest.joblib",
+    "sha256": "ba7c5087b8bac2d283374934c3b75380a9c90bd1ffc409fc4c53e75e84922818",
+    "feature_schema": [
+      "building_area_m2",
+      "building_perimeter_m",
+      "shape_index"
+    ]
+  },
+  "input": {
+    "path": "data/processed/sprint_00-14/buildings.parquet",
+    "sha256": "1009db263a8cfd234f12fd0e973aba36c4c9e6bbc4024938d25f1ab1c88c180c",
+    "records": 3617
+  },
+  "output": {
+    "path": "data/dashboard/sprint_00-17/predicted_damage.geojson",
+    "records": 3617,
+    "sha256": "307a114c180be2fb2682470daeb13b73fb48c9fcbd8b06c3d979cfe97e791509",
+    "probability_columns": [
+      "probability_damaged",
+      "probability_destroyed",
+      "probability_no_visible_damage",
+      "probability_possibly_damaged"
+    ],
+    "low_confidence_records": 171,
+    "low_confidence_threshold": 0.6
+  },
+  "leakage_audit": {
+    "passed": true,
+    "model_inputs": [
+      "building_area_m2",
+      "building_perimeter_m",
+      "shape_index"
+    ],
+    "observed_damage_used_for_inference": false,
+    "observed_damage_role": "display_and_comparison_only"
+  },
+  "limitations": [
+    "Predictions are exploratory and are not official building-safety decisions.",
+    "Sprint 00-16 found weak minority-class and spatial generalization performance.",
+    "Confidence is an uncalibrated model probability and not a safety guarantee."
+  ]
+}
