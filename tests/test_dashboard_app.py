@@ -20,6 +20,7 @@ ALL_PAGES = [
     ("Karşılaştırma", "2022–2023 Değişim Analizi"),
     ("Karşılaştırma", "2023–2026 Yeniden Yapılanma"),
     ("Karşılaştırma", "Uydu · Zaman Serisi"),
+    ("Rapor & İndirme", None),
     ("Yöntem", None),
 ]
 
@@ -106,3 +107,12 @@ def test_building_panel_shows_selected_polygon_details() -> None:
     assert not app.exception
     html = "".join(item.body for item in app.markdown)
     assert picker.value in html and "2023→2026 durumu" in html
+
+
+@pytest.mark.parametrize("kind", ["Mahalle analiz raporu", "Yapı alanı (bina) raporu",
+                                  "Model performans raporu", "Veri kalitesi raporu"])
+def test_report_page_builds_every_report_type(kind) -> None:
+    app = open_page("Rapor & İndirme")
+    app.radio(key="report_kind").set_value(kind).run(timeout=240)
+    assert not app.exception, [item.value for item in app.exception]
+    assert any(kind.split(" (")[0].split(" raporu")[0] in item.value for item in app.subheader)

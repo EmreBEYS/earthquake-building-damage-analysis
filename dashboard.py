@@ -182,8 +182,8 @@ def section_home() -> None:
                      "2022→2023 spektral değişim alanı payı (%) · Sentinel-2", "Purples"),
             "2023": ("official_severe_ratio", "Resmî ağır hasar oranı · Bakanlık kayıtları",
                      "YlOrRd"),
-            "2026": ("removed_share_of_2023_pct",
-                     "2023→2026 kaldırılan yapı payı (%) · OSM", "Reds"),
+            "2026": ("net_building_loss_pct",
+                     "2023→2026 net OSM bina kaybı (%) · OSM", "Reds"),
         }
         column, caption, scale = period_maps[period]
         st.markdown(f'<div class="panel-title">Malatya mahalle haritası — {PERIODS[period]}</div>',
@@ -288,6 +288,84 @@ def section_interactive_map() -> None:
     show_sources("neighborhoods", "emsr648", "predictions", "reconstruction",
                  *(f"osm_{period}",))
     render(ROOT, period)
+
+
+@st.cache_resource(show_spinner="Rapor verileri yükleniyor…")
+def report_context() -> dict:
+    from earthquake_damage.reporting import load_context
+
+    return load_context(ROOT)
+
+
+def section_reports() -> None:
+    """Rapor & İndirme (Sprint 00-23)"""
+    from earthquake_damage import reporting
+
+    st.header("Rapor ve indirme")
+    show_sources("official", "emsr648", "predictions", "spatial", "reconstruction")
+    try:
+        context = report_context()
+    except FileNotFoundError as error:
+        st.warning(f"Rapor girdileri eksik: {error}")
+        return
+    kinds = {
+        "Mahalle analiz raporu": "neighborhood",
+        "Yapı alanı (bina) raporu": "building",
+        "Model performans raporu": "model",
+        "Veri kalitesi raporu": "quality",
+    }
+    kind = kinds[st.radio("Rapor türü", list(kinds), horizontal=True, key="report_kind")]
+    if kind == "neighborhood":
+        names = sorted(context["comparison"]["mahalle"])
+        default = names.index("Dabakhane Mahallesi") if "Dabakhane Mahallesi" in names else 0
+        subject = st.selectbox("Mahalle", names, index=default, key="report_hood")
+        report = reporting.neighborhood_report(context, subject)
+    elif kind == "building":
+        hood = st.selectbox("Mahalle", sorted(context["details"]["mahalle"].unique()),
+                            key="report_building_hood")
+        ids = sorted(context["details"].loc[context["details"]["mahalle"] == hood, "feature_id"])
+        subject = st.selectbox("EMSR648 poligonu", ids, key="report_building")
+        report = reporting.building_report(context, subject)
+    elif kind == "model":
+        report = reporting.model_performance_report(context)
+    else:
+        report = reporting.data_quality_report(ROOT)
+
+    with st.container(border=True):
+        st.subheader(f"{report.title} — {report.subtitle}")
+        st.caption(f"Üretim: {report.generated_at}")
+        summary = reporting.summary_frame(report)
+        st.dataframe(summary, width="stretch", hide_index=True)
+        figure_names = list(report.figures)
+        columns = st.columns(min(2, len(figure_names)) or 1)
+        for column, name in zip(columns, figure_names, strict=False):
+            column.pyplot(report.figures[name], clear_figure=False)
+        for name, table in report.tables.items():
+            with st.expander(f"{name} ({len(table)} satır)"):
+                st.dataframe(table, width="stretch", hide_index=True)
+        for note in report.notes:
+            st.caption("• " + note)
+
+    st.markdown('<div class="panel-title">İndir</div>', unsafe_allow_html=True)
+    stem = report.slug()
+    c1, c2, c3, c4 = st.columns(4)
+    c1.download_button("CSV", reporting.to_csv(report), file_name=f"{stem}.csv",
+                       mime=reporting.MIME_TYPES["csv"], icon=":material/table:",
+                       width="stretch", key=f"dl_csv_{stem}")
+    c2.download_button("Excel", reporting.to_excel(report), file_name=f"{stem}.xlsx",
+                       mime=reporting.MIME_TYPES["xlsx"], icon=":material/grid_on:",
+                       width="stretch", key=f"dl_xlsx_{stem}")
+    c3.download_button("PDF", reporting.to_pdf(report), file_name=f"{stem}.pdf",
+                       mime=reporting.MIME_TYPES["pdf"], icon=":material/picture_as_pdf:",
+                       width="stretch", key=f"dl_pdf_{stem}")
+    figure_choice = c4.selectbox("PNG grafiği", figure_names, key=f"png_choice_{kind}",
+                                 label_visibility="collapsed")
+    c4.download_button("PNG", reporting.to_png(report.figures[figure_choice]),
+                       file_name=f"{stem}_{figure_choice}.png", mime=reporting.MIME_TYPES["png"],
+                       icon=":material/image:", width="stretch", key=f"dl_png_{stem}")
+    import matplotlib.pyplot as plt
+
+    plt.close("all")
 
 
 def section_sources() -> None:
@@ -1623,6 +1701,8 @@ NAVIGATION = {
             "Uydu · Zaman Serisi": section_satellite_series,
         },
     },
+    "Rapor & İndirme": {"icon": ":material/download:",
+                        "pages": {"Rapor & İndirme": section_reports}},
     "Yöntem": {"icon": ":material/menu_book:", "pages": {"Yöntem": section_method}},
 }
 

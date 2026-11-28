@@ -1,0 +1,95 @@
+﻿Tablo,Bölüm,Alan,Değer
+Özet,Veri,Satır,3.617
+Özet,Veri,Özellikler,"building_area_m2, building_perimeter_m, shape_index"
+Özet,Veri,Çoğunluk / azınlık oranı,"35,1"
+Özet,Mekânsal test,Random forest doğruluk,"0,91"
+Özet,Mekânsal test,Random forest macro-F1,"0,24"
+Özet,Mekânsal test,Dummy macro-F1,"0,24"
+Özet,Mekânsal test,Karışıklık matrisinden macro-F1,"0,2388 (00-16 ile aynı)"
+Özet,Sonuç,Değerlendirme,Spatial değerlendirmede en yüksek macro-F1 dummy için 0.2397. Hiçbir model operasyonel hasar sınıflandırması için yeterli kanıt sunmuyor; azınlık sınıfları ve coğrafi genelleme zayıf.
+Model metrikleri,satır 1,split,stratified_random
+Model metrikleri,satır 2,split,stratified_random
+Model metrikleri,satır 3,split,stratified_random
+Model metrikleri,satır 4,split,spatial_1km_groups
+Model metrikleri,satır 5,split,spatial_1km_groups
+Model metrikleri,satır 6,split,spatial_1km_groups
+Model metrikleri,satır 1,model,dummy
+Model metrikleri,satır 2,model,logistic_regression
+Model metrikleri,satır 3,model,random_forest
+Model metrikleri,satır 4,model,dummy
+Model metrikleri,satır 5,model,logistic_regression
+Model metrikleri,satır 6,model,random_forest
+Model metrikleri,satır 1,train_rows,2895
+Model metrikleri,satır 2,train_rows,2895
+Model metrikleri,satır 3,train_rows,2895
+Model metrikleri,satır 4,train_rows,3034
+Model metrikleri,satır 5,train_rows,3034
+Model metrikleri,satır 6,train_rows,3034
+Model metrikleri,satır 1,test_rows,724
+Model metrikleri,satır 2,test_rows,724
+Model metrikleri,satır 3,test_rows,724
+Model metrikleri,satır 4,test_rows,583
+Model metrikleri,satır 5,test_rows,583
+Model metrikleri,satır 6,test_rows,583
+Model metrikleri,satır 1,accuracy,0.9033
+Model metrikleri,satır 2,accuracy,0.2693
+Model metrikleri,satır 3,accuracy,0.9006
+Model metrikleri,satır 4,accuracy,0.9211
+Model metrikleri,satır 5,accuracy,0.2762
+Model metrikleri,satır 6,accuracy,0.9142
+Model metrikleri,satır 1,macro_f1,0.2373
+Model metrikleri,satır 2,macro_f1,0.1828
+Model metrikleri,satır 3,macro_f1,0.3083
+Model metrikleri,satır 4,macro_f1,0.2397
+Model metrikleri,satır 5,macro_f1,0.1679
+Model metrikleri,satır 6,macro_f1,0.2388
+Model metrikleri,satır 1,weighted_f1,0.8574
+Model metrikleri,satır 2,weighted_f1,0.3614
+Model metrikleri,satır 3,weighted_f1,0.8637
+Model metrikleri,satır 4,weighted_f1,0.8833
+Model metrikleri,satır 5,weighted_f1,0.3863
+Model metrikleri,satır 6,weighted_f1,0.8798
+Model metrikleri,satır 1,macro_f1_ci_lower,0.2344
+Model metrikleri,satır 2,macro_f1_ci_lower,0.1574
+Model metrikleri,satır 3,macro_f1_ci_lower,0.2575
+Model metrikleri,satır 4,macro_f1_ci_lower,0.2364
+Model metrikleri,satır 5,macro_f1_ci_lower,0.144
+Model metrikleri,satır 6,macro_f1_ci_lower,0.2356
+Model metrikleri,satır 1,macro_f1_ci_upper,0.2401
+Model metrikleri,satır 2,macro_f1_ci_upper,0.2115
+Model metrikleri,satır 3,macro_f1_ci_upper,0.3656
+Model metrikleri,satır 4,macro_f1_ci_upper,0.2428
+Model metrikleri,satır 5,macro_f1_ci_upper,0.1947
+Model metrikleri,satır 6,macro_f1_ci_upper,0.2418
+"Karışıklık matrisi (mekânsal, random forest)",satır 1,Gerçek \ Tahmin,Görünür hasar yok
+"Karışıklık matrisi (mekânsal, random forest)",satır 2,Gerçek \ Tahmin,Olası hasarlı
+"Karışıklık matrisi (mekânsal, random forest)",satır 3,Gerçek \ Tahmin,Hasarlı
+"Karışıklık matrisi (mekânsal, random forest)",satır 4,Gerçek \ Tahmin,Yıkılmış
+"Karışıklık matrisi (mekânsal, random forest)",satır 1,Görünür hasar yok,533
+"Karışıklık matrisi (mekânsal, random forest)",satır 2,Görünür hasar yok,13
+"Karışıklık matrisi (mekânsal, random forest)",satır 3,Görünür hasar yok,26
+"Karışıklık matrisi (mekânsal, random forest)",satır 4,Görünür hasar yok,7
+"Karışıklık matrisi (mekânsal, random forest)",satır 1,Olası hasarlı,0
+"Karışıklık matrisi (mekânsal, random forest)",satır 2,Olası hasarlı,0
+"Karışıklık matrisi (mekânsal, random forest)",satır 3,Olası hasarlı,0
+"Karışıklık matrisi (mekânsal, random forest)",satır 4,Olası hasarlı,0
+"Karışıklık matrisi (mekânsal, random forest)",satır 1,Hasarlı,1
+"Karışıklık matrisi (mekânsal, random forest)",satır 2,Hasarlı,0
+"Karışıklık matrisi (mekânsal, random forest)",satır 3,Hasarlı,0
+"Karışıklık matrisi (mekânsal, random forest)",satır 4,Hasarlı,0
+"Karışıklık matrisi (mekânsal, random forest)",satır 1,Yıkılmış,3
+"Karışıklık matrisi (mekânsal, random forest)",satır 2,Yıkılmış,0
+"Karışıklık matrisi (mekânsal, random forest)",satır 3,Yıkılmış,0
+"Karışıklık matrisi (mekânsal, random forest)",satır 4,Yıkılmış,0
+Sınıf bazında F1,satır 1,Sınıf,Görünür hasar yok
+Sınıf bazında F1,satır 2,Sınıf,Olası hasarlı
+Sınıf bazında F1,satır 3,Sınıf,Hasarlı
+Sınıf bazında F1,satır 4,Sınıf,Yıkılmış
+Sınıf bazında F1,satır 1,F1,0.9552
+Sınıf bazında F1,satır 2,F1,0.0
+Sınıf bazında F1,satır 3,F1,0.0
+Sınıf bazında F1,satır 4,F1,0.0
+Sınıf bazında F1,satır 1,Test satırı,537
+Sınıf bazında F1,satır 2,Test satırı,13
+Sınıf bazında F1,satır 3,Test satırı,26
+Sınıf bazında F1,satır 4,Test satırı,7
