@@ -434,7 +434,16 @@ def section_change_2022_2023() -> None:
     if report_path.exists():
         audit = json.loads(report_path.read_text(encoding="utf-8"))
         if audit.get("status") == "blocked":
-            st.warning("Analiz henüz üretilemedi: " + audit.get("reason", "Veri eksik"))
+            tiles = root / "data/external/building_change/tiles"
+            downloaded = len(list(tiles.glob("*.json"))) if tiles.exists() else 0
+            st.warning(
+                "OSM bina değişimi (2022→2023) henüz hazır değil: tarihli OSM kesitleri "
+                f"Overpass'tan karo karo indiriliyor ({downloaded}/18 karo). Sunucu yoğun "
+                "olduğunda istekler geçici 502/504 hatası alır ve yeniden denenir. Aşağıdaki "
+                "Sentinel-2 spektral değişim katmanı bundan etkilenmez."
+            )
+            with st.expander("Son teknik hata"):
+                st.code(audit.get("reason", "Veri eksik"), language=None)
     if not (output / "building_change_2022_2023.geojson").exists():
         st.info("2022 ve 2023 bina kesitlerini edinmek için: "
                 "`python scripts/16_analyze_building_change.py --acquire`")
