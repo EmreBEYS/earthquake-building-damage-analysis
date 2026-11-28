@@ -34,6 +34,18 @@ def normalized_difference(left: np.ndarray, right: np.ndarray) -> np.ndarray:
     return np.clip(result, -1, 1)
 
 
+def reflectance(dn: np.ndarray, scale: float, offset: float) -> np.ndarray:
+    """Convert L2A digital numbers to surface reflectance; DN 0 (no-data) → NaN.
+
+    Processing baseline ≥ 04.00 products carry a -0.1 (DN -1000) offset. Ignoring
+    it biases every normalized-difference index, so it is applied explicitly.
+    """
+    dn = np.asarray(dn)
+    result = dn.astype("float32") * np.float32(scale) + np.float32(offset)
+    result[dn == 0] = np.nan
+    return result
+
+
 def valid_scl_mask(scl: np.ndarray, invalid_classes: list[int]) -> np.ndarray:
     """Mask no-data, saturated, shadow, cloud/cirrus and snow SCL classes."""
     return ~np.isin(scl, invalid_classes)
@@ -166,12 +178,10 @@ def _read_scene(root: Path, config: dict, role: str):
     return arrays, assert_aligned(metadata)
 
 
-def _index_stack(scene: dict) -> dict[str, np.ndarray]:
-    scale = 0.0001
-    red = scene["red"] * scale
-    nir = scene["nir"] * scale
-    swir16 = scene["swir16"] * scale
-    swir22 = scene["swir22"] * scale
+def _index_stack(scene: dict, scale: float, offset: float) -> dict[str, np.ndarray]:
+    red, nir, swir16, swir22 = (
+        reflectance(scene[band], scale, offset) for band in ("red", "nir", "swir16", "swir22")
+    )
     return {
         "ndvi": normalized_difference(nir, red),
         "ndbi": normalized_difference(swir16, nir),
@@ -205,8 +215,14 @@ def analyze(root: Path, config: dict) -> dict:
         [(pre[band] > 0) & (post[band] > 0) for band in BANDS if band != "scl"]
     )
     valid = aoi_mask & pre_clear & post_clear & reflectance_valid
-    pre_indices = _index_stack(pre)
-    post_indices = _index_stack(post)
+    pre_indices, post_indices = (
+        _index_stack(
+            scene,
+            config["scenes"][role]["reflectance_scale"],
+            config["scenes"][role]["reflectance_offset"],
+        )
+        for role, scene in (("pre", pre), ("post", post))
+    )
     deltas = {name: post_indices[name] - pre_indices[name] for name in pre_indices}
     threshold = config["thresholds"]
     signals = (
@@ -369,6 +385,7 @@ def analyze(root: Path, config: dict) -> dict:
         "rejected_post_scenes_aoi_scl_invalid_percent": config[
             "rejected_post_scenes_aoi_scl_invalid_percent"
         ],
+        "reflectance_correction": "DN * scale + offset (offset -0.1 for baseline >= 04.00)",
         "indices": ["NDVI", "NDBI", "NBR"],
         "thresholds": threshold,
         "candidate_components": len(changes),

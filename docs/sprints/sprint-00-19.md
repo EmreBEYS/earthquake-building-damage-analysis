@@ -162,7 +162,7 @@ kontrolleri (her kesitteki her ayak izi tam bir kez temsil edilir) ve sınırlı
   spektral fark fenoloji, toprak nemi ve kar etkisi içerir: kalıcı binaların %25,7'si de "uydu
   destekli" görünür. Spektral destek doğrulayıcı kanıttır, kanıt değildir.
 - Eşikler saha etiketiyle kalibre edilmemiş tarama kurallarıdır.
-- 00-18 hattı (`satellite_change_analysis`) −0,1 yansıtım offsetini uygulamıyor. Bu sprint
-  offseti uygular; 00-18 düzeltmesi ayrı iştir.
+- 00-18 hattındaki eksik −0,1 yansıtım offseti 28 Kasım 2026'da düzeltildi; iki hat artık aynı
+  `reflectance` fonksiyonunu kullanır.
 
 Kontrol listesi: [`sprint-00-19-checklist.md`](sprint-00-19-checklist.md).

@@ -1,17 +1,23 @@
 {
   "status": "completed_candidate_screening",
-  "generated_at_utc": "2026-11-24T16:21:01.509031+00:00",
+  "generated_at_utc": "2026-11-28T12:07:29.976580+00:00",
   "scenes": {
     "pre": {
       "item_id": "S2A_37SDC_20221231_0_L2A",
       "datetime": "2022-12-31T08:29:21.956Z",
       "catalog_cloud_cover_percent": 8.626486,
+      "processing_baseline": "05.09",
+      "reflectance_scale": 0.0001,
+      "reflectance_offset": -0.1,
       "base_url": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/37/S/DC/2022/12/S2A_37SDC_20221231_0_L2A"
     },
     "post": {
       "item_id": "S2B_37SDC_20230224_0_L2A",
       "datetime": "2023-02-24T08:29:23.341Z",
       "catalog_cloud_cover_percent": 2.463634,
+      "processing_baseline": "05.09",
+      "reflectance_scale": 0.0001,
+      "reflectance_offset": -0.1,
       "base_url": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/37/S/DC/2023/2/S2B_37SDC_20230224_0_L2A"
     }
   },
@@ -52,6 +58,7 @@
     "2023-02-16": 98.99,
     "2023-02-21": 88.425
   },
+  "reflectance_correction": "DN * scale + offset (offset -0.1 for baseline >= 04.00)",
   "indices": [
     "NDVI",
     "NDBI",
@@ -64,47 +71,47 @@
     "minimum_signals": 2,
     "minimum_component_pixels": 4
   },
-  "candidate_components": 6017,
-  "candidate_pixels": 46082,
-  "candidate_area_m2": 4608200.0,
+  "candidate_components": 22048,
+  "candidate_pixels": 217564,
+  "candidate_area_m2": 21756400.0,
   "valid_area_m2": 167399100.0,
-  "candidate_fraction_of_valid": 0.027528224464767135,
-  "built_context_valid_pixels": 1308279,
+  "candidate_fraction_of_valid": 0.12996724594098774,
+  "built_context_valid_pixels": 711693,
   "scene_gap_days": 55.00001603009259,
   "emsr648_polygons": 3617,
-  "emsr648_polygons_with_candidate_pixels": 1414,
+  "emsr648_polygons_with_candidate_pixels": 3276,
   "emsr648_by_damage_grade": [
     {
       "damage_grade": "Damaged",
       "polygons": 157,
-      "polygons_with_candidate": 55,
+      "polygons_with_candidate": 145,
       "valid_pixels": 14648,
-      "candidate_pixels": 560,
-      "candidate_fraction_valid": 0.0382304752
+      "candidate_pixels": 3719,
+      "candidate_fraction_valid": 0.2538913162
     },
     {
       "damage_grade": "Destroyed",
       "polygons": 102,
-      "polygons_with_candidate": 59,
+      "polygons_with_candidate": 94,
       "valid_pixels": 2381,
-      "candidate_pixels": 264,
-      "candidate_fraction_valid": 0.1108777824
+      "candidate_pixels": 1011,
+      "candidate_fraction_valid": 0.4246115078
     },
     {
       "damage_grade": "No visible damage",
       "polygons": 3265,
-      "polygons_with_candidate": 1253,
+      "polygons_with_candidate": 2946,
       "valid_pixels": 348584,
-      "candidate_pixels": 15683,
-      "candidate_fraction_valid": 0.0449905905
+      "candidate_pixels": 77917,
+      "candidate_fraction_valid": 0.2235243155
     },
     {
       "damage_grade": "Possibly damaged",
       "polygons": 93,
-      "polygons_with_candidate": 47,
+      "polygons_with_candidate": 91,
       "valid_pixels": 11560,
-      "candidate_pixels": 667,
-      "candidate_fraction_valid": 0.0576989619
+      "candidate_pixels": 2799,
+      "candidate_fraction_valid": 0.2421280277
     }
   ],
   "input_clip_sha256": {
@@ -124,8 +131,8 @@
     "post/scl.tif": "970683e3888b2e84c2ce3c6c6c286bd1b5dc792d79180226d4f43956e5c5aacc"
   },
   "outputs_sha256": {
-    "pre_post_change_map.geojson": "e1296d3dc2b7ce66b77cde6562b415967abfae5dc709d096f86b1392c8a17b72",
-    "satellite_emsr648_comparison.csv": "c49166a4741a0cf2984683fd27b1a31c2a6cd0ea035840670e4324cc714d8bd7"
+    "pre_post_change_map.geojson": "0cc78694f05c4a144733f6e152a253370846447fe89a5e0fdd14aa3bf57c2182",
+    "satellite_emsr648_comparison.csv": "5abc3756431035806b678be37122364d75c19271b81932dfe64175c602ab491f"
   },
   "roundtrip_valid": true,
   "limitations": [

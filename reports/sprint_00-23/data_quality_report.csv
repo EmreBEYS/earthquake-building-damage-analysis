@@ -1,0 +1,151 @@
+﻿Tablo,Bölüm,Alan,Değer
+Özet,Kapsam,Veri seti,11
+Özet,Kapsam,Eksik veri seti,1
+Özet,Kapsam,Yalnız yerel veri seti,2
+Özet,Geometri,Toplam geçersiz geometri,0
+Özet,Resmî kayıtlar,Toplam kayıt,46.563
+Özet,Resmî kayıtlar,Mahalle,87
+Veri setleri,satır 1,Veri seti,Bakanlık hasar tespit kayıtları
+Veri setleri,satır 2,Veri seti,Copernicus EMS EMSR648 AOI05
+Veri setleri,satır 3,Veri seti,Mahalle sınırları (OSM)
+Veri setleri,satır 4,Veri seti,İlçe sınırları (geoBoundaries ADM2)
+Veri setleri,satır 5,Veri seti,Model tahminleri (random forest)
+Veri setleri,satır 6,Veri seti,Sentinel-2 2022→2023 spektral değişim
+Veri setleri,satır 7,Veri seti,OSM bina kesiti 2022-12-31
+Veri setleri,satır 8,Veri seti,OSM bina kesiti 2023-02-24
+Veri setleri,satır 9,Veri seti,OSM bina kesiti 2026-07-27
+Veri setleri,satır 10,Veri seti,2023–2026 yeniden yapılanma haritası
+Veri setleri,satır 11,Veri seti,Mekânsal analiz ve sıcak noktalar
+Veri setleri,satır 1,Sprint,00-15
+Veri setleri,satır 2,Sprint,00-12
+Veri setleri,satır 3,Sprint,00-12
+Veri setleri,satır 4,Sprint,00-21
+Veri setleri,satır 5,Sprint,00-17
+Veri setleri,satır 6,Sprint,00-18
+Veri setleri,satır 7,Sprint,00-18
+Veri setleri,satır 8,Sprint,00-19
+Veri setleri,satır 9,Sprint,00-19
+Veri setleri,satır 10,Sprint,00-19
+Veri setleri,satır 11,Sprint,00-20
+Veri setleri,satır 1,Dosya,data/dashboard/sprint_00-15/official_neighborhood_statistics.csv
+Veri setleri,satır 2,Dosya,data/dashboard/sprint_00-12/copernicus_damage_polygons.geojson
+Veri setleri,satır 3,Dosya,data/dashboard/sprint_00-12/aoi05_neighborhoods.geojson
+Veri setleri,satır 4,Dosya,data/dashboard/sprint_00-21/neighborhood_districts.csv
+Veri setleri,satır 5,Dosya,data/dashboard/sprint_00-17/predicted_damage.geojson
+Veri setleri,satır 6,Dosya,data/dashboard/sprint_00-18/pre_post_change_map.geojson
+Veri setleri,satır 7,Dosya,data/external/building_change/buildings_2022.geojson
+Veri setleri,satır 8,Dosya,data/external/reconstruction/osm/buildings_post_event.geojson
+Veri setleri,satır 9,Dosya,data/external/reconstruction/osm/buildings_current.geojson
+Veri setleri,satır 10,Dosya,data/dashboard/sprint_00-19/reconstruction_change_map.geojson
+Veri setleri,satır 11,Dosya,data/dashboard/sprint_00-20/neighborhood_spatial_analysis.geojson
+Veri setleri,satır 1,Durum,depoda
+Veri setleri,satır 2,Durum,depoda
+Veri setleri,satır 3,Durum,depoda
+Veri setleri,satır 4,Durum,depoda
+Veri setleri,satır 5,Durum,depoda
+Veri setleri,satır 6,Durum,depoda
+Veri setleri,satır 7,Durum,eksik
+Veri setleri,satır 8,Durum,yerel (Git dışı)
+Veri setleri,satır 9,Durum,yerel (Git dışı)
+Veri setleri,satır 10,Durum,depoda
+Veri setleri,satır 11,Durum,depoda
+Veri setleri,satır 1,Satır,87.0
+Veri setleri,satır 2,Satır,3617.0
+Veri setleri,satır 3,Satır,87.0
+Veri setleri,satır 4,Satır,87.0
+Veri setleri,satır 5,Satır,3617.0
+Veri setleri,satır 6,Satır,22048.0
+Veri setleri,satır 7,Satır,—
+Veri setleri,satır 8,Satır,60598.0
+Veri setleri,satır 9,Satır,57468.0
+Veri setleri,satır 10,Satır,15089.0
+Veri setleri,satır 11,Satır,87.0
+Veri setleri,satır 1,Sütun,15.0
+Veri setleri,satır 2,Sütun,4.0
+Veri setleri,satır 3,Sütun,16.0
+Veri setleri,satır 4,Sütun,4.0
+Veri setleri,satır 5,Sütun,11.0
+Veri setleri,satır 6,Sütun,11.0
+Veri setleri,satır 7,Sütun,—
+Veri setleri,satır 8,Sütun,6.0
+Veri setleri,satır 9,Sütun,6.0
+Veri setleri,satır 10,Sütun,23.0
+Veri setleri,satır 11,Sütun,85.0
+Veri setleri,satır 1,Doluluk,1.0
+Veri setleri,satır 2,Doluluk,1.0
+Veri setleri,satır 3,Doluluk,0.995
+Veri setleri,satır 4,Doluluk,1.0
+Veri setleri,satır 5,Doluluk,1.0
+Veri setleri,satır 6,Doluluk,0.9931
+Veri setleri,satır 7,Doluluk,—
+Veri setleri,satır 8,Doluluk,1.0
+Veri setleri,satır 9,Doluluk,1.0
+Veri setleri,satır 10,Doluluk,0.7243
+Veri setleri,satır 11,Doluluk,0.995
+Veri setleri,satır 1,Yinelenen satır,0.0
+Veri setleri,satır 2,Yinelenen satır,0.0
+Veri setleri,satır 3,Yinelenen satır,0.0
+Veri setleri,satır 4,Yinelenen satır,0.0
+Veri setleri,satır 5,Yinelenen satır,0.0
+Veri setleri,satır 6,Yinelenen satır,0.0
+Veri setleri,satır 7,Yinelenen satır,—
+Veri setleri,satır 8,Yinelenen satır,0.0
+Veri setleri,satır 9,Yinelenen satır,0.0
+Veri setleri,satır 10,Yinelenen satır,0.0
+Veri setleri,satır 11,Yinelenen satır,0.0
+Veri setleri,satır 1,SHA-256,277d61c763c8ede4…
+Veri setleri,satır 2,SHA-256,82f15fe31f22ccc3…
+Veri setleri,satır 3,SHA-256,98dd5a12a75b98eb…
+Veri setleri,satır 4,SHA-256,51a69cc9c06470b5…
+Veri setleri,satır 5,SHA-256,307a114c180be2fb…
+Veri setleri,satır 6,SHA-256,0cc78694f05c4a14…
+Veri setleri,satır 7,SHA-256,—
+Veri setleri,satır 8,SHA-256,9f7b327c98466b53…
+Veri setleri,satır 9,SHA-256,c2d65264d07630ec…
+Veri setleri,satır 10,SHA-256,ba205b81c5e0a5ce…
+Veri setleri,satır 11,SHA-256,c36e2b9cbc64487d…
+Veri setleri,satır 1,Geçersiz geometri,—
+Veri setleri,satır 2,Geçersiz geometri,0.0
+Veri setleri,satır 3,Geçersiz geometri,0.0
+Veri setleri,satır 4,Geçersiz geometri,—
+Veri setleri,satır 5,Geçersiz geometri,0.0
+Veri setleri,satır 6,Geçersiz geometri,0.0
+Veri setleri,satır 7,Geçersiz geometri,—
+Veri setleri,satır 8,Geçersiz geometri,0.0
+Veri setleri,satır 9,Geçersiz geometri,0.0
+Veri setleri,satır 10,Geçersiz geometri,0.0
+Veri setleri,satır 11,Geçersiz geometri,0.0
+Veri setleri,satır 1,Boş geometri,—
+Veri setleri,satır 2,Boş geometri,0.0
+Veri setleri,satır 3,Boş geometri,0.0
+Veri setleri,satır 4,Boş geometri,—
+Veri setleri,satır 5,Boş geometri,0.0
+Veri setleri,satır 6,Boş geometri,0.0
+Veri setleri,satır 7,Boş geometri,—
+Veri setleri,satır 8,Boş geometri,0.0
+Veri setleri,satır 9,Boş geometri,0.0
+Veri setleri,satır 10,Boş geometri,0.0
+Veri setleri,satır 11,Boş geometri,0.0
+Veri setleri,satır 1,Yinelenen geometri,—
+Veri setleri,satır 2,Yinelenen geometri,1.0
+Veri setleri,satır 3,Yinelenen geometri,0.0
+Veri setleri,satır 4,Yinelenen geometri,—
+Veri setleri,satır 5,Yinelenen geometri,1.0
+Veri setleri,satır 6,Yinelenen geometri,0.0
+Veri setleri,satır 7,Yinelenen geometri,—
+Veri setleri,satır 8,Yinelenen geometri,16.0
+Veri setleri,satır 9,Yinelenen geometri,0.0
+Veri setleri,satır 10,Yinelenen geometri,847.0
+Veri setleri,satır 11,Yinelenen geometri,0.0
+Doğrulama raporları,satır 1,Rapor,00-19 yeniden yapılanma
+Doğrulama raporları,satır 2,Rapor,00-20 mekânsal analiz
+Doğrulama raporları,satır 3,Rapor,00-18 uydu taraması
+Doğrulama raporları,satır 1,Durum,completed_reconstruction_screening
+Doğrulama raporları,satır 2,Durum,completed_spatial_analysis
+Doğrulama raporları,satır 3,Durum,completed_candidate_screening
+Doğrulama raporları,satır 1,Tekrar okuma,True
+Doğrulama raporları,satır 2,Tekrar okuma,True
+Doğrulama raporları,satır 3,Tekrar okuma,True
+Doğrulama raporları,satır 1,Üretim,2026-11-28T11:46:36
+Doğrulama raporları,satır 2,Üretim,2026-11-28T12:38:27
+Doğrulama raporları,satır 3,Üretim,2026-11-28T12:07:29

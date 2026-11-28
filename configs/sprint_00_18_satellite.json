@@ -14,12 +14,18 @@
       "item_id": "S2A_37SDC_20221231_0_L2A",
       "datetime": "2022-12-31T08:29:21.956Z",
       "catalog_cloud_cover_percent": 8.626486,
+      "processing_baseline": "05.09",
+      "reflectance_scale": 0.0001,
+      "reflectance_offset": -0.1,
       "base_url": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/37/S/DC/2022/12/S2A_37SDC_20221231_0_L2A"
     },
     "post": {
       "item_id": "S2B_37SDC_20230224_0_L2A",
       "datetime": "2023-02-24T08:29:23.341Z",
       "catalog_cloud_cover_percent": 2.463634,
+      "processing_baseline": "05.09",
+      "reflectance_scale": 0.0001,
+      "reflectance_offset": -0.1,
       "base_url": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/37/S/DC/2023/2/S2B_37SDC_20230224_0_L2A"
     }
   },

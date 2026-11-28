@@ -81,7 +81,7 @@ def sha256(path):
 
 
 def load_snapshot(path, expected_timestamp):
-    """Validate actual ohsome per-feature snapshot metadata, not filenames/edit dates."""
+    """Validate per-feature snapshot metadata (Overpass attic), not filenames/edit dates."""
     document = json.loads(Path(path).read_text(encoding="utf-8"))
     if document.get("type") != "FeatureCollection" or not document.get("features"):
         raise ValueError(f"Empty/non-GeoJSON snapshot: {path}")
@@ -100,7 +100,7 @@ def load_snapshot(path, expected_timestamp):
 
 
 def acquire_snapshots(root, config):
-    """Immutable real OSM history extracts with request and payload hashes."""
+    """Pinned district boundaries plus dated OSM building snapshots with provenance."""
     import httpx
 
     scope = json.loads((root / "configs/datasets.json").read_text())["geoboundaries"]
@@ -114,28 +114,23 @@ def acquire_snapshots(root, config):
         boundary_path.write_bytes(response.content)
     if sha256(boundary_path) != scope["sha256"]:
         raise ValueError("Pinned district boundary checksum mismatch")
+    # ohsome extraction endpoints answer HTTP 403; dated snapshots come from Overpass attic data.
+    from earthquake_damage.overpass_snapshots import download_snapshot
+
     directory = root / "data/external/building_change"
-    directory.mkdir(parents=True, exist_ok=True)
-    for year, timestamp in config["timestamps"].items():
-        target = directory / f"buildings_{year}.geojson"
-        if target.exists():
-            load_snapshot(target, timestamp)
-            continue
-        request = {"bboxes": ",".join(map(str, config["bbox"])), "time": timestamp,
-                   "filter": "building=* and geometry:polygon", "properties": "tags,metadata",
-                   "clipGeometry": "false"}
-        response = httpx.post(config["endpoint"], data=request, timeout=45)
-        response.raise_for_status()
-        temporary = target.with_suffix(".part")
-        temporary.write_bytes(response.content)
-        load_snapshot(temporary, timestamp)
-        temporary.replace(target)
-        target.with_suffix(".source.json").write_text(json.dumps({
-            "endpoint": config["endpoint"], "request": request,
-            "retrieved_at": datetime.now(timezone.utc).isoformat(), "sha256": sha256(target),
-            "license": "ODbL 1.0; © OpenStreetMap contributors",
-            "semantics": "OSM mapping state, not physical observation date",
-        }, indent=2), encoding="utf-8")
+    west, south, east, north = config["bbox"]
+    return [
+        download_snapshot(
+            directory / f"buildings_{year}.geojson",
+            (west, south, east, north),
+            timestamp,
+            config["endpoints"],
+            int(config.get("tiles_per_axis", 3)),
+            f"osm_{year}",
+            load_snapshot,
+        )
+        for year, timestamp in config["timestamps"].items()
+    ]
 
 
 def prepare_frame(document, aoi, metric_crs):

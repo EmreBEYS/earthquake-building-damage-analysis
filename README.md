@@ -128,8 +128,13 @@ The project follows a reproducible analytical workflow.
 | 00-14 | Geometry validation, metric features and GeoPackage/GeoParquet | Completed |
 | 00-15 | Gerçek Hasar Haritası with audited source separation | Completed |
 | 00-16 | Existing-model evaluation, spatial split and leakage audit | Completed |
-| 00-17 | Building-level prediction GeoJSON and separate map layers | In progress |
+| 00-17 | Building-level prediction GeoJSON and separate map layers | Completed |
+| 00-18 | 2022–2023 mapping and spectral change | Completed (OSM part pending) |
 | 00-19 | 2023–2026 reconstruction change map and neighbourhood indicators | Completed |
+| 00-20 | Neighbourhood damage density, hot spots and comparison table | Completed |
+| 00-21 | New dark-theme Streamlit dashboard | Completed |
+| 00-22 | Interactive map, period panel and building details | Completed |
+| 00-23 | Reporting and download system | Completed |
 
 ### Sprint 00-08 — Official Damage Dataset Extraction
 
@@ -636,8 +641,10 @@ uv run python scripts/17_analyze_satellite_change.py all
 ```
 
 Current status: the satellite screening is complete with real pixels; 80.86% of AOI pixels are
-jointly valid after SCL masking. The 6,017 candidate components (4.6082 km²) are screening
-results, not damaged-building counts. The dated OSM snapshot workflow remains blocked by source
+jointly valid after SCL masking. After the reflectance-offset fix (28 November 2026) the screening
+yields 22,048 candidate components (21.7564 km², 13.0% of valid area); the earlier 6,017 figure
+was an artefact of ignoring the −0.1 L2A offset. Candidates are screening results, not
+damaged-building counts. The dated OSM snapshot workflow remains blocked by source
 access, so no OSM construction/demolition result is claimed. Large raster clips remain ignored.
 See [method](docs/sprints/sprint-00-18.md) and
 [checklist](docs/sprints/sprint-00-18-checklist.md).
@@ -660,3 +667,65 @@ candidates, 45,309 persistent, 3,409 uncertain, plus 8,981 satellite-only change
 Neighbourhood indicators cover all 87 neighbourhoods. New construction is under-counted because
 OSM maps new buildings late. See [method](docs/sprints/sprint-00-19.md) and
 [checklist](docs/sprints/sprint-00-19-checklist.md).
+
+## Sprint 00-20 — Spatial analysis and neighbourhood comparison
+
+Puts official damage density, EMSR648 shares, the Sprint 00-17 predictions, OSM building density
+and the 2022–2026 change indicators side by side for all 87 neighbourhoods, without merging
+their meanings. Clustering is measured with global Moran's I, local Moran (LISA) and
+Getis-Ord Gi* on queen contiguity, plus a 500 m grid. Permutation inference is seeded, and Gi*
+carries a Benjamini–Hochberg FDR flag.
+
+```bash
+uv run python scripts/19_analyze_spatial_neighborhoods.py
+```
+
+All five indicators cluster significantly (Moran's I 0.18–0.52, p ≤ 0.006). The official severe
+damage ratio forms an FDR-confirmed hot spot in the historic centre (Dabakhane, İsmetiye,
+Kavaklıbağ, Yenihamam, Cirikpınar, Salköprü). Neighbourhoods with more severe damage also lost
+more buildings by 2026 (Spearman ρ = 0.61). See [method](docs/sprints/sprint-00-20.md) and
+[checklist](docs/sprints/sprint-00-20-checklist.md).
+
+## Sprint 00-21 — New dashboard
+
+`dashboard.py` has a dark theme, a left menu, KPI cards, a 2022/2023/2026 period selector and
+data-source badges on every page. Earlier pages live as sub-tabs under seven menu headings. Every
+home-page number is computed from committed outputs: 46,563 official records, the class shares,
+district split and building counts. The model card reports the spatial-split macro-F1 next to
+the dummy baseline.
+
+```bash
+uv run python scripts/20_prepare_dashboard_overview.py
+uv run python -m streamlit run dashboard.py
+```
+
+See [design notes](docs/sprints/sprint-00-21.md) and [checklist](docs/sprints/sprint-00-21-checklist.md).
+
+## Sprint 00-22 — Interactive map and time panel
+
+`src/earthquake_damage/interactive_map.py` adds **Harita Analizi → İnteraktif Harita**:
+satellite, street or dark basemaps; ten toggleable GIS layers filtered by the 2022/2023/2026
+period; neighbourhood focus; side-by-side period or truth-vs-prediction maps; and a building
+panel for any EMSR648 polygon. EMSR648 polygons are built-up areas (median 5,111 m²), so the panel
+counts the OSM buildings inside each one and how many were removed by 2026, rather than forcing
+a one-to-one match.
+
+```bash
+uv run python scripts/21_prepare_interactive_map.py
+```
+
+See [notes](docs/sprints/sprint-00-22.md) and [checklist](docs/sprints/sprint-00-22-checklist.md).
+
+## Sprint 00-23 — Reporting and downloads
+
+`src/earthquake_damage/reporting.py` builds neighbourhood, building, model-performance and
+data-quality reports. Each exports to CSV, Excel, PNG and PDF from the dashboard's
+**Rapor & İndirme** page or the command line. The model report recomputes the random-forest
+confusion matrix on the exact Sprint 00-16 spatial split (macro-F1 0.2388, identical). It shows
+that no minority damage class is recovered.
+
+```bash
+uv run python scripts/22_generate_reports.py
+```
+
+See [notes](docs/sprints/sprint-00-23.md) and [checklist](docs/sprints/sprint-00-23-checklist.md).

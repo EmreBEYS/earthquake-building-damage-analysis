@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "sprint": "00-20",
+  "metric_crs": "EPSG:32637",
+  "neighborhoods": "data/dashboard/sprint_00-12/aoi05_neighborhoods.geojson",
+  "neighborhood_name_field": "mahalle",
+  "official_statistics": "data/dashboard/sprint_00-15/official_neighborhood_statistics.csv",
+  "copernicus": "data/dashboard/sprint_00-12/copernicus_damage_polygons.geojson",
+  "predictions": "data/dashboard/sprint_00-17/predicted_damage.geojson",
+  "spectral_change_2022_2023": "data/dashboard/sprint_00-18/pre_post_change_map.geojson",
+  "reconstruction_indicators": "data/dashboard/sprint_00-19/neighborhood_reconstruction_indicators.csv",
+  "reconstruction_map": "data/dashboard/sprint_00-19/reconstruction_change_map.parquet",
+  "osm_post_event_snapshot": "data/external/reconstruction/osm/buildings_post_event.geojson",
+  "output_directory": "data/dashboard/sprint_00-20",
+  "report_directory": "reports/sprint_00-20",
+  "severe_copernicus_grades": [
+    "Damaged",
+    "Destroyed"
+  ],
+  "severe_predicted_classes": [
+    "damaged",
+    "destroyed"
+  ],
+  "contiguity_tolerance_metres": 1.0,
+  "permutations": 999,
+  "random_seed": 20,
+  "significance_levels": [
+    0.01,
+    0.05,
+    0.1
+  ],
+  "fdr_alpha": 0.05,
+  "copernicus_minimum_coverage_ratio": 0.5,
+  "hotspot_variables": {
+    "official_severe_ratio": "Resmî ağır hasar oranı",
+    "official_severe_per_km2": "Resmî ağır hasar yoğunluğu (km² başına)",
+    "building_density_2023_km2": "Bina yoğunluğu 2023 (km² başına)",
+    "removed_share_of_2023_pct": "Kaldırılan yapı payı 2023→2026 (%)",
+    "net_building_loss_pct": "Net OSM bina kaybı 2023→2026 (%)"
+  },
+  "grid": {
+    "cell_size_metres": 500,
+    "minimum_buildings": 10,
+    "minimum_copernicus_buildings": 5
+  }
+}

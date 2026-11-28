@@ -1,0 +1,9 @@
+{
+  "schema_version": "1.0",
+  "sprint": "00-21",
+  "metric_crs": "EPSG:32637",
+  "neighborhoods": "data/dashboard/sprint_00-12/aoi05_neighborhoods.geojson",
+  "district_boundaries": "data/external/building_change/districts.geojson",
+  "district_shape_ids": ["54988432B75263721717029", "54988432B29488154081251"],
+  "output_directory": "data/dashboard/sprint_00-21"
+}

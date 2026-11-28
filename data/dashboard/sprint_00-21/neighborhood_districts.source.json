@@ -1,0 +1,11 @@
+{
+  "generated_at_utc": "2026-11-28T12:20:43.316707+00:00",
+  "neighborhoods": 87,
+  "district_counts": {
+    "Battalgazi": 47,
+    "Yeşilyurt": 40
+  },
+  "minimum_district_share": 0.9979,
+  "source": "data/external/building_change/districts.geojson",
+  "method": "largest overlap area in EPSG:32637"
+}
