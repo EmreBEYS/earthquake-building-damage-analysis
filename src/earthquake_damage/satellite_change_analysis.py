@@ -348,7 +348,7 @@ def analyze(root: Path, config: dict) -> dict:
     else:
         changes.to_crs(4326).to_file(map_path, driver="GeoJSON")
     comparison_path = output / "satellite_emsr648_comparison.csv"
-    comparison.to_csv(comparison_path, index=False)
+    comparison.to_csv(lineterminator="\n", path_or_buf=comparison_path, index=False)
     reopened_changes = gpd.read_file(map_path)
     reopened_comparison = pd.read_csv(comparison_path)
     if len(reopened_changes) != len(changes) or len(reopened_comparison) != len(comparison):

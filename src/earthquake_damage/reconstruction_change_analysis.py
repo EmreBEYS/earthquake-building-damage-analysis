@@ -686,8 +686,8 @@ def analyze(root: Path, config: dict) -> dict:
     web_map[float_columns] = web_map[float_columns].round(4)
     web_map.to_file(map_path, driver="GeoJSON")
     change_map.to_parquet(parquet_path, index=False)
-    indicators.to_csv(indicators_path, index=False)
-    context.to_csv(context_path, index=False)
+    indicators.to_csv(lineterminator="\n", path_or_buf=indicators_path, index=False)
+    context.to_csv(lineterminator="\n", path_or_buf=context_path, index=False)
 
     reopened = gpd.read_file(map_path)
     reopened_parquet = gpd.read_parquet(parquet_path)

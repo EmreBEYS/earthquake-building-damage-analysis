@@ -277,7 +277,7 @@ def prepare_real_damage_map(project_root: Path = PROJECT_ROOT) -> dict[str, Any]
     manifest_path = output_root / "manifest.json"
     validation_path = output_root / "validation_report.json"
     _write_json(official_path, official_layer)
-    stats.sort_values("official_total", ascending=False).to_csv(stats_path, index=False)
+    stats.sort_values("official_total", ascending=False).to_csv(lineterminator="\n", path_or_buf=stats_path, index=False)
 
     class_totals = {
         item["key"]: int(records["hasar_durumu"].eq(item["source_label"]).sum())

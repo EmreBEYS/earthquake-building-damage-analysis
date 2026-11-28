@@ -447,8 +447,8 @@ def evaluate_existing_models(
 
     destination = output_root or project_root / config["output_root"]
     destination.mkdir(parents=True, exist_ok=True)
-    pd.DataFrame(metrics).to_csv(destination / "model_comparison.csv", index=False)
-    pd.DataFrame(report["uncertainty"]).to_csv(
+    pd.DataFrame(metrics).to_csv(lineterminator="\n", path_or_buf=destination / "model_comparison.csv", index=False)
+    pd.DataFrame(report["uncertainty"]).to_csv(lineterminator="\n", path_or_buf=
         destination / "uncertainty_summary.csv", index=False
     )
     pd.DataFrame(
@@ -456,7 +456,7 @@ def evaluate_existing_models(
             {"damage_class": key, "records": int(value), "share": float(value / counts.sum())}
             for key, value in counts.items()
         ]
-    ).to_csv(destination / "class_distribution.csv", index=False)
+    ).to_csv(lineterminator="\n", path_or_buf=destination / "class_distribution.csv", index=False)
     (destination / "model_evaluation_report.json").write_text(
         json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
