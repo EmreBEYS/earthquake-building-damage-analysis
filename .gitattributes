@@ -1,0 +1,5 @@
+# Data artifacts are checksummed byte for byte: never convert their line endings.
+*.geojson -text
+*.parquet binary
+data/dashboard/** -text
+reports/** -text
