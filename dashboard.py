@@ -280,6 +280,16 @@ def section_home() -> None:
             )
 
 
+def section_interactive_map() -> None:
+    """İnteraktif Harita (Sprint 00-22)"""
+    from earthquake_damage.interactive_map import render
+
+    st.header("İnteraktif harita ve zaman paneli")
+    show_sources("neighborhoods", "emsr648", "predictions", "reconstruction",
+                 *(f"osm_{period}",))
+    render(ROOT, period)
+
+
 def section_sources() -> None:
     """Veri kaynakları"""
     st.header("Veri kaynakları")
@@ -1578,6 +1588,7 @@ NAVIGATION = {
     "Harita Analizi": {
         "icon": ":material/map:",
         "pages": {
+            "İnteraktif Harita": section_interactive_map,
             "Gerçek Hasar Haritası": section_real_damage_map,
             "Harita · Katmanlar": section_map_layers,
         },

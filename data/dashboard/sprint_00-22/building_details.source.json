@@ -1,0 +1,13 @@
+{
+  "generated_at_utc": "2026-11-28T12:29:02.678349+00:00",
+  "buildings": 3617,
+  "reconstruction_status_counts": {
+    "none_removed": 2913,
+    "some_removed": 386,
+    "no_osm_footprint": 168,
+    "mostly_removed": 150
+  },
+  "buildings_with_spectral_cover": 3266,
+  "osm_post_event_snapshot_sha256": "9f7b327c98466b536c2d74b978806587cb8d84dd60b8f1bd4d85009069157544",
+  "sha256": "068e298d80776bbb826334ea5ac65d8bb144ede5084ef9e68619b3a9ecc6c320"
+}

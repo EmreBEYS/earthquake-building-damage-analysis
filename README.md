@@ -133,6 +133,7 @@ The project follows a reproducible analytical workflow.
 | 00-19 | 2023–2026 reconstruction change map and neighbourhood indicators | Completed |
 | 00-20 | Neighbourhood damage density, hot spots and comparison table | Completed |
 | 00-21 | New dark-theme Streamlit dashboard | Completed |
+| 00-22 | Interactive map, period panel and building details | Completed |
 
 ### Sprint 00-08 — Official Damage Dataset Extraction
 
@@ -698,3 +699,18 @@ uv run python -m streamlit run dashboard.py
 ```
 
 See [design notes](docs/sprints/sprint-00-21.md) and [checklist](docs/sprints/sprint-00-21-checklist.md).
+
+## Sprint 00-22 — Interactive map and time panel
+
+`src/earthquake_damage/interactive_map.py` adds **Harita Analizi → İnteraktif Harita**:
+satellite, street or dark basemaps; ten toggleable GIS layers filtered by the 2022/2023/2026
+period; neighbourhood focus; side-by-side period or truth-vs-prediction maps; and a building
+panel for any EMSR648 polygon. EMSR648 polygons are built-up areas (median 5,111 m²), so the panel
+counts the OSM buildings inside each one and how many were removed by 2026, rather than forcing
+a one-to-one match.
+
+```bash
+uv run python scripts/21_prepare_interactive_map.py
+```
+
+See [notes](docs/sprints/sprint-00-22.md) and [checklist](docs/sprints/sprint-00-22-checklist.md).

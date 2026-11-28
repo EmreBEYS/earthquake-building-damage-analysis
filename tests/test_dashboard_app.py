@@ -7,6 +7,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 ALL_PAGES = [
     ("Ana Sayfa", None),
+    ("Harita Analizi", "İnteraktif Harita"),
     ("Harita Analizi", "Gerçek Hasar Haritası"),
     ("Harita Analizi", "Harita · Katmanlar"),
     ("Model Tahmini", "Bina Tahmin Haritası"),
@@ -74,3 +75,34 @@ def test_spatial_analysis_page_renders_all_display_modes() -> None:
         for choice in ("Gi* sıcak nokta", "LISA küme"):
             mode.set_value(choice).run(timeout=120)
             assert not app.exception
+
+
+@pytest.mark.parametrize("period", ["2022", "2023", "2026"])
+def test_interactive_map_periods_focus_and_comparison(period) -> None:
+    app = AppTest.from_file(ROOT / "dashboard.py").run(timeout=120)
+    app.radio(key="period").set_value(period).run(timeout=120)
+    app.sidebar.radio(key="menu").set_value("Harita Analizi").run(timeout=120)
+    app.radio(key="page_Harita Analizi").set_value("İnteraktif Harita").run(timeout=120)
+    assert not app.exception
+    app.sidebar.selectbox(key="imap_focus").set_value("Dabakhane Mahallesi").run(timeout=180)
+    assert not app.exception
+    for layer in ("osm_2022", "osm_2023", "osm_2026", "spectral_2022_2023"):
+        boxes = [box for box in app.sidebar.checkbox if box.key == f"imap_{period}_{layer}"]
+        for box in boxes:
+            box.check().run(timeout=180)
+            assert not app.exception
+    app.radio(key="imap_mode").set_value("Yan yana karşılaştırma").run(timeout=180)
+    assert not app.exception
+    app.radio(key="imap_comparison").set_value("Gerçek ↔ Tahmin (2023)").run(timeout=180)
+    assert not app.exception
+
+
+def test_building_panel_shows_selected_polygon_details() -> None:
+    app = AppTest.from_file(ROOT / "dashboard.py").run(timeout=120)
+    app.sidebar.radio(key="menu").set_value("Harita Analizi").run(timeout=120)
+    app.radio(key="page_Harita Analizi").set_value("İnteraktif Harita").run(timeout=120)
+    picker = app.selectbox(key="imap_picker")
+    picker.set_value(picker.options[-1]).run(timeout=120)
+    assert not app.exception
+    html = "".join(item.body for item in app.markdown)
+    assert picker.value in html and "2023→2026 durumu" in html

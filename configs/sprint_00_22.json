@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "sprint": "00-22",
+  "metric_crs": "EPSG:32637",
+  "buildings": "data/processed/sprint_00-14/buildings.parquet",
+  "predictions": "data/dashboard/sprint_00-17/predicted_damage.geojson",
+  "districts": "data/dashboard/sprint_00-21/neighborhood_districts.csv",
+  "spectral_change_2022_2023": "data/dashboard/sprint_00-18/pre_post_change_map.geojson",
+  "reconstruction_map": "data/dashboard/sprint_00-19/reconstruction_change_map.parquet",
+  "osm_post_event_snapshot": "data/external/reconstruction/osm/buildings_post_event.geojson",
+  "output_directory": "data/dashboard/sprint_00-22"
+}
