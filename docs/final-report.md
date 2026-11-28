@@ -137,7 +137,7 @@ kat sayısı ve yer hareketi gibi değişkenler gerekir.
 
 ## 5. Doğrulama ve tekrar üretilebilirlik
 
-- **Otomatik testler:** 193 test her push'ta GitHub CI'da (Ubuntu) ve yerelde (Windows 11)
+- **Otomatik testler:** 194 test her push'ta GitHub CI'da (Ubuntu) ve yerelde (Windows 11)
   çalışır. Kapsamı:
   - istatistikler elle hesaplanmış değerlere karşı
   - uçtan uca sentetik analizler

@@ -28,4 +28,14 @@
   - `demo_check.py` "Demo hazır"
   - tüm testler, Ruff ve `check_project`
 - [ ] MacBook demo testi: `docs/demo.md` §4 tablosu demo öncesinde elle doldurulacak.
-- [ ] Tarayıcıda gözle kontrol: koyu tema, dar ekran yerleşimi, harita tıklaması.
+- [x] Tarayıcıda gözle kontrol (1440 px): ana sayfa, interaktif harita, rapor sayfası. Bulunan
+      ve düzeltilen sorunlar:
+  - menü radyo düğmeleri ve seçili öğe vurgusu
+  - dönem seçicinin satır kırması
+  - KPI kartlarının taşması
+  - kırpılan metrikler
+  - halka grafiği etiketleri
+  - haritada tıklamanın paneli güncellememesi
+  - seçimden sonra katmanların soluklaşması
+  - görünmeyen poligon merkezleri
+- [ ] Dar ekran (mobil) yerleşiminin gözle kontrolü.

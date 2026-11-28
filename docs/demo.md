@@ -84,11 +84,12 @@ sürebilir.
 | `uv sync --locked --all-extras` | ✅ | ☐ |
 | `scripts/demo_check.py` "Demo hazır" | ✅ | ☐ |
 | `python -m pytest -q` tamamı geçer | ✅ | ☐ |
-| Dashboard açılır, 16 sayfa hatasız | ✅ AppTest | ☐ gözle |
+| Dashboard açılır, 16 sayfa hatasız | ✅ AppTest + gözle (ana sayfa, harita, rapor) | ☐ gözle |
 | Dönem seçici 2022/2023/2026 | ✅ AppTest | ☐ gözle |
-| İnteraktif harita: tıklama → bina paneli | ✅ liste seçimi (AppTest) | ☐ fare ile |
+| İnteraktif harita: tıklama → bina paneli | ✅ fare ile ve AppTest | ☐ fare ile |
 | PDF/Excel/CSV/PNG indirme | ✅ birim testi | ☐ tarayıcıdan |
-| Koyu tema ve dar ekran yerleşimi | ☐ gözle | ☐ gözle |
+| Koyu tema (1440 px) | ✅ gözle | ☐ gözle |
+| Dar ekran yerleşimi | ☐ gözle | ☐ gözle |
 
 Windows sütunu bu depoda otomatik testlerle doğrulandı. Gözle yapılacak kontroller ve
 MacBook sütunu demo öncesinde elle işaretlenmelidir.
