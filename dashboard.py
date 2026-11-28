@@ -35,7 +35,7 @@ st.set_page_config(
 )
 
 st.title("Malatya Deprem Hasar Araştırması")
-st.caption("Sprint 00-18 · Mekânsal değişim ve ayrı hasar katmanları")
+st.caption("Sprint 00-19 · 2023–2026 yeniden yapılanma ve ayrı hasar katmanları")
 
 st.warning(
     "Bu arayüz araştırma amaçlıdır. Sonuçlar bina güvenliği, tahliye, güçlendirme veya "
@@ -61,6 +61,7 @@ page = st.sidebar.radio(
         "Harita · Katmanlar",
         "Uydu · Zaman Serisi",
         "2022–2023 Değişim Analizi",
+        "2023–2026 Yeniden Yapılanma",
         "V1 · Copernicus",
         "V2 · Resmî kayıtlar",
         "V3 · Mekânsal",
@@ -199,6 +200,165 @@ elif page == "2022–2023 Değişim Analizi":
             file_name=map_path.name,
             mime="application/geo+json",
         )
+
+elif page == "2023–2026 Yeniden Yapılanma":
+    from earthquake_damage.reconstruction_change_analysis import CLASS_LABELS_TR
+
+    st.header("2023–2026 Yeniden Yapılanma Analizi")
+    st.info(
+        "24 Şubat 2023 ile 2026 arasındaki fiziksel kent dönüşümünü iki bağımsız kanıtla "
+        "gösterir: tarihli OSM bina ayak izleri ve ofset düzeltilmiş Sentinel-2 L2A spektral "
+        "farkı. Sınıflar **değişim** sınıflarıdır; hasar sınıfı değildir ve hasar "
+        "bilgisiyle birleştirilmez."
+    )
+    root = Path(__file__).resolve().parent
+    output = root / "data/dashboard/sprint_00-19"
+    report_path = root / "reports/sprint_00-19/reconstruction_validation.json"
+    map_path = output / "reconstruction_change_map.geojson"
+    indicators_path = output / "neighborhood_reconstruction_indicators.csv"
+    context_path = output / "reconstruction_vs_emsr648_context.csv"
+    if not map_path.exists():
+        st.caption("reconstruction_change_map: veri dosyası henüz yok.")
+        st.info("Üretmek için: `python scripts/18_analyze_reconstruction_change.py all`")
+    else:
+        class_colors = {
+            "removed_candidate": "#c74343",
+            "new_candidate": "#2e9d5b",
+            "modified_candidate": "#e0a526",
+            "uncertain": "#8c8c8c",
+            "spectral_only_change": "#7a5bbf",
+        }
+        with st.sidebar:
+            st.subheader("Yeniden yapılanma katmanları")
+            selected_classes = [
+                key
+                for key, label in CLASS_LABELS_TR.items()
+                if key in class_colors
+                and st.checkbox(
+                    label,
+                    value=key in {"removed_candidate", "new_candidate"},
+                    key="recon_" + key,
+                )
+            ]
+            supported_only = st.checkbox("Yalnız OSM + uydu destekli", value=False)
+        collection = json.loads(map_path.read_text(encoding="utf-8"))
+        figure = go.Figure()
+        for key in selected_classes:
+            subset = [
+                dict(feature, id=str(index))
+                for index, feature in enumerate(collection["features"])
+                if feature["properties"]["reconstruction_class"] == key
+                and (
+                    not supported_only
+                    or feature["properties"]["evidence"] in {"osm_and_spectral", "spectral_only"}
+                )
+            ]
+            if not subset:
+                continue
+            figure.add_trace(
+                go.Choroplethmapbox(
+                    geojson={"type": "FeatureCollection", "features": subset},
+                    locations=[feature["id"] for feature in subset],
+                    z=[1] * len(subset),
+                    colorscale=[[0, class_colors[key]], [1, class_colors[key]]],
+                    showscale=False,
+                    marker_opacity=0.7,
+                    marker_line_width=0.5,
+                    name=f"{CLASS_LABELS_TR[key]} ({len(subset):,})",
+                    showlegend=True,
+                    text=[
+                        "<br>".join(
+                            f"{name}: {feature['properties'].get(name)}"
+                            for name in (
+                                "unit_id", "neighborhood", "evidence",
+                                "footprint_area_m2", "spectral_change_fraction",
+                                "direction_hint",
+                            )
+                        )
+                        for feature in subset
+                    ],
+                    hovertemplate="%{text}<extra></extra>",
+                )
+            )
+        figure.update_layout(
+            mapbox_style="open-street-map",
+            mapbox_zoom=11.5,
+            mapbox_center={"lat": 38.345, "lon": 38.31},
+            height=650,
+            margin={"l": 0, "r": 0, "t": 0, "b": 0},
+            legend={"orientation": "h", "y": 1.02},
+        )
+        st.plotly_chart(figure, use_container_width=True)
+        st.caption(
+            "© OpenStreetMap contributors (ODbL) · Contains modified Copernicus Sentinel "
+            "data 2023–2026 · Sürekli (persistent) ayak izleri haritada çizilmez, sayılır."
+        )
+        st.download_button(
+            "reconstruction_change_map indir",
+            map_path.read_bytes(),
+            file_name=map_path.name,
+            mime="application/geo+json",
+        )
+    if report_path.exists():
+        recon_report = json.loads(report_path.read_text(encoding="utf-8"))
+        counts = recon_report["osm"]["reconstruction_class_counts"]
+        col1, col2, col3, col4 = st.columns(4)
+        col1.metric("Kaldırılmış yapı adayı", f"{counts.get('removed_candidate', 0):,}")
+        col2.metric("Yeni görünen yapı adayı", f"{counts.get('new_candidate', 0):,}")
+        col3.metric(
+            "Net ayak izi değişimi",
+            f"{recon_report['osm']['net_footprint_count_change']:+,}",
+        )
+        col4.metric(
+            "Ortak geçerli uydu alanı",
+            f"{recon_report['sentinel2']['joint_valid_aoi_percent']:.1f}%",
+        )
+        st.caption(
+            f"OSM: {recon_report['period']['osm_post_event'][:10]} → "
+            f"{recon_report['period']['osm_current'][:10]} · Sentinel-2: "
+            f"{recon_report['period']['sentinel2_post'][:10]} → "
+            f"{recon_report['period']['sentinel2_current'][:10]}"
+        )
+    if indicators_path.exists():
+        indicators = pd.read_csv(indicators_path)
+        st.subheader("Mahalle bazlı yapılaşma göstergeleri")
+        ranked = indicators[indicators["neighborhood"] != "unknown"].copy()
+        melted = ranked.nlargest(15, "renewal_turnover_pct").melt(
+            id_vars="neighborhood",
+            value_vars=["removed_candidates", "new_candidates"],
+            var_name="gösterge",
+            value_name="ayak izi",
+        )
+        melted["gösterge"] = melted["gösterge"].map(
+            {"removed_candidates": "Kaldırılmış aday", "new_candidates": "Yeni aday"}
+        )
+        st.plotly_chart(
+            px.bar(
+                melted,
+                x="ayak izi",
+                y="neighborhood",
+                color="gösterge",
+                barmode="group",
+                orientation="h",
+                color_discrete_map={"Kaldırılmış aday": "#c74343", "Yeni aday": "#2e9d5b"},
+                title="Yenilenme devri en yüksek 15 mahalle",
+            ).update_layout(height=520, yaxis_title=None),
+            use_container_width=True,
+        )
+        st.dataframe(indicators, use_container_width=True, hide_index=True)
+        st.download_button(
+            "Mahalle göstergelerini indir",
+            indicators_path.read_bytes(),
+            file_name=indicators_path.name,
+            mime="text/csv",
+        )
+    if context_path.exists():
+        with st.expander("Ayrı bağlam: EMSR648 hasar poligonlarıyla mekânsal birliktelik"):
+            st.warning(
+                "Bu tablo değişim birimlerinin Copernicus hasar poligonlarıyla kesişimini sayar. "
+                "Bir yapının kaldırılması hasar sınıfı anlamına gelmez; doğruluk ölçüsü değildir."
+            )
+            st.dataframe(pd.read_csv(context_path), use_container_width=True, hide_index=True)
 
 elif page == "Gerçek Hasar Haritası":
     st.header("Gerçek Hasar Haritası")

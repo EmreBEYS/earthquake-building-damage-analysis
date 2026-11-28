@@ -1,0 +1,25 @@
+reconstruction_class,damage_grade,units_intersecting,units_in_class,interpretation
+modified_candidate,Damaged,7,119,spatial co-occurrence only; not a damage label or accuracy
+modified_candidate,Destroyed,2,119,spatial co-occurrence only; not a damage label or accuracy
+modified_candidate,No visible damage,88,119,spatial co-occurrence only; not a damage label or accuracy
+modified_candidate,Possibly damaged,3,119,spatial co-occurrence only; not a damage label or accuracy
+new_candidate,Damaged,2,166,spatial co-occurrence only; not a damage label or accuracy
+new_candidate,Destroyed,1,166,spatial co-occurrence only; not a damage label or accuracy
+new_candidate,No visible damage,41,166,spatial co-occurrence only; not a damage label or accuracy
+new_candidate,Possibly damaged,3,166,spatial co-occurrence only; not a damage label or accuracy
+persistent,Damaged,919,45309,spatial co-occurrence only; not a damage label or accuracy
+persistent,Destroyed,131,45309,spatial co-occurrence only; not a damage label or accuracy
+persistent,No visible damage,31791,45309,spatial co-occurrence only; not a damage label or accuracy
+persistent,Possibly damaged,740,45309,spatial co-occurrence only; not a damage label or accuracy
+removed_candidate,Damaged,212,2414,spatial co-occurrence only; not a damage label or accuracy
+removed_candidate,Destroyed,78,2414,spatial co-occurrence only; not a damage label or accuracy
+removed_candidate,No visible damage,1802,2414,spatial co-occurrence only; not a damage label or accuracy
+removed_candidate,Possibly damaged,135,2414,spatial co-occurrence only; not a damage label or accuracy
+spectral_only_change,Damaged,210,8981,spatial co-occurrence only; not a damage label or accuracy
+spectral_only_change,Destroyed,58,8981,spatial co-occurrence only; not a damage label or accuracy
+spectral_only_change,No visible damage,3859,8981,spatial co-occurrence only; not a damage label or accuracy
+spectral_only_change,Possibly damaged,191,8981,spatial co-occurrence only; not a damage label or accuracy
+uncertain,Damaged,366,3409,spatial co-occurrence only; not a damage label or accuracy
+uncertain,Destroyed,99,3409,spatial co-occurrence only; not a damage label or accuracy
+uncertain,No visible damage,2349,3409,spatial co-occurrence only; not a damage label or accuracy
+uncertain,Possibly damaged,121,3409,spatial co-occurrence only; not a damage label or accuracy
