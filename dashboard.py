@@ -35,7 +35,7 @@ st.set_page_config(
 )
 
 st.title("Malatya Deprem Hasar Araştırması")
-st.caption("Sprint 00-19 · 2023–2026 yeniden yapılanma ve ayrı hasar katmanları")
+st.caption("Sprint 00-20 · Mekânsal analiz, sıcak noktalar ve mahalle karşılaştırması")
 
 st.warning(
     "Bu arayüz araştırma amaçlıdır. Sonuçlar bina güvenliği, tahliye, güçlendirme veya "
@@ -62,6 +62,7 @@ page = st.sidebar.radio(
         "Uydu · Zaman Serisi",
         "2022–2023 Değişim Analizi",
         "2023–2026 Yeniden Yapılanma",
+        "Mekânsal Analiz ve Mahalle Karşılaştırması",
         "V1 · Copernicus",
         "V2 · Resmî kayıtlar",
         "V3 · Mekânsal",
@@ -359,6 +360,150 @@ elif page == "2023–2026 Yeniden Yapılanma":
                 "Bir yapının kaldırılması hasar sınıfı anlamına gelmez; doğruluk ölçüsü değildir."
             )
             st.dataframe(pd.read_csv(context_path), use_container_width=True, hide_index=True)
+
+elif page == "Mekânsal Analiz ve Mahalle Karşılaştırması":
+    from earthquake_damage.spatial_analysis import HOTSPOT_LABELS_TR, LISA_LABELS_TR
+
+    st.header("Mekânsal Analiz ve Mahalle Karşılaştırması")
+    st.info(
+        "Resmî hasar kayıtları, EMSR648, bina yoğunluğu ve 2023–2026 değişimi mahalle "
+        "düzeyinde yan yana konur. Sıcak noktalar Getis-Ord Gi*, kümeler yerel Moran (LISA) "
+        "ile bulunur. Kaynaklar birleştirilmez; yalnız karşılaştırılır."
+    )
+    root = Path(__file__).resolve().parent
+    output = root / "data/dashboard/sprint_00-20"
+    layer_path = output / "neighborhood_spatial_analysis.geojson"
+    table_path = output / "neighborhood_comparison.csv"
+    grid_path = output / "hotspot_grid.geojson"
+    summary_path = output / "spatial_autocorrelation_summary.csv"
+    report_path = root / "reports/sprint_00-20/spatial_analysis_validation.json"
+    if not layer_path.exists():
+        st.caption("Mekânsal analiz: veri dosyası henüz yok.")
+        st.info("Üretmek için: `python scripts/19_analyze_spatial_neighborhoods.py`")
+    else:
+        config = json.loads((root / "configs/sprint_00_20.json").read_text(encoding="utf-8"))
+        variables = config["hotspot_variables"]
+        hotspot_colors = {
+            "hot_99": "#b2182b", "hot_95": "#ef8a62", "hot_90": "#fddbc7",
+            "not_significant": "#f2f2f2", "cold_90": "#d1e5f0", "cold_95": "#67a9cf",
+            "cold_99": "#2166ac", "no_data": "#bdbdbd",
+        }
+        lisa_colors = {"HH": "#d7191c", "LL": "#2c7bb6", "HL": "#fdae61", "LH": "#abd9e9",
+                       "not_significant": "#f2f2f2", "no_data": "#bdbdbd"}
+        with st.sidebar:
+            st.subheader("Mekânsal analiz")
+            variable = st.selectbox(
+                "Gösterge", list(variables), format_func=lambda key: variables[key]
+            )
+            mode = st.radio("Gösterim", ["Değer", "Gi* sıcak nokta", "LISA küme"])
+            fdr_only = st.checkbox("Yalnız FDR ile anlamlı sıcak noktalar", value=False)
+        collection = json.loads(layer_path.read_text(encoding="utf-8"))
+        features = [dict(f, id=str(i)) for i, f in enumerate(collection["features"])]
+        props = [f["properties"] for f in features]
+        hover = [
+            f"<b>{p['mahalle']}</b><br>{variables[variable]}: {p.get(variable)}"
+            f"<br>Gi* z: {p.get(variable + '__gi_z')} · p: {p.get(variable + '__gi_p')}"
+            f"<br>{HOTSPOT_LABELS_TR.get(p.get(variable + '__hotspot'), '')}"
+            f" · {LISA_LABELS_TR.get(p.get(variable + '__lisa'), '')}"
+            for p in props
+        ]
+        figure = go.Figure()
+        if mode == "Değer":
+            figure.add_trace(go.Choroplethmapbox(
+                geojson={"type": "FeatureCollection", "features": features},
+                locations=[f["id"] for f in features],
+                z=[p.get(variable) for p in props],
+                colorscale="YlOrRd", marker_opacity=0.75, marker_line_width=0.6,
+                colorbar={"title": ""}, text=hover, hovertemplate="%{text}<extra></extra>",
+            ))
+        else:
+            key = "__hotspot" if mode == "Gi* sıcak nokta" else "__lisa"
+            colors = hotspot_colors if key == "__hotspot" else lisa_colors
+            labels = HOTSPOT_LABELS_TR if key == "__hotspot" else LISA_LABELS_TR
+            for category, color in colors.items():
+                members = [
+                    i for i, p in enumerate(props)
+                    if p.get(variable + key) == category
+                    and (not fdr_only or key != "__hotspot" or category.startswith(("not", "no"))
+                         or p.get(variable + "__gi_fdr"))
+                ]
+                if not members:
+                    continue
+                figure.add_trace(go.Choroplethmapbox(
+                    geojson={"type": "FeatureCollection",
+                             "features": [features[i] for i in members]},
+                    locations=[features[i]["id"] for i in members], z=[1] * len(members),
+                    colorscale=[[0, color], [1, color]], showscale=False,
+                    marker_opacity=0.8, marker_line_width=0.6,
+                    name=f"{labels[category]} ({len(members)})", showlegend=True,
+                    text=[hover[i] for i in members], hovertemplate="%{text}<extra></extra>",
+                ))
+        figure.update_layout(
+            mapbox_style="open-street-map", mapbox_zoom=11.3,
+            mapbox_center={"lat": 38.345, "lon": 38.31}, height=620,
+            margin={"l": 0, "r": 0, "t": 0, "b": 0}, legend={"orientation": "h", "y": 1.02},
+        )
+        st.plotly_chart(figure, use_container_width=True)
+        st.caption(
+            "Queen komşuluk, 999 permütasyon. %90/%95/%99 sınıfları tek tek testtir; 87 eşzamanlı "
+            "test için doğrulayıcı ifade FDR bayrağına dayanmalıdır."
+        )
+    if summary_path.exists():
+        st.subheader("Küresel Moran's I")
+        summary = pd.read_csv(summary_path)
+        st.dataframe(summary, use_container_width=True, hide_index=True)
+    if report_path.exists():
+        spatial_report = json.loads(report_path.read_text(encoding="utf-8"))
+        st.subheader("Kaynaklar arası sıra korelasyonu (Spearman)")
+        st.dataframe(pd.DataFrame(spatial_report["source_rank_correlations"]),
+                     use_container_width=True, hide_index=True)
+        st.caption(
+            "Uyum ölçüsüdür, nedensellik değildir. 00-17 tahminleri modelin eğitildiği EMSR648 "
+            "binalarını kapsadığından EMSR648 ile yüksek uyumu doğrulama sayılmaz."
+        )
+    if grid_path.exists():
+        with st.expander("500 m grid sıcak noktaları"):
+            grid_variable = st.radio(
+                "Grid göstergesi", ["emsr_severe_share", "removed_share"], horizontal=True,
+                format_func=lambda k: {"emsr_severe_share": "EMSR648 ağır hasar payı",
+                                       "removed_share": "Kaldırılan yapı payı"}[k],
+            )
+            grid = json.loads(grid_path.read_text(encoding="utf-8"))
+            cells = [dict(f, id=str(i)) for i, f in enumerate(grid["features"])]
+            grid_figure = go.Figure()
+            for category, color in hotspot_colors.items():
+                members = [c for c in cells
+                           if c["properties"].get(grid_variable + "__hotspot") == category]
+                if not members or category == "no_data":
+                    continue
+                grid_figure.add_trace(go.Choroplethmapbox(
+                    geojson={"type": "FeatureCollection", "features": members},
+                    locations=[c["id"] for c in members], z=[1] * len(members),
+                    colorscale=[[0, color], [1, color]], showscale=False,
+                    marker_opacity=0.7, marker_line_width=0.3,
+                    name=f"{HOTSPOT_LABELS_TR[category]} ({len(members)})",
+                ))
+            grid_figure.update_layout(
+                mapbox_style="open-street-map", mapbox_zoom=11.3,
+                mapbox_center={"lat": 38.345, "lon": 38.31}, height=520,
+                margin={"l": 0, "r": 0, "t": 0, "b": 0},
+            )
+            st.plotly_chart(grid_figure, use_container_width=True)
+    if table_path.exists():
+        st.subheader("Mahalle karşılaştırma tablosu")
+        table = pd.read_csv(table_path)
+        core = ["mahalle", "area_km2", "official_records", "official_severe",
+                "official_severe_ratio", "official_severe_per_km2", "emsr_severe_share",
+                "predicted_severe_share", "building_density_2023_km2",
+                "removed_share_of_2023_pct", "new_footprint_density_per_km2",
+                "spectral_change_2022_2023_pct", "rank_official_severe_ratio"]
+        st.dataframe(table[core].sort_values("rank_official_severe_ratio"),
+                     use_container_width=True, hide_index=True)
+        st.download_button("Karşılaştırma tablosunu indir (CSV)", table_path.read_bytes(),
+                           file_name=table_path.name, mime="text/csv")
+        st.download_button("Mahalle analiz katmanını indir (GeoJSON)",
+                           layer_path.read_bytes(), file_name=layer_path.name,
+                           mime="application/geo+json")
 
 elif page == "Gerçek Hasar Haritası":
     st.header("Gerçek Hasar Haritası")

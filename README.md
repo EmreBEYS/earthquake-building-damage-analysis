@@ -131,6 +131,7 @@ The project follows a reproducible analytical workflow.
 | 00-17 | Building-level prediction GeoJSON and separate map layers | Completed |
 | 00-18 | 2022–2023 mapping and spectral change | Completed (OSM part pending) |
 | 00-19 | 2023–2026 reconstruction change map and neighbourhood indicators | Completed |
+| 00-20 | Neighbourhood damage density, hot spots and comparison table | Completed |
 
 ### Sprint 00-08 — Official Damage Dataset Extraction
 
@@ -663,3 +664,21 @@ candidates, 45,309 persistent, 3,409 uncertain, plus 8,981 satellite-only change
 Neighbourhood indicators cover all 87 neighbourhoods. New construction is under-counted because
 OSM maps new buildings late. See [method](docs/sprints/sprint-00-19.md) and
 [checklist](docs/sprints/sprint-00-19-checklist.md).
+
+## Sprint 00-20 — Spatial analysis and neighbourhood comparison
+
+Puts official damage density, EMSR648 shares, the Sprint 00-17 predictions, OSM building density
+and the 2022–2026 change indicators side by side for all 87 neighbourhoods, without merging
+their meanings. Clustering is measured with global Moran's I, local Moran (LISA) and
+Getis-Ord Gi* on queen contiguity, plus a 500 m grid. Permutation inference is seeded, and Gi*
+carries a Benjamini–Hochberg FDR flag.
+
+```bash
+uv run python scripts/19_analyze_spatial_neighborhoods.py
+```
+
+All four indicators cluster significantly (Moran's I 0.18–0.52, p ≤ 0.006). The official severe
+damage ratio forms an FDR-confirmed hot spot in the historic centre (Dabakhane, İsmetiye,
+Kavaklıbağ, Yenihamam, Cirikpınar, Salköprü). Neighbourhoods with more severe damage also lost
+more buildings by 2026 (Spearman ρ = 0.61). See [method](docs/sprints/sprint-00-20.md) and
+[checklist](docs/sprints/sprint-00-20-checklist.md).

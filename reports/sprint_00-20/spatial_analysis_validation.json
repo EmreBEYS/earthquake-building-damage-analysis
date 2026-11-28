@@ -1,0 +1,196 @@
+{
+  "status": "completed_spatial_analysis",
+  "generated_at_utc": "2026-11-28T12:15:57.479330+00:00",
+  "neighborhoods": 87,
+  "weights": {
+    "type": "queen contiguity (buffered intersects)",
+    "tolerance_metres": 1.0,
+    "islands": 0
+  },
+  "permutations": 999,
+  "random_seed": 20,
+  "global_morans_i": [
+    {
+      "variable": "official_severe_ratio",
+      "label_tr": "Resmî ağır hasar oranı",
+      "units": 87,
+      "morans_i": 0.4892,
+      "expected_i": -0.0116,
+      "z_sim": 7.898,
+      "p_sim": 0.001,
+      "hot_spots_95": 11,
+      "cold_spots_95": 14,
+      "gi_fdr_significant": 6,
+      "lisa_hh": 11,
+      "lisa_ll": 20,
+      "lisa_outliers": 4
+    },
+    {
+      "variable": "official_severe_per_km2",
+      "label_tr": "Resmî ağır hasar yoğunluğu (km² başına)",
+      "units": 87,
+      "morans_i": 0.5207,
+      "expected_i": -0.0116,
+      "z_sim": 8.308,
+      "p_sim": 0.001,
+      "hot_spots_95": 16,
+      "cold_spots_95": 6,
+      "gi_fdr_significant": 9,
+      "lisa_hh": 14,
+      "lisa_ll": 20,
+      "lisa_outliers": 2
+    },
+    {
+      "variable": "building_density_2023_km2",
+      "label_tr": "Bina yoğunluğu 2023 (km² başına)",
+      "units": 87,
+      "morans_i": 0.4359,
+      "expected_i": -0.0116,
+      "z_sim": 6.92,
+      "p_sim": 0.001,
+      "hot_spots_95": 13,
+      "cold_spots_95": 10,
+      "gi_fdr_significant": 11,
+      "lisa_hh": 11,
+      "lisa_ll": 10,
+      "lisa_outliers": 3
+    },
+    {
+      "variable": "removed_share_of_2023_pct",
+      "label_tr": "Kaldırılan yapı payı 2023→2026 (%)",
+      "units": 87,
+      "morans_i": 0.1799,
+      "expected_i": -0.0116,
+      "z_sim": 3.227,
+      "p_sim": 0.006,
+      "hot_spots_95": 10,
+      "cold_spots_95": 0,
+      "gi_fdr_significant": 2,
+      "lisa_hh": 8,
+      "lisa_ll": 16,
+      "lisa_outliers": 2
+    }
+  ],
+  "source_rank_correlations": [
+    {
+      "a": "official_severe_ratio",
+      "b": "emsr_severe_share",
+      "n": 72,
+      "spearman_rho": 0.3048
+    },
+    {
+      "a": "official_severe_ratio",
+      "b": "predicted_severe_share",
+      "n": 72,
+      "spearman_rho": 0.3456
+    },
+    {
+      "a": "emsr_severe_share",
+      "b": "predicted_severe_share",
+      "n": 72,
+      "spearman_rho": 0.93
+    },
+    {
+      "a": "official_severe_ratio",
+      "b": "removed_share_of_2023_pct",
+      "n": 87,
+      "spearman_rho": 0.6118
+    },
+    {
+      "a": "official_severe_per_km2",
+      "b": "removed_candidates",
+      "n": 87,
+      "spearman_rho": 0.2362
+    },
+    {
+      "a": "building_density_2023_km2",
+      "b": "official_severe_per_km2",
+      "n": 87,
+      "spearman_rho": 0.7154
+    },
+    {
+      "a": "official_severe_ratio",
+      "b": "spectral_change_2022_2023_pct",
+      "n": 87,
+      "spearman_rho": 0.1736
+    }
+  ],
+  "grid": {
+    "emsr_severe_share": {
+      "cells_analysed": 222,
+      "minimum_denominator": 5,
+      "hotspot_counts": {
+        "no_data": 704,
+        "not_significant": 168,
+        "hot_99": 18,
+        "cold_90": 18,
+        "hot_95": 13,
+        "hot_90": 5
+      },
+      "fdr_significant": 15
+    },
+    "removed_share": {
+      "cells_analysed": 554,
+      "minimum_denominator": 10,
+      "hotspot_counts": {
+        "not_significant": 462,
+        "no_data": 374,
+        "hot_99": 52,
+        "hot_95": 24,
+        "hot_90": 14
+      },
+      "fdr_significant": 43
+    },
+    "cells_total": 926,
+    "cell_size_metres": 500,
+    "osm_post_event_snapshot_sha256": "9f7b327c98466b536c2d74b978806587cb8d84dd60b8f1bd4d85009069157544"
+  },
+  "counts": {
+    "copernicus_unassigned": 19,
+    "copernicus_total": 3617,
+    "predictions_total": 3617,
+    "spectral_components": 22048
+  },
+  "copernicus_neighborhoods_with_sufficient_coverage": 72,
+  "inputs": {
+    "neighborhoods": {
+      "path": "data/dashboard/sprint_00-12/aoi05_neighborhoods.geojson",
+      "sha256": "98dd5a12a75b98eba4bb2a87c3abd39f6d9ba991bea0586d3c423522ecaf265e"
+    },
+    "official_statistics": {
+      "path": "data/dashboard/sprint_00-15/official_neighborhood_statistics.csv",
+      "sha256": "277d61c763c8ede4ecc7cbdb7bfb2868895c39206ccbfc8ac35fc2d1fe7e0fa1"
+    },
+    "copernicus": {
+      "path": "data/dashboard/sprint_00-12/copernicus_damage_polygons.geojson",
+      "sha256": "82f15fe31f22ccc3ad701e72316f29971370e56df1e01eb06ec51c44b96a6ca5"
+    },
+    "predictions": {
+      "path": "data/dashboard/sprint_00-17/predicted_damage.geojson",
+      "sha256": "307a114c180be2fb2682470daeb13b73fb48c9fcbd8b06c3d979cfe97e791509"
+    },
+    "spectral_change_2022_2023": {
+      "path": "data/dashboard/sprint_00-18/pre_post_change_map.geojson",
+      "sha256": "0cc78694f05c4a144733f6e152a253370846447fe89a5e0fdd14aa3bf57c2182"
+    },
+    "reconstruction_indicators": {
+      "path": "data/dashboard/sprint_00-19/neighborhood_reconstruction_indicators.csv",
+      "sha256": "ec65c9a6a2e7bb936b5c5f93d8930421762bc0da583a3e4130563e7ab6fe82c3"
+    }
+  },
+  "outputs_sha256": {
+    "neighborhood_comparison.csv": "400451db45d69cd9c083d1ab85071fafcac2919494bbf0e2de9164b8bc64da65",
+    "neighborhood_spatial_analysis.geojson": "3ef5c77c250c52ba7e049bcb5cb47c738120c9c0f0c778e9e7cc0273cca4c698",
+    "hotspot_grid.geojson": "18a5c07cabf2205e640d1d26f5ab578e08eeb127897130e82cd528f996cdf469",
+    "spatial_autocorrelation_summary.csv": "b8312d135d530e1b7341e7665aeecf77a4e330848ee17431d1df02ab17229385"
+  },
+  "roundtrip_valid": true,
+  "limitations": [
+    "Official records are name-matched neighbourhood aggregates without coordinates; densities assume records belong to the whole neighbourhood polygon.",
+    "EMSR648 covers only part of the study area; its shares are reported only where at least 50% of the neighbourhood is inside the activation AOI.",
+    "Neighbourhoods differ greatly in size and record count (modifiable areal unit problem); hot spots depend on this zoning and on the contiguity definition.",
+    "87 simultaneous local tests inflate false positives; use the FDR flag for confirmatory statements.",
+    "Sprint 00-17 predictions are exploratory (spatial macro-F1 0.24) and are compared, never used as ground truth. They cover the same EMSR648 footprints the model was trained on, so their high agreement with EMSR648 shares is largely in-sample and is not validation.",
+    "Rank correlations describe agreement between sources, not causation."
+  ]
+}
